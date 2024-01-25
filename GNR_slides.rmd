@@ -1,0 +1,52 @@
+---
+title: "GNR"
+subtitle: ""
+author: "Seiro Ito"
+date: "`r format(Sys.time(), '%Y年%m月%d日 %R')`"
+header_includes:
+    - \usepackage{tikz}
+    - \usepackage{adjustbox}
+output:
+  xaringan::moon_reader:
+    lib_dir: libs
+    css: [default, default-fonts, xaringan-themer.css]
+    nature:
+      highlightStyle: github
+      countIncrementalSlides: false
+      ratio: "16:9"
+    citation_package: natbib
+# path <- "c:/seiro/docs/IDE/kenkyuukai/2023/MinWageConcentration/MarketPower/"; rmarkdown::render(paste0(path, "GNR_slides.Rmd"))
+# renderthis::to_pdf(paste0(path, "GNR_slides.Rmd"))
+---
+class: inverse
+```{r xaringan-themer, include=FALSE, warning=FALSE}
+library(xaringanthemer)
+#style_mono_dark(base_color = "#cbf7ed")
+#style_mono_light(base_color = "#23395b")
+style_solarized_light(text_color = "black", title_slide_background_color = "darkblue",
+  link_color = "blue")
+```
+```{css echo=FALSE}
+.highlight-last-item > ul > li,
+.highlight-last-item > ol > li {
+  opacity: 0.5;
+}
+.highlight-last-item > ul > li:last-of-type,
+.highlight-last-item > ol > li:last-of-type {
+  opacity: 1;
+}
+.inverse {
+  background-color: #272822;
+  color: #d6d6d6;
+  text-shadow: 0 0 20px #333;
+}
+```
+## For gross production functions, parameters are not indentified: 
+
+## When using profit maximization FOC in material demand inversion and using IVs to estimate other parameters.  
+
+## Material demand variations (say, by input prices which may or maynot be observed), can help identification but weak.
+
+@GNR2020 
+
+
