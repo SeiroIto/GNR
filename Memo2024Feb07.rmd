@@ -84,7 +84,7 @@ Unbalanced panel & dropping farms with a missing observation for some year.
 
 --
 
-### Survivor $\subset$ Unbalanced
+### Survivor $\subset$ Unbalanced $\subseteq$ Unbalanced of Jan 29 sample
 
 ---
 ## Michael FYE-Feb firm-low wage worker samples (CIT-IRP5)
