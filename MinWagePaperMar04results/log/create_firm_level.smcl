@@ -1,0 +1,222 @@
+{smcl}
+{txt}{sf}{ul off}{.-}
+      name:  {res}<unnamed>
+       {txt}log:  {res}F:\michael\2023 VERSION\minimum wage paper\log\create_firm_level.smcl
+  {txt}log type:  {res}smcl
+ {txt}opened on:  {res}27 Feb 2023, 17:49:30
+{txt}
+{com}. 
+. use "$saveaddress_data\merged_ind_panel", clear 
+{txt}
+{com}. cap drop n 
+{txt}
+{com}. cap drop n_id 
+{txt}
+{com}. egen n_id=group(id_new)
+{txt}
+{com}. cap drop n_fid 
+{txt}
+{com}. egen n_fid=group(taxrefno) 
+{txt}
+{com}. *Code from Marlies 
+. gen totalperiodsinyearofassessment1 = subinstr(totalperiodsinyearofassessment, ".", " ", .)
+{txt}
+{com}. cap drop totpy 
+{txt}
+{com}. destring totalperiodsinyearofassessment1 , gen(totpy) force 
+{txt}totalperiodsinyearofassessment1: contains nonnumeric characters; totpy {res}generated {txt}as {res}int
+{txt}(30928 missing values generated)
+{res}{txt}
+{com}. gen totalperiodsworked1 = subinstr(totalperiodsworked, ".", " ", .)
+{txt}
+{com}. cap drop totpwork 
+{txt}
+{com}. destring totalperiodsworked1, gen(totpwork) force 
+{txt}totalperiodsworked1: contains nonnumeric characters; totpwork {res}generated {txt}as {res}int
+{txt}(807407 missing values generated)
+{res}{txt}
+{com}. 
+. replace totpy=abs(totpy)
+{txt}(0 real changes made)
+
+{com}. replace totpwork=abs(totpwork)
+{txt}(4 real changes made)
+
+{com}.    
+. gen frac=totpwork/totpy
+{txt}(807,473 missing values generated)
+
+{com}.         
+.         
+. gen totpy_annual=totpy
+{txt}(30,928 missing values generated)
+
+{com}. replace totpy_annual=totpy*2 if totpy==26 
+{txt}(420,280 real changes made)
+
+{com}. gen frac_annual= totpwork/totpy_annual
+{txt}(807,473 missing values generated)
+
+{com}.          
+. * create monthly earnings 
+. gen monthly_earnings=(a3601_income/frac)/12
+{txt}(1,016,037 missing values generated)
+
+{com}. 
+. *create total wages per firm
+. bys n_fid taxyear: egen double tot_3601 = total(a3601_income) 
+{txt}
+{com}. bys n_fid taxyear: egen double tot_kerr = total(kerr_income) if kerr_emp_inc==1 
+{txt}(373,158 missing values generated)
+
+{com}.         
+. *identify minimum wage workers (workers earning below 2274 in 2012)
+. sort id_new taxyear 
+{txt}
+{com}. br id_new taxyear monthly_earnings 
+{txt}
+{com}. drop if id_new == ""
+{txt}(0 observations deleted)
+
+{com}. cap drop mw_worker_2012 
+{txt}
+{com}. gen mw_worker_2012 = monthly_earnings<2274 & taxyear ==2013 
+{txt}
+{com}.         
+. cap drop mw_worker_2012_tg 
+{txt}
+{com}. by id_new: egen mw_worker_2012_tg = max(mw_worker_2012)
+{txt}
+{com}.         
+. * number of workers in firm 
+. bysort n_fid taxyear: egen firm_size=count(n_id)
+{txt}
+{com}.         
+. *gen fraction affected - which min wage value to take?
+. cap drop FA 
+{txt}
+{com}. bysort n_fid taxyear: egen FA=count(n_id) if monthly_earnings<2274
+{txt}(9,612,441 missing values generated)
+
+{com}. cap drop mw_count_2012
+{txt}
+{com}. gen mw_count_2012 = FA if taxyear == 2013
+{txt}(14,686,921 missing values generated)
+
+{com}. replace mw_count_2012 = 0 if mw_count_2012 ==. 
+{txt}(14,686,921 real changes made)
+
+{com}. cap drop mw_count_2013
+{txt}
+{com}. gen mw_count_2013 = FA if taxyear == 2014
+{txt}(14,711,768 missing values generated)
+
+{com}. replace mw_count_2013 = 0 if mw_count_2013==. 
+{txt}(14,711,768 real changes made)
+
+{com}.         
+. cap drop mw_count_2012_tag 
+{txt}
+{com}. bys taxrefno: egen mw_count_2012_tag = max(mw_count_2012)
+{txt}
+{com}.         
+. cap drop mw_count_2013_tag 
+{txt}
+{com}. bys taxrefno: egen mw_count_2013_tag = max(mw_count_2013)
+{txt}
+{com}.         
+. *Compliance is the proportion of minimum wage workers who recieved and the minimum wage 
+. cap drop compliance 
+{txt}
+{com}. gen compliance = mw_count_2013_tag/mw_count_2012_tag
+{txt}(2,246,224 missing values generated)
+
+{com}.         
+. tab taxyear 
+
+    {txt}taxyear {c |}      Freq.     Percent        Cum.
+{hline 12}{c +}{hline 35}
+       2010 {c |}{res}  1,103,321        7.13        7.13
+{txt}       2011 {c |}{res}  1,383,860        8.94       16.06
+{txt}       2012 {c |}{res}  1,725,247       11.14       27.21
+{txt}       2013 {c |}{res}  1,954,732       12.63       39.83
+{txt}       2014 {c |}{res}  2,069,569       13.37       53.20
+{txt}       2015 {c |}{res}  2,148,636       13.88       67.08
+{txt}       2016 {c |}{res}  2,174,440       14.04       81.12
+{txt}       2017 {c |}{res}  1,889,002       12.20       93.32
+{txt}       2018 {c |}{res}  1,033,727        6.68      100.00
+{txt}{hline 12}{c +}{hline 35}
+      Total {c |}{res} 15,482,534      100.00
+{txt}
+{com}.         
+. br id_new taxyear FA mw_count_2012 
+{txt}
+{com}. 
+. gen fraction_affected=FA/firm_size
+{txt}(9,612,441 missing values generated)
+
+{com}. egen prop_affected=max(fraction_affected),by(n_fid taxyear)
+{txt}(1,108,506 missing values generated)
+
+{com}. replace prop_affected=0 if prop_affected==. & FA==.
+{txt}(1,108,506 real changes made)
+
+{com}. 
+. bro n_id n_fid taxyear FA fraction_affected prop_affected
+{txt}
+{com}. cap drop  prop_affected_2012 
+{txt}
+{com}. gen  prop_affected_2012  =0 
+{txt}
+{com}. replace prop_affected_2012 = prop_affected if taxyear==2013 
+{txt}(1,841,713 real changes made)
+
+{com}. cap drop fa_use 
+{txt}
+{com}. bys taxrefno: egen fa_use = max(prop_affected_2012)
+{txt}
+{com}.         
+. cap drop n_fid 
+{txt}
+{com}. egen n_fid = group(taxrefno)
+{txt}
+{com}. 
+. cap drop n 
+{txt}
+{com}. bys n_fid taxyear : gen n = _n 
+{txt}
+{com}. 
+. 
+. keep if n ==1 
+{txt}(15,262,575 observations deleted)
+
+{com}. cap drop n 
+{txt}
+{com}. tab taxyear 
+
+    {txt}taxyear {c |}      Freq.     Percent        Cum.
+{hline 12}{c +}{hline 35}
+       2010 {c |}{res}     19,793        9.00        9.00
+{txt}       2011 {c |}{res}     22,528       10.24       19.24
+{txt}       2012 {c |}{res}     22,328       10.15       29.39
+{txt}       2013 {c |}{res}     26,547       12.07       41.46
+{txt}       2014 {c |}{res}     26,701       12.14       53.60
+{txt}       2015 {c |}{res}     26,827       12.20       65.80
+{txt}       2016 {c |}{res}     26,713       12.14       77.94
+{txt}       2017 {c |}{res}     26,176       11.90       89.84
+{txt}       2018 {c |}{res}     22,346       10.16      100.00
+{txt}{hline 12}{c +}{hline 35}
+      Total {c |}{res}    219,959      100.00
+{txt}
+{com}. *SAVE ANALYSIS DATASET. 
+. save  "$saveaddress_data\analysis_firm.dta", replace 
+{txt}{p 0 4 2}
+file {bf}
+F:\michael\2023 VERSION\minimum wage paper\data\\analysis_firm.dta{rm}
+saved
+{p_end}
+
+{com}. 
+. cap log close 
+{smcl}
+{com}{sf}{ul off}

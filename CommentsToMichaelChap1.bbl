@@ -1,0 +1,19 @@
+\ifx\undefined\bysame
+\newcommand{\bysame}{\leavevmode\hbox to\leftmargin{\hrulefill\,\,}}
+\fi
+\begin{thebibliography}{xx}
+
+\harvarditem[Harasztosi and Lindner]{Harasztosi and
+  Lindner}{2019}{HarasztosiLindner2019}
+{\bf Harasztosi, P{\'e}ter and Attila Lindner}, ``Who pays for the minimum
+  wage?,'' {\it American Economic Review}, 2019, {\it 109} (8), 2693--2727.
+
+\harvarditem[Manning]{Manning}{2006}{Manning2006}
+{\bf Manning, Alan}, ``A generalised model of monopsony,'' {\it Economic
+  Journal}, 2006, {\it 116} (508), 84--100.
+
+\harvarditem[Manning]{Manning}{2021}{Manning2021}
+{\bf \bysame{}}, ``The elusive employment effect of the minimum wage,'' {\it
+  Journal of Economic Perspectives}, 2021.
+
+\end{thebibliography}

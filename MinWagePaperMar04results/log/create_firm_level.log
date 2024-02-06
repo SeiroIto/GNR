@@ -1,0 +1,220 @@
+-------------------------------------------------------------------------------
+      name:  <unnamed>
+       log:  F:\michael\2023 VERSION\minimum wage paper\log\create_firm_level.s
+> mcl
+  log type:  smcl
+ opened on:  27 Feb 2023, 17:49:30
+
+. 
+. use "$saveaddress_data\merged_ind_panel", clear 
+
+. cap drop n 
+
+. cap drop n_id 
+
+. egen n_id=group(id_new)
+
+. cap drop n_fid 
+
+. egen n_fid=group(taxrefno) 
+
+. *Code from Marlies 
+. gen totalperiodsinyearofassessment1 = subinstr(totalperiodsinyearofassessment
+> , ".", " ", .)
+
+. cap drop totpy 
+
+. destring totalperiodsinyearofassessment1 , gen(totpy) force 
+totalperiodsinyearofassessment1: contains nonnumeric characters; totpy generate
+> d as int
+(30928 missing values generated)
+
+. gen totalperiodsworked1 = subinstr(totalperiodsworked, ".", " ", .)
+
+. cap drop totpwork 
+
+. destring totalperiodsworked1, gen(totpwork) force 
+totalperiodsworked1: contains nonnumeric characters; totpwork generated as int
+(807407 missing values generated)
+
+. 
+. replace totpy=abs(totpy)
+(0 real changes made)
+
+. replace totpwork=abs(totpwork)
+(4 real changes made)
+
+.    
+. gen frac=totpwork/totpy
+(807,473 missing values generated)
+
+.         
+.         
+. gen totpy_annual=totpy
+(30,928 missing values generated)
+
+. replace totpy_annual=totpy*2 if totpy==26 
+(420,280 real changes made)
+
+. gen frac_annual= totpwork/totpy_annual
+(807,473 missing values generated)
+
+.          
+. * create monthly earnings 
+. gen monthly_earnings=(a3601_income/frac)/12
+(1,016,037 missing values generated)
+
+. 
+. *create total wages per firm
+. bys n_fid taxyear: egen double tot_3601 = total(a3601_income) 
+
+. bys n_fid taxyear: egen double tot_kerr = total(kerr_income) if kerr_emp_inc=
+> =1 
+(373,158 missing values generated)
+
+.         
+. *identify minimum wage workers (workers earning below 2274 in 2012)
+. sort id_new taxyear 
+
+. br id_new taxyear monthly_earnings 
+
+. drop if id_new == ""
+(0 observations deleted)
+
+. cap drop mw_worker_2012 
+
+. gen mw_worker_2012 = monthly_earnings<2274 & taxyear ==2013 
+
+.         
+. cap drop mw_worker_2012_tg 
+
+. by id_new: egen mw_worker_2012_tg = max(mw_worker_2012)
+
+.         
+. * number of workers in firm 
+. bysort n_fid taxyear: egen firm_size=count(n_id)
+
+.         
+. *gen fraction affected - which min wage value to take?
+. cap drop FA 
+
+. bysort n_fid taxyear: egen FA=count(n_id) if monthly_earnings<2274
+(9,612,441 missing values generated)
+
+. cap drop mw_count_2012
+
+. gen mw_count_2012 = FA if taxyear == 2013
+(14,686,921 missing values generated)
+
+. replace mw_count_2012 = 0 if mw_count_2012 ==. 
+(14,686,921 real changes made)
+
+. cap drop mw_count_2013
+
+. gen mw_count_2013 = FA if taxyear == 2014
+(14,711,768 missing values generated)
+
+. replace mw_count_2013 = 0 if mw_count_2013==. 
+(14,711,768 real changes made)
+
+.         
+. cap drop mw_count_2012_tag 
+
+. bys taxrefno: egen mw_count_2012_tag = max(mw_count_2012)
+
+.         
+. cap drop mw_count_2013_tag 
+
+. bys taxrefno: egen mw_count_2013_tag = max(mw_count_2013)
+
+.         
+. *Compliance is the proportion of minimum wage workers who recieved and the mi
+> nimum wage 
+. cap drop compliance 
+
+. gen compliance = mw_count_2013_tag/mw_count_2012_tag
+(2,246,224 missing values generated)
+
+.         
+. tab taxyear 
+
+    taxyear |      Freq.     Percent        Cum.
+------------+-----------------------------------
+       2010 |  1,103,321        7.13        7.13
+       2011 |  1,383,860        8.94       16.06
+       2012 |  1,725,247       11.14       27.21
+       2013 |  1,954,732       12.63       39.83
+       2014 |  2,069,569       13.37       53.20
+       2015 |  2,148,636       13.88       67.08
+       2016 |  2,174,440       14.04       81.12
+       2017 |  1,889,002       12.20       93.32
+       2018 |  1,033,727        6.68      100.00
+------------+-----------------------------------
+      Total | 15,482,534      100.00
+
+.         
+. br id_new taxyear FA mw_count_2012 
+
+. 
+. gen fraction_affected=FA/firm_size
+(9,612,441 missing values generated)
+
+. egen prop_affected=max(fraction_affected),by(n_fid taxyear)
+(1,108,506 missing values generated)
+
+. replace prop_affected=0 if prop_affected==. & FA==.
+(1,108,506 real changes made)
+
+. 
+. bro n_id n_fid taxyear FA fraction_affected prop_affected
+
+. cap drop  prop_affected_2012 
+
+. gen  prop_affected_2012  =0 
+
+. replace prop_affected_2012 = prop_affected if taxyear==2013 
+(1,841,713 real changes made)
+
+. cap drop fa_use 
+
+. bys taxrefno: egen fa_use = max(prop_affected_2012)
+
+.         
+. cap drop n_fid 
+
+. egen n_fid = group(taxrefno)
+
+. 
+. cap drop n 
+
+. bys n_fid taxyear : gen n = _n 
+
+. 
+. 
+. keep if n ==1 
+(15,262,575 observations deleted)
+
+. cap drop n 
+
+. tab taxyear 
+
+    taxyear |      Freq.     Percent        Cum.
+------------+-----------------------------------
+       2010 |     19,793        9.00        9.00
+       2011 |     22,528       10.24       19.24
+       2012 |     22,328       10.15       29.39
+       2013 |     26,547       12.07       41.46
+       2014 |     26,701       12.14       53.60
+       2015 |     26,827       12.20       65.80
+       2016 |     26,713       12.14       77.94
+       2017 |     26,176       11.90       89.84
+       2018 |     22,346       10.16      100.00
+------------+-----------------------------------
+      Total |    219,959      100.00
+
+. *SAVE ANALYSIS DATASET. 
+. save  "$saveaddress_data\analysis_firm.dta", replace 
+file F:\michael\2023 VERSION\minimum wage paper\data\\analysis_firm.dta saved
+
+. 
+. cap log close 

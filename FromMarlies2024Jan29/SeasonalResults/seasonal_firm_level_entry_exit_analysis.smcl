@@ -1,0 +1,1869 @@
+{smcl}
+{com}{sf}{ul off}{txt}{.-}
+      name:  {res}<unnamed>
+       {txt}log:  {res}Z:\Workbenches\epadmin\michael_kilumelume\2024 projects\minimum wage\datasets for Marlies\Analysis using Marlies code and Michael's samples\Seasonal\seasonal_firm_level_entry_exit_analysis.smcl
+  {txt}log type:  {res}smcl
+ {txt}opened on:  {res}29 Jan 2024, 15:36:32
+{txt}
+{com}.         cd "Z:\Workbenches\epadmin\michael_kilumelume\2024 projects\minimum wage\datasets for Marlies\Analysis using Marlies code and Michael's samples\Seasonal"
+{res}Z:\Workbenches\epadmin\michael_kilumelume\2024 projects\minimum wage\datasets for Marlies\Analysis using Marlies code and Michael's samples\Seasonal
+{txt}
+{com}.         cap drop if taxrefno==""
+{txt}
+{com}.         
+. // Merge in the CIT indicators from MK sample
+.                 
+.         merge 1:1 taxrefno taxyear using "Z:\Workbenches\epadmin\michael_kilumelume\2024 projects\minimum wage\datasets for Marlies\Full_CIT_sample_cleaned.dta", gen(merge_CIT)        
+{res}{txt}{p 0 7 2}
+(variable
+{bf:taxyear} was {bf:int}, now {bf:float} to accommodate using data's values)
+{p_end}
+
+{col 5}Result{col 38}# of obs.
+{col 5}{hline 41}
+{col 5}not matched{col 30}{res}          34,807
+{txt}{col 9}from master{col 30}{res}          24,014{txt}  (merge_CIT==1)
+{col 9}from using{col 30}{res}          10,793{txt}  (merge_CIT==2)
+
+{col 5}matched{col 30}{res}           8,119{txt}  (merge_CIT==3)
+{col 5}{hline 41}
+
+{com}.         
+.         gegen fid=group(taxrefno)
+{res}{txt}{res}{txt}
+{com}.         xtset fid taxyear
+{res}{txt}{col 8}panel variable:  {res}fid (unbalanced)
+{txt}{col 9}time variable:  {res}{col 25}taxyear, 2011 to 2017, but with gaps
+{txt}{col 17}delta:  {res}1 unit
+{txt}
+{com}.         
+.         egen years_alive=count(taxyear), by(fid)
+{txt}
+{com}.         egen firm_year_entry=min(taxyear), by(fid)
+{txt}
+{com}.         egen firm_year_exit=max(taxyear), by(fid)
+{txt}
+{com}.         
+.         gen non_survivor=0
+{txt}
+{com}.         replace non_survivor=1 if firm_year_exit==2014 | firm_year_exit==2015 | firm_year_exit==2016  
+{txt}(9,440 real changes made)
+
+{com}.         
+.         gen survivor=0 
+{txt}
+{com}.         replace survivor=1 if years_alive==7 
+{txt}(14,147 real changes made)
+
+{com}.         replace survivor=1 if firm_year_entry==2012 & years_alive==6
+{txt}(2,430 real changes made)
+
+{com}.         
+.         tab years_alive merge_CIT
+
+{txt}years_aliv {c |}            merge_CIT
+         e {c |} master on  using onl  matched ( {c |}     Total
+{hline 11}{c +}{hline 33}{c +}{hline 10}
+         1 {c |}{res}     1,587        842        135 {txt}{c |}{res}     2,564 
+{txt}         2 {c |}{res}     2,280      1,209        273 {txt}{c |}{res}     3,762 
+{txt}         3 {c |}{res}     2,658      1,442        508 {txt}{c |}{res}     4,608 
+{txt}         4 {c |}{res}     2,988      1,367        501 {txt}{c |}{res}     4,856 
+{txt}         5 {c |}{res}     3,398      1,595        832 {txt}{c |}{res}     5,825 
+{txt}         6 {c |}{res}     4,021      1,861      1,282 {txt}{c |}{res}     7,164 
+{txt}         7 {c |}{res}     7,082      2,477      4,588 {txt}{c |}{res}    14,147 
+{txt}{hline 11}{c +}{hline 33}{c +}{hline 10}
+     Total {c |}{res}    24,014     10,793      8,119 {txt}{c |}{res}    42,926 
+{txt}
+{com}.         
+.         tsfill, full // we need to do this so that we can move up exit figures by a year
+{txt}
+{com}.         
+.         label variable entry_agri "Number of entrants into agri by firm"
+{txt}
+{com}.         label variable exit_agri "Number of exits out of agri by firm"
+{txt}
+{com}.         
+. // Merge in rainfall data and clean province info
+.         
+.         merge m:1 taxyear mode_prov using "Z:\Workbenches\widerinequality\marlies_piek\updated_employment_paper\out_files\2022\_20220204\Rainfall_data_merge_ready.dta" 
+{res}
+{txt}{col 5}Result{col 38}# of obs.
+{col 5}{hline 41}
+{col 5}not matched{col 30}{res}          51,044
+{txt}{col 9}from master{col 30}{res}          50,936{txt}  (_merge==1)
+{col 9}from using{col 30}{res}             108{txt}  (_merge==2)
+
+{col 5}matched{col 30}{res}          30,089{txt}  (_merge==3)
+{col 5}{hline 41}
+
+{com}. 
+.          
+.         gen mode_prov_num=1 if mode_prov=="Eastern Cape"
+{txt}(78,148 missing values generated)
+
+{com}.         replace mode_prov_num=2 if mode_prov=="Free State"
+{txt}(2,655 real changes made)
+
+{com}.         replace mode_prov_num=3 if mode_prov=="Gauteng"
+{txt}(2,148 real changes made)
+
+{com}.         replace mode_prov_num=4 if mode_prov=="KwaZulu-Natal"
+{txt}(5,333 real changes made)
+
+{com}.         replace mode_prov_num=5 if mode_prov=="Limpopo"
+{txt}(1,650 real changes made)
+
+{com}.         replace mode_prov_num=6 if mode_prov=="Mpumalanga"
+{txt}(2,747 real changes made)
+
+{com}.         replace mode_prov_num=7 if mode_prov=="North West"
+{txt}(1,194 real changes made)
+
+{com}.         replace mode_prov_num=8 if mode_prov=="Northern Cape"
+{txt}(1,791 real changes made)
+
+{com}.         replace mode_prov_num=9 if mode_prov=="Western Cape"
+{txt}(9,694 real changes made)
+
+{com}.         
+.         tab mode_prov_num
+
+{txt}mode_prov_n {c |}
+         um {c |}      Freq.     Percent        Cum.
+{hline 12}{c +}{hline 35}
+          1 {c |}{res}      2,985        9.89        9.89
+{txt}          2 {c |}{res}      2,655        8.79       18.68
+{txt}          3 {c |}{res}      2,148        7.11       25.79
+{txt}          4 {c |}{res}      5,333       17.66       43.45
+{txt}          5 {c |}{res}      1,650        5.46       48.92
+{txt}          6 {c |}{res}      2,747        9.10       58.01
+{txt}          7 {c |}{res}      1,194        3.95       61.97
+{txt}          8 {c |}{res}      1,791        5.93       67.90
+{txt}          9 {c |}{res}      9,694       32.10      100.00
+{txt}{hline 12}{c +}{hline 35}
+      Total {c |}{res}     30,197      100.00
+{txt}
+{com}.         label define prov 1 "Eastern Cape" 2 "Free State" 3 "Gauteng" 4 "KwaZulu-Natal" 5 "Limpopo" 6 "Mpumalanga" 7 "North West" 8 "Northern Cape" 9 "Western Cape"
+{txt}
+{com}.         label values mode_prov_num prov 
+{txt}
+{com}.         tab mode_prov_num
+
+{txt}mode_prov_num {c |}      Freq.     Percent        Cum.
+{hline 14}{c +}{hline 35}
+ Eastern Cape {c |}{res}      2,985        9.89        9.89
+{txt}   Free State {c |}{res}      2,655        8.79       18.68
+{txt}      Gauteng {c |}{res}      2,148        7.11       25.79
+{txt}KwaZulu-Natal {c |}{res}      5,333       17.66       43.45
+{txt}      Limpopo {c |}{res}      1,650        5.46       48.92
+{txt}   Mpumalanga {c |}{res}      2,747        9.10       58.01
+{txt}   North West {c |}{res}      1,194        3.95       61.97
+{txt}Northern Cape {c |}{res}      1,791        5.93       67.90
+{txt} Western Cape {c |}{res}      9,694       32.10      100.00
+{txt}{hline 14}{c +}{hline 35}
+        Total {c |}{res}     30,197      100.00
+{txt}
+{com}.         
+.         
+. ********************************************************************************
+. *                               Fraction affected, wage gaps & treatment indicators                                                     *
+. ********************************************************************************
+.         
+.         summ frac if agri==1, de // p25 at 63%, median is at 85% 
+
+                     {txt}(mean) frac_annual
+{hline 61}
+      Percentiles      Smallest
+ 1%    {res} .0810565       .0076923
+{txt} 5%    {res} .0963801       .0076923
+{txt}10%    {res} .1483517       .0083333       {txt}Obs         {res}     32,133
+{txt}25%    {res} .2023077       .0113208       {txt}Sum of wgt. {res}     32,133
+
+{txt}50%    {res} .2710317                      {txt}Mean          {res} .2822169
+                        {txt}Largest       Std. dev.     {res} .1104753
+{txt}75%    {res} .3541667             .5
+{txt}90%    {res} .4416667             .5       {txt}Variance      {res} .0122048
+{txt}95%    {res}       .5             .5       {txt}Skewness      {res} .2199781
+{txt}99%    {res}       .5             .5       {txt}Kurtosis      {res} 2.408125
+{txt}
+{com}.         label variable frac "Employee's fraction of year worked, averaged by firm & year" 
+{txt}
+{com}. 
+.         drop if agri==0 // these firms are non-agri
+{txt}(0 observations deleted)
+
+{com}.         
+.         gen l_leg_min_w_2014=l_leg_r_min_wage if taxyear==2014
+{txt}(76,451 missing values generated)
+
+{com}.         gegen l_leg_min_w_2014_a=max(l_leg_min_w_2014)
+{res}{txt}{res}{txt}
+{com}.         drop l_leg_min_w_2014
+{txt}
+{com}.         
+.         
+. * Treatment indicator (proportion of workers affected in 2013)
+.         gegen prop_affected_all=max(prop_affected), by(fid)
+{res}{bf:warning}: gegen is {bf:NOT} parsing the expression 'prop_affected' by group.
+To parse this expression by group, call gegen using the -by:- prefix.
+{txt}{res}{txt}
+{com}.         label variable prop_affected_all "Proportion of workers in 2013 that earned below the 2014 min wage"
+{txt}
+{com}. 
+.         
+. ********************************************************************************
+. *                                                               Entry & exit stats                                                              *
+. ********************************************************************************
+.         table taxyear, cont(sum entry_agri sum exit_agri2)
+
+{txt}{hline 10}{c TT}{hline 29}
+The year  {c |}
+of        {c |}
+assessmen {c |}
+t.        {c |} sum(entry_~l)  sum(exit_a~2)
+{hline 10}{c +}{hline 29}
+     2001 {c |}             {res}0              0
+     {txt}2002 {c |}             {res}0              0
+     {txt}2003 {c |}             {res}0              0
+     {txt}2004 {c |}             {res}0              0
+     {txt}2005 {c |}             {res}0              0
+     {txt}2006 {c |}             {res}0              0
+     {txt}2007 {c |}             {res}0              0
+     {txt}2008 {c |}             {res}0              0
+     {txt}2009 {c |}             {res}0              0
+     {txt}2010 {c |}             {res}0              0
+     {txt}2011 {c |}             {res}0          86715
+     {txt}2012 {c |}        {res}115455          93385
+     {txt}2013 {c |}        {res}116435         107281
+     {txt}2014 {c |}        {res}102336          93283
+     {txt}2015 {c |}        {res}118265         100803
+     {txt}2016 {c |}        {res}117400         101941
+     {txt}2017 {c |}        {res}121239              0
+     {txt}2018 {c |}             {res}0              0
+     {txt}2019 {c |}             {res}0              0
+{txt}{hline 10}{c BT}{hline 29}
+
+{com}. 
+.         replace entry_agri=. if taxyear==2011 // first year of panel, thus all entered 2011
+{txt}(3,937 real changes made, 3,937 to missing)
+
+{com}.         table taxyear, cont(sum entry_agri sum exit_agri2)
+
+{txt}{hline 10}{c TT}{hline 29}
+The year  {c |}
+of        {c |}
+assessmen {c |}
+t.        {c |} sum(entry_~l)  sum(exit_a~2)
+{hline 10}{c +}{hline 29}
+     2001 {c |}             {res}0              0
+     {txt}2002 {c |}             {res}0              0
+     {txt}2003 {c |}             {res}0              0
+     {txt}2004 {c |}             {res}0              0
+     {txt}2005 {c |}             {res}0              0
+     {txt}2006 {c |}             {res}0              0
+     {txt}2007 {c |}             {res}0              0
+     {txt}2008 {c |}             {res}0              0
+     {txt}2009 {c |}             {res}0              0
+     {txt}2010 {c |}             {res}0              0
+     {txt}2011 {c |}             {res}0          86715
+     {txt}2012 {c |}        {res}115455          93385
+     {txt}2013 {c |}        {res}116435         107281
+     {txt}2014 {c |}        {res}102336          93283
+     {txt}2015 {c |}        {res}118265         100803
+     {txt}2016 {c |}        {res}117400         101941
+     {txt}2017 {c |}        {res}121239              0
+     {txt}2018 {c |}             {res}0              0
+     {txt}2019 {c |}             {res}0              0
+{txt}{hline 10}{c BT}{hline 29}
+
+{com}. 
+. * exit_agri2 was defined in the year the person was last seen in agri but actually, this should 
+. * be 1 in the year after their last year; thus we want to move exit_agri2 one year later
+.    sort fid taxyear 
+{txt}
+{com}.         gen exit_agri_new=.
+{txt}(81,133 missing values generated)
+
+{com}.         replace exit_agri_new= L.exit_agri2 if fid==L.fid
+{txt}(27,089 real changes made)
+
+{com}.         
+.         table taxyear, cont(sum entry_agri sum exit_agri_new)
+
+{txt}{hline 10}{c TT}{hline 29}
+The year  {c |}
+of        {c |}
+assessmen {c |}
+t.        {c |} sum(entry_~l)  sum(exit_a~w)
+{hline 10}{c +}{hline 29}
+     2001 {c |}             {res}0              0
+     {txt}2002 {c |}             {res}0              0
+     {txt}2003 {c |}             {res}0              0
+     {txt}2004 {c |}             {res}0              0
+     {txt}2005 {c |}             {res}0              0
+     {txt}2006 {c |}             {res}0              0
+     {txt}2007 {c |}             {res}0              0
+     {txt}2008 {c |}             {res}0              0
+     {txt}2009 {c |}             {res}0              0
+     {txt}2010 {c |}             {res}0              0
+     {txt}2011 {c |}             {res}0              0
+     {txt}2012 {c |}        {res}115455          86715
+     {txt}2013 {c |}        {res}116435          93385
+     {txt}2014 {c |}        {res}102336         107281
+     {txt}2015 {c |}        {res}118265          93283
+     {txt}2016 {c |}        {res}117400         100803
+     {txt}2017 {c |}        {res}121239         101941
+     {txt}2018 {c |}             {res}0              0
+     {txt}2019 {c |}             {res}0              0
+{txt}{hline 10}{c BT}{hline 29}
+
+{com}. 
+.         gen post=0 if taxyear<2014
+{txt}(46,318 missing values generated)
+
+{com}.         replace post=1 if taxyear>2013
+{txt}(46,318 real changes made)
+
+{com}.         
+. ********************************************************************************
+. *                                                                       Stats on zeros                                                          *
+. ********************************************************************************
+. tab taxyear 
+
+{txt}The year of {c |}
+assessment. {c |}      Freq.     Percent        Cum.
+{hline 12}{c +}{hline 35}
+       2001 {c |}{res}          9        0.01        0.01
+{txt}       2002 {c |}{res}          9        0.01        0.02
+{txt}       2003 {c |}{res}          9        0.01        0.03
+{txt}       2004 {c |}{res}          9        0.01        0.04
+{txt}       2005 {c |}{res}          9        0.01        0.06
+{txt}       2006 {c |}{res}          9        0.01        0.07
+{txt}       2007 {c |}{res}          9        0.01        0.08
+{txt}       2008 {c |}{res}          9        0.01        0.09
+{txt}       2009 {c |}{res}          9        0.01        0.10
+{txt}       2010 {c |}{res}          9        0.01        0.11
+{txt}       2011 {c |}{res}     11,575       14.27       14.38
+{txt}       2012 {c |}{res}     11,575       14.27       28.64
+{txt}       2013 {c |}{res}     11,575       14.27       42.91
+{txt}       2014 {c |}{res}     11,575       14.27       57.18
+{txt}       2015 {c |}{res}     11,575       14.27       71.44
+{txt}       2016 {c |}{res}     11,575       14.27       85.71
+{txt}       2017 {c |}{res}     11,575       14.27       99.98
+{txt}       2018 {c |}{res}          9        0.01       99.99
+{txt}       2019 {c |}{res}          9        0.01      100.00
+{txt}{hline 12}{c +}{hline 35}
+      Total {c |}{res}     81,133      100.00
+{txt}
+{com}. tab taxyear if mean_firm_wage!=.
+
+{txt}The year of {c |}
+assessment. {c |}      Freq.     Percent        Cum.
+{hline 12}{c +}{hline 35}
+       2011 {c |}{res}      3,937       12.25       12.25
+{txt}       2012 {c |}{res}      4,210       13.10       25.35
+{txt}       2013 {c |}{res}      4,533       14.11       39.46
+{txt}       2014 {c |}{res}      4,682       14.57       54.03
+{txt}       2015 {c |}{res}      4,810       14.97       69.00
+{txt}       2016 {c |}{res}      4,917       15.30       84.30
+{txt}       2017 {c |}{res}      5,044       15.70      100.00
+{txt}{hline 12}{c +}{hline 35}
+      Total {c |}{res}     32,133      100.00
+{txt}
+{com}. tab taxyear if entry_agri==0 // 20% in 2012, 26% in 2017
+
+{txt}The year of {c |}
+assessment. {c |}      Freq.     Percent        Cum.
+{hline 12}{c +}{hline 35}
+       2012 {c |}{res}        645       13.01       13.01
+{txt}       2013 {c |}{res}        773       15.59       28.61
+{txt}       2014 {c |}{res}        880       17.75       46.36
+{txt}       2015 {c |}{res}        849       17.13       63.49
+{txt}       2016 {c |}{res}        917       18.50       81.99
+{txt}       2017 {c |}{res}        893       18.01      100.00
+{txt}{hline 12}{c +}{hline 35}
+      Total {c |}{res}      4,957      100.00
+{txt}
+{com}. 
+. tab taxyear if exit_agri_new==0 // 21% in 2012, 23% in 2017
+
+{txt}The year of {c |}
+assessment. {c |}      Freq.     Percent        Cum.
+{hline 12}{c +}{hline 35}
+       2012 {c |}{res}        619       14.90       14.90
+{txt}       2013 {c |}{res}        663       15.96       30.87
+{txt}       2014 {c |}{res}        637       15.34       46.21
+{txt}       2015 {c |}{res}        717       17.26       63.47
+{txt}       2016 {c |}{res}        754       18.16       81.63
+{txt}       2017 {c |}{res}        763       18.37      100.00
+{txt}{hline 12}{c +}{hline 35}
+      Total {c |}{res}      4,153      100.00
+{txt}
+{com}. 
+. 
+. ********************************************************************************
+. *                                                               Regression analysis                                                             *
+. ********************************************************************************
+. * Negative ninomial
+.         * using proportion affected (prop_affected_all) as the treatment variable 
+.         * using offset variable (firm size: either in 2013 or dynamically)
+. 
+. /*
+> Run for CIT and non-CIT samples:
+> - survivors (present in all years 2011-2017)
+> - unbalanced (present for less than 7 years)
+> */
+. 
+. 
+. **# Reg analysis: CIT Survivors
+.         
+. ********************************************************************************
+. *               Total employment - using LAGGED dynamic firm size as an offset variable *
+. ********************************************************************************
+.         cap mkdir "Z:\Workbenches\epadmin\michael_kilumelume\2024 projects\minimum wage\datasets for Marlies\Analysis using Marlies code and Michael's samples\Seasonal\CIT Survivors"
+{txt}
+{com}.         cd "Z:\Workbenches\epadmin\michael_kilumelume\2024 projects\minimum wage\datasets for Marlies\Analysis using Marlies code and Michael's samples\Seasonal\CIT Survivors"
+{res}Z:\Workbenches\epadmin\michael_kilumelume\2024 projects\minimum wage\datasets for Marlies\Analysis using Marlies code and Michael's samples\Seasonal\CIT Survivors
+{txt}
+{com}.         preserve 
+{txt}
+{com}.         keep if merge_CIT==3 & survivor==1 // CIT survivors
+{txt}(76,017 observations deleted)
+
+{com}.         
+. * nbreg unweighted
+. 
+.         estimates clear 
+{txt}
+{com}.         nbreg count_agri c.prop_affected_all##ib(2013).taxyear  gender_fill prop_age_cat_* i.mode_prov_num rainfall, cluster(taxrefno) exposure(L.firm_size_year) 
+{txt}note: {bf:prop_age_cat_5_seasonal_fill} omitted because of collinearity.
+
+Fitting Poisson model:
+{res}
+{txt}Iteration 0:{space 3}log pseudolikelihood = {res:-67375.336}  
+Iteration 1:{space 3}log pseudolikelihood = {res:-66674.581}  
+Iteration 2:{space 3}log pseudolikelihood = {res:-66672.259}  
+Iteration 3:{space 3}log pseudolikelihood = {res:-66672.259}  
+{res}
+{txt}Fitting constant-only model:
+{res}
+{txt}Iteration 0:{space 3}log pseudolikelihood = {res:-14671.782}  
+Iteration 1:{space 3}log pseudolikelihood = {res:-14414.247}  
+Iteration 2:{space 3}log pseudolikelihood = {res:-14372.937}  
+Iteration 3:{space 3}log pseudolikelihood = {res:-14372.828}  
+Iteration 4:{space 3}log pseudolikelihood = {res:-14372.828}  
+{res}
+{txt}Fitting full model:
+{res}
+{txt}Iteration 0:{space 3}log pseudolikelihood = {res:-14346.957}  
+Iteration 1:{space 3}log pseudolikelihood = {res:-14216.206}  
+Iteration 2:{space 3}log pseudolikelihood = {res:  -14199.9}  
+Iteration 3:{space 3}log pseudolikelihood = {res:-14199.871}  
+Iteration 4:{space 3}log pseudolikelihood = {res:-14199.871}  
+{res}
+{txt}Negative binomial regression{col 49}Number of obs{col 67}= {res}     3,172
+{txt}{col 49}Wald chi2({res}25{txt}){col 67}= {res}     53.09
+{txt}{col 1}Dispersion{col 22}= {res}mean{txt}{col 49}Prob > chi2{col 67}= {res}    0.0009
+{txt}Log pseudolikelihood = {res}-14199.871{txt}{col 49}Pseudo R2{col 67}= {res}    0.0120
+
+{txt}{ralign 94:(Std. Err. adjusted for {res:875} clusters in taxrefno)}
+{hline 29}{c TT}{hline 11}{hline 11}{hline 9}{hline 8}{hline 13}{hline 12}
+{col 30}{c |}{col 42}    Robust
+{col 1}                  count_agri{col 30}{c |}      Coef.{col 42}   Std. Err.{col 54}      z{col 62}   P>|z|{col 70}     [95% Con{col 83}f. Interval]
+{hline 29}{c +}{hline 11}{hline 11}{hline 9}{hline 8}{hline 13}{hline 12}
+{space 11}prop_affected_all {c |}{col 30}{res}{space 2} .6992926{col 42}{space 2} .3009811{col 53}{space 1}    2.32{col 62}{space 3}0.020{col 70}{space 4} .1093805{col 83}{space 3} 1.289205
+{txt}{space 28} {c |}
+{space 21}taxyear {c |}
+{space 23}2012  {c |}{col 30}{res}{space 2} 1.313147{col 42}{space 2} .4910249{col 53}{space 1}    2.67{col 62}{space 3}0.007{col 70}{space 4} .3507564{col 83}{space 3} 2.275539
+{txt}{space 23}2014  {c |}{col 30}{res}{space 2} .2717824{col 42}{space 2} .2025694{col 53}{space 1}    1.34{col 62}{space 3}0.180{col 70}{space 4}-.1252463{col 83}{space 3}  .668811
+{txt}{space 23}2015  {c |}{col 30}{res}{space 2} .3731226{col 42}{space 2} .2304258{col 53}{space 1}    1.62{col 62}{space 3}0.105{col 70}{space 4}-.0785037{col 83}{space 3} .8247488
+{txt}{space 23}2016  {c |}{col 30}{res}{space 2} .0994987{col 42}{space 2} .1889881{col 53}{space 1}    0.53{col 62}{space 3}0.599{col 70}{space 4}-.2709112{col 83}{space 3} .4699087
+{txt}{space 23}2017  {c |}{col 30}{res}{space 2} .0091179{col 42}{space 2} .1769885{col 53}{space 1}    0.05{col 62}{space 3}0.959{col 70}{space 4}-.3377732{col 83}{space 3}  .356009
+{txt}{space 28} {c |}
+{space 1}taxyear#c.prop_affected_all {c |}
+{space 23}2012  {c |}{col 30}{res}{space 2} -1.69018{col 42}{space 2} .6107492{col 53}{space 1}   -2.77{col 62}{space 3}0.006{col 70}{space 4}-2.887227{col 83}{space 3}-.4931341
+{txt}{space 23}2014  {c |}{col 30}{res}{space 2}-.7701669{col 42}{space 2} .3422619{col 53}{space 1}   -2.25{col 62}{space 3}0.024{col 70}{space 4}-1.440988{col 83}{space 3}-.0993458
+{txt}{space 23}2015  {c |}{col 30}{res}{space 2}-.7353768{col 42}{space 2}  .342039{col 53}{space 1}   -2.15{col 62}{space 3}0.032{col 70}{space 4}-1.405761{col 83}{space 3}-.0649927
+{txt}{space 23}2016  {c |}{col 30}{res}{space 2}-.3575319{col 42}{space 2}  .364527{col 53}{space 1}   -0.98{col 62}{space 3}0.327{col 70}{space 4}-1.071992{col 83}{space 3} .3569279
+{txt}{space 23}2017  {c |}{col 30}{res}{space 2}-.2590923{col 42}{space 2}  .322171{col 53}{space 1}   -0.80{col 62}{space 3}0.421{col 70}{space 4}-.8905359{col 83}{space 3} .3723513
+{txt}{space 28} {c |}
+{space 17}gender_fill {c |}{col 30}{res}{space 2}-.4209919{col 42}{space 2} .1286792{col 53}{space 1}   -3.27{col 62}{space 3}0.001{col 70}{space 4}-.6731985{col 83}{space 3}-.1687853
+{txt}prop_age_cat_1_seasonal_fill {c |}{col 30}{res}{space 2} .1632227{col 42}{space 2}  .169248{col 53}{space 1}    0.96{col 62}{space 3}0.335{col 70}{space 4}-.1684972{col 83}{space 3} .4949426
+{txt}prop_age_cat_2_seasonal_fill {c |}{col 30}{res}{space 2}-.1542405{col 42}{space 2} .1717625{col 53}{space 1}   -0.90{col 62}{space 3}0.369{col 70}{space 4}-.4908887{col 83}{space 3} .1824078
+{txt}prop_age_cat_3_seasonal_fill {c |}{col 30}{res}{space 2}-.0927236{col 42}{space 2} .1922256{col 53}{space 1}   -0.48{col 62}{space 3}0.630{col 70}{space 4}-.4694789{col 83}{space 3} .2840317
+{txt}prop_age_cat_4_seasonal_fill {c |}{col 30}{res}{space 2}-.2915748{col 42}{space 2} .1738524{col 53}{space 1}   -1.68{col 62}{space 3}0.094{col 70}{space 4}-.6323194{col 83}{space 3} .0491697
+{txt}prop_age_cat_5_seasonal_fill {c |}{col 30}{res}{space 2}        0{col 42}{txt}  (omitted)
+{space 28} {c |}
+{space 15}mode_prov_num {c |}
+{space 17}Free State  {c |}{col 30}{res}{space 2}-.4115752{col 42}{space 2} .3380807{col 53}{space 1}   -1.22{col 62}{space 3}0.223{col 70}{space 4}-1.074201{col 83}{space 3} .2510507
+{txt}{space 20}Gauteng  {c |}{col 30}{res}{space 2}-.4367568{col 42}{space 2} .3602155{col 53}{space 1}   -1.21{col 62}{space 3}0.225{col 70}{space 4}-1.142766{col 83}{space 3} .2692526
+{txt}{space 14}KwaZulu-Natal  {c |}{col 30}{res}{space 2}-.6066927{col 42}{space 2} .3653767{col 53}{space 1}   -1.66{col 62}{space 3}0.097{col 70}{space 4}-1.322818{col 83}{space 3} .1094324
+{txt}{space 20}Limpopo  {c |}{col 30}{res}{space 2}-.4700722{col 42}{space 2} .3705086{col 53}{space 1}   -1.27{col 62}{space 3}0.205{col 70}{space 4}-1.196256{col 83}{space 3} .2561114
+{txt}{space 17}Mpumalanga  {c |}{col 30}{res}{space 2} -.509369{col 42}{space 2}  .373459{col 53}{space 1}   -1.36{col 62}{space 3}0.173{col 70}{space 4}-1.241335{col 83}{space 3} .2225971
+{txt}{space 17}North West  {c |}{col 30}{res}{space 2} -.346921{col 42}{space 2} .3612891{col 53}{space 1}   -0.96{col 62}{space 3}0.337{col 70}{space 4}-1.055035{col 83}{space 3} .3611926
+{txt}{space 14}Northern Cape  {c |}{col 30}{res}{space 2}-.1493338{col 42}{space 2} .4143809{col 53}{space 1}   -0.36{col 62}{space 3}0.719{col 70}{space 4}-.9615055{col 83}{space 3} .6628379
+{txt}{space 15}Western Cape  {c |}{col 30}{res}{space 2}-.2743289{col 42}{space 2} .3655002{col 53}{space 1}   -0.75{col 62}{space 3}0.453{col 70}{space 4}-.9906961{col 83}{space 3} .4420383
+{txt}{space 28} {c |}
+{space 20}rainfall {c |}{col 30}{res}{space 2} .0001024{col 42}{space 2} .0003093{col 53}{space 1}    0.33{col 62}{space 3}0.741{col 70}{space 4}-.0005038{col 83}{space 3} .0007087
+{txt}{space 23}_cons {c |}{col 30}{res}{space 2} .6310496{col 42}{space 2} .4684703{col 53}{space 1}    1.35{col 62}{space 3}0.178{col 70}{space 4}-.2871353{col 83}{space 3} 1.549234
+{col 1}{txt}ln(L.firm_size_year_seaso~l){col 30}{c |}{res}{space 2}        1{col 42}{txt}  (exposure)
+{hline 29}{c +}{hline 11}{hline 11}{hline 9}{hline 8}{hline 13}{hline 12}
+{space 20}/lnalpha {c |}{col 30}{res}{space 2}-.2994015{col 42}{space 2} .0955352{col 70}{space 4} -.486647{col 83}{space 3} -.112156
+{txt}{hline 29}{c +}{hline 11}{hline 11}{hline 9}{hline 8}{hline 13}{hline 12}
+                       alpha {c |}{col 30}{res}{space 2} .7412617{col 42}{space 2} .0708166{col 70}{space 4}  .614684{col 83}{space 3} .8939048
+{txt}{hline 29}{c BT}{hline 11}{hline 11}{hline 9}{hline 8}{hline 13}{hline 12}
+
+{com}.         estimates store reg8
+{txt}
+{com}.         summ prop_affected_all if taxyear==2013 & e(sample)==1
+
+{txt}    Variable {c |}        Obs        Mean    Std. dev.       Min        Max
+{hline 13}{c +}{hline 57}
+prop_affe~ll {c |}{res}        514    .7365402     .322513          0          1
+{txt}
+{com}.         estout reg* using nb_empl_uw_CIT_Survivor.xls, replace  cells(b(star fmt(3)) se(par)) stats(r2_p N ,fmt(3 0 0 0) label ("Pseudo R-squared" "N" )) nobaselevels varlabels(_cons Constant) starlevels(* 0.1 ** 0.05 *** 0.01) 
+{res}{txt}(output written to {browse  `"nb_empl_uw_CIT_Survivor.xls"'})
+
+{com}. 
+. 
+.         * coef plot - full model with LAGGED dynamic offset variable
+.         coefplot reg8, vertical keep(2012.taxyear#c.prop_affected_all 2013.taxyear#c.prop_affected_all 2014.taxyear#c.prop_affected_all 2015.taxyear#c.prop_affected_all 2016.taxyear#c.prop_affected_all 2017.taxyear#c.prop_affected_all) coeflabels(2012.taxyear#c.prop_affected_all = "-2" ///
+>         2013.taxyear#c.prop_affected_all = "-1"  2014.taxyear#c.prop_affected_all = "0" 2015.taxyear#c.prop_affected_all = "1" ///
+>         2016.taxyear#c.prop_affected_all = "2"  2017.taxyear#c.prop_affected_all = "3" , wrap(2)) ///
+>         baselevels omitted nolabel xtitle(Event time) /*ytitle(Interaction coefficient)*/ ///
+>         /*scheme(plotplain)*/ msymbol(O) title("") mcolor(gs1) yline(0, lcolor("gs10") lpattern(dash)) ciopts(lcolor("gs1")) graphregion(fcolor(white)) fcolor(white) lcolor(white) xscale(lcolor("gs1")) yscale(lcolor("gs1")) xlabel(, labcolor("gs1") noticks) ylabel(, labcolor("gs1")  grid glcolor(gs10) glwidth(vvthin) noticks) 
+{res}{txt}
+{com}.         
+.         graph export "nb_empl_uw_CIT_Survivor.png", replace as(png)
+{txt}{p 0 4 2}
+file {bf}
+nb_empl_uw_CIT_Survivor.png{rm}
+saved as
+PNG
+format
+{p_end}
+
+{com}.         graph save "nb_empl_uw_CIT_Survivor.gph", replace 
+{res}{txt}(file nb_empl_uw_CIT_Survivor.gph saved)
+
+{com}.         
+. * nbreg weighted
+. 
+.         nbreg count_agri c.prop_affected_all##ib(2013).taxyear  gender_fill prop_age_cat_* i.mode_prov_num rainfall  [pw=firm_size_year], cluster(taxrefno) exposure(L.firm_size_year) 
+{txt}note: {bf:prop_age_cat_5_seasonal_fill} omitted because of collinearity.
+
+Fitting Poisson model:
+{res}
+{txt}Iteration 0:{space 3}log pseudolikelihood = {res: -43737589}  
+Iteration 1:{space 3}log pseudolikelihood = {res: -42938557}  
+Iteration 2:{space 3}log pseudolikelihood = {res: -42935901}  
+Iteration 3:{space 3}log pseudolikelihood = {res: -42935901}  
+{res}
+{txt}Fitting constant-only model:
+{res}
+{txt}Iteration 0:{space 3}log pseudolikelihood = {res:-3017531.5}  
+Iteration 1:{space 3}log pseudolikelihood = {res:  -2890480}  
+Iteration 2:{space 3}log pseudolikelihood = {res:-2871067.4}  
+Iteration 3:{space 3}log pseudolikelihood = {res:  -2871030}  
+Iteration 4:{space 3}log pseudolikelihood = {res:  -2871030}  
+{res}
+{txt}Fitting full model:
+{res}
+{txt}Iteration 0:{space 3}log pseudolikelihood = {res:  -2871030}  
+Iteration 1:{space 3}log pseudolikelihood = {res:-2803000.1}  
+Iteration 2:{space 3}log pseudolikelihood = {res:-2785239.7}  
+Iteration 3:{space 3}log pseudolikelihood = {res:-2784563.8}  
+Iteration 4:{space 3}log pseudolikelihood = {res:-2784561.9}  
+Iteration 5:{space 3}log pseudolikelihood = {res:-2784561.9}  
+{res}
+{txt}Negative binomial regression{col 49}Number of obs{col 67}= {res}     3,172
+{txt}{col 49}Wald chi2({res}25{txt}){col 67}= {res}     72.03
+{txt}{col 1}Dispersion{col 22}= {res}mean{txt}{col 49}Prob > chi2{col 67}= {res}    0.0000
+{txt}Log pseudolikelihood = {res}-2784561.9{txt}{col 49}Pseudo R2{col 67}= {res}    0.0301
+
+{txt}{ralign 94:(Std. Err. adjusted for {res:875} clusters in taxrefno)}
+{hline 29}{c TT}{hline 11}{hline 11}{hline 9}{hline 8}{hline 13}{hline 12}
+{col 30}{c |}{col 42}    Robust
+{col 1}                  count_agri{col 30}{c |}      Coef.{col 42}   Std. Err.{col 54}      z{col 62}   P>|z|{col 70}     [95% Con{col 83}f. Interval]
+{hline 29}{c +}{hline 11}{hline 11}{hline 9}{hline 8}{hline 13}{hline 12}
+{space 11}prop_affected_all {c |}{col 30}{res}{space 2} 1.278858{col 42}{space 2} .5092357{col 53}{space 1}    2.51{col 62}{space 3}0.012{col 70}{space 4}  .280774{col 83}{space 3} 2.276941
+{txt}{space 28} {c |}
+{space 21}taxyear {c |}
+{space 23}2012  {c |}{col 30}{res}{space 2} 2.537399{col 42}{space 2} .8846391{col 53}{space 1}    2.87{col 62}{space 3}0.004{col 70}{space 4} .8035385{col 83}{space 3}  4.27126
+{txt}{space 23}2014  {c |}{col 30}{res}{space 2} .0872078{col 42}{space 2} .2329868{col 53}{space 1}    0.37{col 62}{space 3}0.708{col 70}{space 4}-.3694379{col 83}{space 3} .5438536
+{txt}{space 23}2015  {c |}{col 30}{res}{space 2} .7971553{col 42}{space 2} .5183799{col 53}{space 1}    1.54{col 62}{space 3}0.124{col 70}{space 4}-.2188507{col 83}{space 3} 1.813161
+{txt}{space 23}2016  {c |}{col 30}{res}{space 2} .3488717{col 42}{space 2} .3366225{col 53}{space 1}    1.04{col 62}{space 3}0.300{col 70}{space 4}-.3108962{col 83}{space 3}  1.00864
+{txt}{space 23}2017  {c |}{col 30}{res}{space 2}  .077207{col 42}{space 2} .2258397{col 53}{space 1}    0.34{col 62}{space 3}0.732{col 70}{space 4}-.3654306{col 83}{space 3} .5198446
+{txt}{space 28} {c |}
+{space 1}taxyear#c.prop_affected_all {c |}
+{space 23}2012  {c |}{col 30}{res}{space 2}-2.676663{col 42}{space 2} 1.231708{col 53}{space 1}   -2.17{col 62}{space 3}0.030{col 70}{space 4}-5.090767{col 83}{space 3}-.2625592
+{txt}{space 23}2014  {c |}{col 30}{res}{space 2}-.9293364{col 42}{space 2} .5179769{col 53}{space 1}   -1.79{col 62}{space 3}0.073{col 70}{space 4}-1.944552{col 83}{space 3} .0858796
+{txt}{space 23}2015  {c |}{col 30}{res}{space 2}-1.356228{col 42}{space 2} .7121358{col 53}{space 1}   -1.90{col 62}{space 3}0.057{col 70}{space 4}-2.751989{col 83}{space 3} .0395323
+{txt}{space 23}2016  {c |}{col 30}{res}{space 2}-.2883476{col 42}{space 2} .8948782{col 53}{space 1}   -0.32{col 62}{space 3}0.747{col 70}{space 4}-2.042277{col 83}{space 3} 1.465581
+{txt}{space 23}2017  {c |}{col 30}{res}{space 2}-.5095728{col 42}{space 2} .5367449{col 53}{space 1}   -0.95{col 62}{space 3}0.342{col 70}{space 4}-1.561573{col 83}{space 3} .5424279
+{txt}{space 28} {c |}
+{space 17}gender_fill {c |}{col 30}{res}{space 2}-.9033684{col 42}{space 2} .3480293{col 53}{space 1}   -2.60{col 62}{space 3}0.009{col 70}{space 4}-1.585493{col 83}{space 3}-.2212435
+{txt}prop_age_cat_1_seasonal_fill {c |}{col 30}{res}{space 2}-1.435846{col 42}{space 2} .6749357{col 53}{space 1}   -2.13{col 62}{space 3}0.033{col 70}{space 4}-2.758696{col 83}{space 3}-.1129966
+{txt}prop_age_cat_2_seasonal_fill {c |}{col 30}{res}{space 2}-1.971023{col 42}{space 2} .7865453{col 53}{space 1}   -2.51{col 62}{space 3}0.012{col 70}{space 4}-3.512623{col 83}{space 3}-.4294224
+{txt}prop_age_cat_3_seasonal_fill {c |}{col 30}{res}{space 2}-1.108905{col 42}{space 2} 1.031731{col 53}{space 1}   -1.07{col 62}{space 3}0.282{col 70}{space 4}-3.131059{col 83}{space 3} .9132502
+{txt}prop_age_cat_4_seasonal_fill {c |}{col 30}{res}{space 2}-2.907792{col 42}{space 2} 1.031092{col 53}{space 1}   -2.82{col 62}{space 3}0.005{col 70}{space 4}-4.928694{col 83}{space 3} -.886889
+{txt}prop_age_cat_5_seasonal_fill {c |}{col 30}{res}{space 2}        0{col 42}{txt}  (omitted)
+{space 28} {c |}
+{space 15}mode_prov_num {c |}
+{space 17}Free State  {c |}{col 30}{res}{space 2}-.9456953{col 42}{space 2} .5542817{col 53}{space 1}   -1.71{col 62}{space 3}0.088{col 70}{space 4}-2.032068{col 83}{space 3}  .140677
+{txt}{space 20}Gauteng  {c |}{col 30}{res}{space 2}-.7782106{col 42}{space 2} .6029846{col 53}{space 1}   -1.29{col 62}{space 3}0.197{col 70}{space 4}-1.960039{col 83}{space 3} .4036174
+{txt}{space 14}KwaZulu-Natal  {c |}{col 30}{res}{space 2}-1.750552{col 42}{space 2} .6084125{col 53}{space 1}   -2.88{col 62}{space 3}0.004{col 70}{space 4}-2.943019{col 83}{space 3}-.5580856
+{txt}{space 20}Limpopo  {c |}{col 30}{res}{space 2}-1.057954{col 42}{space 2} .5694978{col 53}{space 1}   -1.86{col 62}{space 3}0.063{col 70}{space 4}-2.174149{col 83}{space 3} .0582411
+{txt}{space 17}Mpumalanga  {c |}{col 30}{res}{space 2}-1.434994{col 42}{space 2} .5769722{col 53}{space 1}   -2.49{col 62}{space 3}0.013{col 70}{space 4}-2.565839{col 83}{space 3} -.304149
+{txt}{space 17}North West  {c |}{col 30}{res}{space 2}-1.054418{col 42}{space 2}  .547738{col 53}{space 1}   -1.93{col 62}{space 3}0.054{col 70}{space 4}-2.127965{col 83}{space 3} .0191283
+{txt}{space 14}Northern Cape  {c |}{col 30}{res}{space 2}-.1810212{col 42}{space 2}  .629196{col 53}{space 1}   -0.29{col 62}{space 3}0.774{col 70}{space 4}-1.414223{col 83}{space 3}  1.05218
+{txt}{space 15}Western Cape  {c |}{col 30}{res}{space 2}-.8042624{col 42}{space 2} .5427424{col 53}{space 1}   -1.48{col 62}{space 3}0.138{col 70}{space 4}-1.868018{col 83}{space 3} .2594932
+{txt}{space 28} {c |}
+{space 20}rainfall {c |}{col 30}{res}{space 2} .0007311{col 42}{space 2} .0006063{col 53}{space 1}    1.21{col 62}{space 3}0.228{col 70}{space 4}-.0004572{col 83}{space 3} .0019194
+{txt}{space 23}_cons {c |}{col 30}{res}{space 2} 2.179971{col 42}{space 2} .8225584{col 53}{space 1}    2.65{col 62}{space 3}0.008{col 70}{space 4} .5677859{col 83}{space 3} 3.792155
+{col 1}{txt}ln(L.firm_size_year_seaso~l){col 30}{c |}{res}{space 2}        1{col 42}{txt}  (exposure)
+{hline 29}{c +}{hline 11}{hline 11}{hline 9}{hline 8}{hline 13}{hline 12}
+{space 20}/lnalpha {c |}{col 30}{res}{space 2}-.1501018{col 42}{space 2} .1523202{col 70}{space 4}-.4486439{col 83}{space 3} .1484402
+{txt}{hline 29}{c +}{hline 11}{hline 11}{hline 9}{hline 8}{hline 13}{hline 12}
+                       alpha {c |}{col 30}{res}{space 2} .8606203{col 42}{space 2} .1310898{col 70}{space 4} .6384935{col 83}{space 3} 1.160023
+{txt}{hline 29}{c BT}{hline 11}{hline 11}{hline 9}{hline 8}{hline 13}{hline 12}
+
+{com}.         estimates store reg8
+{txt}
+{com}. summ prop_affected_all if taxyear==2013 & e(sample)==1
+
+{txt}    Variable {c |}        Obs        Mean    Std. dev.       Min        Max
+{hline 13}{c +}{hline 57}
+prop_affe~ll {c |}{res}        514    .7365402     .322513          0          1
+{txt}
+{com}.         estout reg* using nb_empl_w_CIT_Survivor.xls, replace  cells(b(star fmt(3)) se(par)) stats(r2_p N ,fmt(3 0 0 0) label ("Pseudo R-squared" "N" )) nobaselevels varlabels(_cons Constant) starlevels(* 0.1 ** 0.05 *** 0.01) 
+{res}{txt}(output written to {browse  `"nb_empl_w_CIT_Survivor.xls"'})
+
+{com}. 
+. 
+. * coef plot - full model with LAGGED dynamic offset variable
+.         coefplot reg8, vertical keep(2012.taxyear#c.prop_affected_all 2013.taxyear#c.prop_affected_all 2014.taxyear#c.prop_affected_all 2015.taxyear#c.prop_affected_all 2016.taxyear#c.prop_affected_all 2017.taxyear#c.prop_affected_all) coeflabels(2012.taxyear#c.prop_affected_all = "-2" ///
+>         2013.taxyear#c.prop_affected_all = "-1"  2014.taxyear#c.prop_affected_all = "0" 2015.taxyear#c.prop_affected_all = "1" ///
+>         2016.taxyear#c.prop_affected_all = "2"  2017.taxyear#c.prop_affected_all = "3" , wrap(2)) ///
+>         baselevels omitted nolabel xtitle(Event time) /*ytitle(Interaction coefficient)*/ ///
+>         /*scheme(plotplain)*/ msymbol(O) title("") mcolor(gs1) yline(0, lcolor("gs10") lpattern(dash)) ciopts(lcolor("gs1")) graphregion(fcolor(white)) fcolor(white) lcolor(white) xscale(lcolor("gs1")) yscale(lcolor("gs1")) xlabel(, labcolor("gs1") noticks) ylabel(, labcolor("gs1")  grid glcolor(gs10) glwidth(vvthin) noticks) 
+{res}{txt}
+{com}.         
+.         graph export "nb_empl_w_CIT_Survivor.png", replace as(png)
+{txt}{p 0 4 2}
+file {bf}
+nb_empl_w_CIT_Survivor.png{rm}
+saved as
+PNG
+format
+{p_end}
+
+{com}.         graph save "nb_empl_w_CIT_Survivor.gph", replace 
+{res}{txt}(file nb_empl_w_CIT_Survivor.gph saved)
+
+{com}. 
+. ********************************************************************************
+. *                                                                       Entry                                                                           *
+. ********************************************************************************
+. *nbreg unweighted
+.         estimates clear
+{res}{txt}
+{com}.         nbreg entry_agri c.prop_affected_all##ib(2013).taxyear  gender_fill prop_age_cat_* i.mode_prov_num rainfall, cluster(taxrefno) exposure(firm_size_year)
+{txt}note: {bf:prop_age_cat_5_seasonal_fill} omitted because of collinearity.
+
+Fitting Poisson model:
+{res}
+{txt}Iteration 0:{space 3}log pseudolikelihood = {res:-18051.045}  
+Iteration 1:{space 3}log pseudolikelihood = {res:-17680.904}  
+Iteration 2:{space 3}log pseudolikelihood = {res:-17679.588}  
+Iteration 3:{space 3}log pseudolikelihood = {res:-17679.588}  
+{res}
+{txt}Fitting constant-only model:
+{res}
+{txt}Iteration 0:{space 3}log pseudolikelihood = {res:-13879.822}  
+Iteration 1:{space 3}log pseudolikelihood = {res:-12708.959}  
+Iteration 2:{space 3}log pseudolikelihood = {res:-12565.307}  
+Iteration 3:{space 3}log pseudolikelihood = {res:-12559.217}  
+Iteration 4:{space 3}log pseudolikelihood = {res:-12559.217}  
+{res}
+{txt}Fitting full model:
+{res}
+{txt}Iteration 0:{space 3}log pseudolikelihood = {res:-12316.719}  
+Iteration 1:{space 3}log pseudolikelihood = {res:-12204.094}  
+Iteration 2:{space 3}log pseudolikelihood = {res:-12136.124}  
+Iteration 3:{space 3}log pseudolikelihood = {res:-12135.784}  
+Iteration 4:{space 3}log pseudolikelihood = {res:-12135.784}  
+{res}
+{txt}Negative binomial regression{col 49}Number of obs{col 67}= {res}     4,145
+{txt}{col 49}Wald chi2({res}25{txt}){col 67}= {res}    530.07
+{txt}{col 1}Dispersion{col 22}= {res}mean{txt}{col 49}Prob > chi2{col 67}= {res}    0.0000
+{txt}Log pseudolikelihood = {res}-12135.784{txt}{col 49}Pseudo R2{col 67}= {res}    0.0337
+
+{txt}{ralign 94:(Std. Err. adjusted for {res:1,028} clusters in taxrefno)}
+{hline 29}{c TT}{hline 11}{hline 11}{hline 9}{hline 8}{hline 13}{hline 12}
+{col 30}{c |}{col 42}    Robust
+{col 1}         entry_agri_seasonal{col 30}{c |}      Coef.{col 42}   Std. Err.{col 54}      z{col 62}   P>|z|{col 70}     [95% Con{col 83}f. Interval]
+{hline 29}{c +}{hline 11}{hline 11}{hline 9}{hline 8}{hline 13}{hline 12}
+{space 11}prop_affected_all {c |}{col 30}{res}{space 2} .5417206{col 42}{space 2} .0786122{col 53}{space 1}    6.89{col 62}{space 3}0.000{col 70}{space 4} .3876435{col 83}{space 3} .6957977
+{txt}{space 28} {c |}
+{space 21}taxyear {c |}
+{space 23}2012  {c |}{col 30}{res}{space 2} .3252598{col 42}{space 2} .0795066{col 53}{space 1}    4.09{col 62}{space 3}0.000{col 70}{space 4} .1694297{col 83}{space 3} .4810899
+{txt}{space 23}2014  {c |}{col 30}{res}{space 2} .0114359{col 42}{space 2} .0808497{col 53}{space 1}    0.14{col 62}{space 3}0.888{col 70}{space 4}-.1470266{col 83}{space 3} .1698984
+{txt}{space 23}2015  {c |}{col 30}{res}{space 2} .2261674{col 42}{space 2} .0841811{col 53}{space 1}    2.69{col 62}{space 3}0.007{col 70}{space 4} .0611754{col 83}{space 3} .3911594
+{txt}{space 23}2016  {c |}{col 30}{res}{space 2} .1495588{col 42}{space 2} .0869069{col 53}{space 1}    1.72{col 62}{space 3}0.085{col 70}{space 4}-.0207756{col 83}{space 3} .3198933
+{txt}{space 23}2017  {c |}{col 30}{res}{space 2} .1716243{col 42}{space 2} .0822189{col 53}{space 1}    2.09{col 62}{space 3}0.037{col 70}{space 4} .0104782{col 83}{space 3} .3327705
+{txt}{space 28} {c |}
+{space 1}taxyear#c.prop_affected_all {c |}
+{space 23}2012  {c |}{col 30}{res}{space 2}-.3075181{col 42}{space 2} .0932342{col 53}{space 1}   -3.30{col 62}{space 3}0.001{col 70}{space 4}-.4902537{col 83}{space 3}-.1247824
+{txt}{space 23}2014  {c |}{col 30}{res}{space 2}-.1144788{col 42}{space 2} .0935009{col 53}{space 1}   -1.22{col 62}{space 3}0.221{col 70}{space 4}-.2977373{col 83}{space 3} .0687796
+{txt}{space 23}2015  {c |}{col 30}{res}{space 2}-.3341978{col 42}{space 2} .0985052{col 53}{space 1}   -3.39{col 62}{space 3}0.001{col 70}{space 4}-.5272645{col 83}{space 3} -.141131
+{txt}{space 23}2016  {c |}{col 30}{res}{space 2}-.2792484{col 42}{space 2} .1018833{col 53}{space 1}   -2.74{col 62}{space 3}0.006{col 70}{space 4}-.4789359{col 83}{space 3}-.0795608
+{txt}{space 23}2017  {c |}{col 30}{res}{space 2}-.3107774{col 42}{space 2}  .095682{col 53}{space 1}   -3.25{col 62}{space 3}0.001{col 70}{space 4}-.4983108{col 83}{space 3} -.123244
+{txt}{space 28} {c |}
+{space 17}gender_fill {c |}{col 30}{res}{space 2} .0421962{col 42}{space 2} .0380548{col 53}{space 1}    1.11{col 62}{space 3}0.268{col 70}{space 4}-.0323899{col 83}{space 3} .1167824
+{txt}prop_age_cat_1_seasonal_fill {c |}{col 30}{res}{space 2} 1.226534{col 42}{space 2} .0909143{col 53}{space 1}   13.49{col 62}{space 3}0.000{col 70}{space 4} 1.048345{col 83}{space 3} 1.404723
+{txt}prop_age_cat_2_seasonal_fill {c |}{col 30}{res}{space 2} .7585792{col 42}{space 2} .0910014{col 53}{space 1}    8.34{col 62}{space 3}0.000{col 70}{space 4} .5802197{col 83}{space 3} .9369387
+{txt}prop_age_cat_3_seasonal_fill {c |}{col 30}{res}{space 2} .6115983{col 42}{space 2} .0982616{col 53}{space 1}    6.22{col 62}{space 3}0.000{col 70}{space 4} .4190091{col 83}{space 3} .8041876
+{txt}prop_age_cat_4_seasonal_fill {c |}{col 30}{res}{space 2} .3712759{col 42}{space 2} .0958438{col 53}{space 1}    3.87{col 62}{space 3}0.000{col 70}{space 4} .1834254{col 83}{space 3} .5591263
+{txt}prop_age_cat_5_seasonal_fill {c |}{col 30}{res}{space 2}        0{col 42}{txt}  (omitted)
+{space 28} {c |}
+{space 15}mode_prov_num {c |}
+{space 17}Free State  {c |}{col 30}{res}{space 2} .1284283{col 42}{space 2} .0598855{col 53}{space 1}    2.14{col 62}{space 3}0.032{col 70}{space 4} .0110549{col 83}{space 3} .2458017
+{txt}{space 20}Gauteng  {c |}{col 30}{res}{space 2} .2294272{col 42}{space 2} .0492963{col 53}{space 1}    4.65{col 62}{space 3}0.000{col 70}{space 4} .1328083{col 83}{space 3} .3260462
+{txt}{space 14}KwaZulu-Natal  {c |}{col 30}{res}{space 2} .1206396{col 42}{space 2} .0476031{col 53}{space 1}    2.53{col 62}{space 3}0.011{col 70}{space 4} .0273393{col 83}{space 3}   .21394
+{txt}{space 20}Limpopo  {c |}{col 30}{res}{space 2} .2225291{col 42}{space 2} .0531455{col 53}{space 1}    4.19{col 62}{space 3}0.000{col 70}{space 4} .1183658{col 83}{space 3} .3266924
+{txt}{space 17}Mpumalanga  {c |}{col 30}{res}{space 2} .0507743{col 42}{space 2} .0521697{col 53}{space 1}    0.97{col 62}{space 3}0.330{col 70}{space 4}-.0514764{col 83}{space 3}  .153025
+{txt}{space 17}North West  {c |}{col 30}{res}{space 2} .1407116{col 42}{space 2} .0613291{col 53}{space 1}    2.29{col 62}{space 3}0.022{col 70}{space 4} .0205089{col 83}{space 3} .2609144
+{txt}{space 14}Northern Cape  {c |}{col 30}{res}{space 2}  .043667{col 42}{space 2} .0631034{col 53}{space 1}    0.69{col 62}{space 3}0.489{col 70}{space 4}-.0800135{col 83}{space 3} .1673474
+{txt}{space 15}Western Cape  {c |}{col 30}{res}{space 2}-.1278573{col 42}{space 2} .0485001{col 53}{space 1}   -2.64{col 62}{space 3}0.008{col 70}{space 4}-.2229156{col 83}{space 3}-.0327989
+{txt}{space 28} {c |}
+{space 20}rainfall {c |}{col 30}{res}{space 2}-.0000227{col 42}{space 2} .0000614{col 53}{space 1}   -0.37{col 62}{space 3}0.712{col 70}{space 4}-.0001431{col 83}{space 3} .0000977
+{txt}{space 23}_cons {c |}{col 30}{res}{space 2}-1.718262{col 42}{space 2} .1159469{col 53}{space 1}  -14.82{col 62}{space 3}0.000{col 70}{space 4}-1.945514{col 83}{space 3} -1.49101
+{col 1}{txt}ln(firm_size_year_seasona~l){col 30}{c |}{res}{space 2}        1{col 42}{txt}  (exposure)
+{hline 29}{c +}{hline 11}{hline 11}{hline 9}{hline 8}{hline 13}{hline 12}
+{space 20}/lnalpha {c |}{col 30}{res}{space 2}-2.304659{col 42}{space 2} .0657257{col 70}{space 4}-2.433479{col 83}{space 3}-2.175839
+{txt}{hline 29}{c +}{hline 11}{hline 11}{hline 9}{hline 8}{hline 13}{hline 12}
+                       alpha {c |}{col 30}{res}{space 2} .0997928{col 42}{space 2}  .006559{col 70}{space 4} .0877311{col 83}{space 3} .1135129
+{txt}{hline 29}{c BT}{hline 11}{hline 11}{hline 9}{hline 8}{hline 13}{hline 12}
+
+{com}.                 estimates store reg6
+{txt}
+{com}.         summ prop_affected_all if taxyear==2013 & e(sample)==1
+
+{txt}    Variable {c |}        Obs        Mean    Std. dev.       Min        Max
+{hline 13}{c +}{hline 57}
+prop_affe~ll {c |}{res}        750    .7445987    .3258671          0          1
+{txt}
+{com}.         estout reg* using "nb_entr_uw_CIT_Survivor.xls", replace  cells(b(star fmt(3)) se(par)) stats(r2_p N ,fmt(3 0 0 0) label ("Pseudo R-squared" "N" )) nobaselevels varlabels(_cons Constant) starlevels(* 0.1 ** 0.05 *** 0.01) 
+{res}{txt}(output written to {browse  `"nb_entr_uw_CIT_Survivor.xls"'})
+
+{com}. 
+. * coef plot - full model with dynamic offset variable
+.         coefplot reg6, vertical keep(2012.taxyear#c.prop_affected_all 2013.taxyear#c.prop_affected_all 2014.taxyear#c.prop_affected_all 2015.taxyear#c.prop_affected_all 2016.taxyear#c.prop_affected_all 2017.taxyear#c.prop_affected_all) coeflabels(2012.taxyear#c.prop_affected_all = "-2" ///
+>         2013.taxyear#c.prop_affected_all = "-1"  2014.taxyear#c.prop_affected_all = "0" 2015.taxyear#c.prop_affected_all = "1" ///
+>         2016.taxyear#c.prop_affected_all = "2"  2017.taxyear#c.prop_affected_all = "3" , wrap(2)) ///
+>         baselevels omitted nolabel xtitle(Event time) ///
+>         /*ytitle(Entry)*/ /*scheme(plotplain)*/ msymbol(O) title("") mcolor(gs1) yline(0, lcolor("gs10") lpattern(dash)) ciopts(lcolor("gs1")) graphregion(fcolor(white)) fcolor(white) lcolor(white) xscale(lcolor("gs1")) yscale(lcolor("gs1")) xlabel(, labcolor("gs1") noticks) ylabel(, labcolor("gs1")  grid glcolor(gs10) glwidth(vvthin) noticks)
+{res}{txt}
+{com}.         
+.         graph export "nb_entr_uw_CIT_Survivor.png", replace
+{txt}{p 0 4 2}
+file {bf}
+nb_entr_uw_CIT_Survivor.png{rm}
+saved as
+PNG
+format
+{p_end}
+
+{com}.         graph save "nb_entr_uw_CIT_Survivor.gph", replace 
+{res}{txt}(file nb_entr_uw_CIT_Survivor.gph saved)
+
+{com}. 
+.         
+. *nbreg weighted
+.         nbreg entry_agri c.prop_affected_all##ib(2013).taxyear  gender_fill  prop_age_cat_* i.mode_prov_num rainfall [pw=firm_size_year], cluster(taxrefno) exposure(firm_size_year)
+{txt}note: {bf:prop_age_cat_5_seasonal_fill} omitted because of collinearity.
+
+Fitting Poisson model:
+{res}
+{txt}Iteration 0:{space 3}log pseudolikelihood = {res:-6161070.9}  
+Iteration 1:{space 3}log pseudolikelihood = {res:-5464082.3}  
+Iteration 2:{space 3}log pseudolikelihood = {res:  -5460907}  
+Iteration 3:{space 3}log pseudolikelihood = {res:-5460905.5}  
+Iteration 4:{space 3}log pseudolikelihood = {res:-5460905.5}  
+{res}
+{txt}Fitting constant-only model:
+{res}
+{txt}Iteration 0:{space 3}log pseudolikelihood = {res:-2748588.8}  
+Iteration 1:{space 3}log pseudolikelihood = {res:-2504464.8}  
+Iteration 2:{space 3}log pseudolikelihood = {res:-2492156.5}  
+Iteration 3:{space 3}log pseudolikelihood = {res:-2482301.6}  
+Iteration 4:{space 3}log pseudolikelihood = {res:-2482257.7}  
+Iteration 5:{space 3}log pseudolikelihood = {res:-2482257.7}  
+{res}
+{txt}Fitting full model:
+{res}
+{txt}Iteration 0:{space 3}log pseudolikelihood = {res:  -2438035}  
+Iteration 1:{space 3}log pseudolikelihood = {res:-2379414.9}  
+Iteration 2:{space 3}log pseudolikelihood = {res:-2377070.3}  
+Iteration 3:{space 3}log pseudolikelihood = {res:-2377069.4}  
+Iteration 4:{space 3}log pseudolikelihood = {res:-2377069.4}  
+{res}
+{txt}Negative binomial regression{col 49}Number of obs{col 67}= {res}     4,145
+{txt}{col 49}Wald chi2({res}25{txt}){col 67}= {res}    439.93
+{txt}{col 1}Dispersion{col 22}= {res}mean{txt}{col 49}Prob > chi2{col 67}= {res}    0.0000
+{txt}Log pseudolikelihood = {res}-2377069.4{txt}{col 49}Pseudo R2{col 67}= {res}    0.0424
+
+{txt}{ralign 94:(Std. Err. adjusted for {res:1,028} clusters in taxrefno)}
+{hline 29}{c TT}{hline 11}{hline 11}{hline 9}{hline 8}{hline 13}{hline 12}
+{col 30}{c |}{col 42}    Robust
+{col 1}         entry_agri_seasonal{col 30}{c |}      Coef.{col 42}   Std. Err.{col 54}      z{col 62}   P>|z|{col 70}     [95% Con{col 83}f. Interval]
+{hline 29}{c +}{hline 11}{hline 11}{hline 9}{hline 8}{hline 13}{hline 12}
+{space 11}prop_affected_all {c |}{col 30}{res}{space 2} .3077986{col 42}{space 2} .1086802{col 53}{space 1}    2.83{col 62}{space 3}0.005{col 70}{space 4} .0947893{col 83}{space 3}  .520808
+{txt}{space 28} {c |}
+{space 21}taxyear {c |}
+{space 23}2012  {c |}{col 30}{res}{space 2} .2502147{col 42}{space 2} .1263389{col 53}{space 1}    1.98{col 62}{space 3}0.048{col 70}{space 4}  .002595{col 83}{space 3} .4978343
+{txt}{space 23}2014  {c |}{col 30}{res}{space 2}-.1053037{col 42}{space 2} .0928744{col 53}{space 1}   -1.13{col 62}{space 3}0.257{col 70}{space 4}-.2873341{col 83}{space 3} .0767267
+{txt}{space 23}2015  {c |}{col 30}{res}{space 2} -.005197{col 42}{space 2} .1061013{col 53}{space 1}   -0.05{col 62}{space 3}0.961{col 70}{space 4}-.2131518{col 83}{space 3} .2027578
+{txt}{space 23}2016  {c |}{col 30}{res}{space 2}-.0178881{col 42}{space 2} .1110936{col 53}{space 1}   -0.16{col 62}{space 3}0.872{col 70}{space 4}-.2356275{col 83}{space 3} .1998513
+{txt}{space 23}2017  {c |}{col 30}{res}{space 2}-.1120882{col 42}{space 2} .0913409{col 53}{space 1}   -1.23{col 62}{space 3}0.220{col 70}{space 4}-.2911132{col 83}{space 3} .0669367
+{txt}{space 28} {c |}
+{space 1}taxyear#c.prop_affected_all {c |}
+{space 23}2012  {c |}{col 30}{res}{space 2}-.2464893{col 42}{space 2} .1501374{col 53}{space 1}   -1.64{col 62}{space 3}0.101{col 70}{space 4}-.5407532{col 83}{space 3} .0477747
+{txt}{space 23}2014  {c |}{col 30}{res}{space 2} .0037619{col 42}{space 2} .1147704{col 53}{space 1}    0.03{col 62}{space 3}0.974{col 70}{space 4}-.2211839{col 83}{space 3} .2287076
+{txt}{space 23}2015  {c |}{col 30}{res}{space 2}-.0630128{col 42}{space 2} .1253456{col 53}{space 1}   -0.50{col 62}{space 3}0.615{col 70}{space 4}-.3086856{col 83}{space 3} .1826599
+{txt}{space 23}2016  {c |}{col 30}{res}{space 2}-.0976879{col 42}{space 2} .1457877{col 53}{space 1}   -0.67{col 62}{space 3}0.503{col 70}{space 4}-.3834265{col 83}{space 3} .1880507
+{txt}{space 23}2017  {c |}{col 30}{res}{space 2}-.0126815{col 42}{space 2} .1132778{col 53}{space 1}   -0.11{col 62}{space 3}0.911{col 70}{space 4} -.234702{col 83}{space 3}  .209339
+{txt}{space 28} {c |}
+{space 17}gender_fill {c |}{col 30}{res}{space 2}-.3819936{col 42}{space 2} .1410397{col 53}{space 1}   -2.71{col 62}{space 3}0.007{col 70}{space 4}-.6584263{col 83}{space 3} -.105561
+{txt}prop_age_cat_1_seasonal_fill {c |}{col 30}{res}{space 2} 2.226131{col 42}{space 2} .2094817{col 53}{space 1}   10.63{col 62}{space 3}0.000{col 70}{space 4} 1.815554{col 83}{space 3} 2.636707
+{txt}prop_age_cat_2_seasonal_fill {c |}{col 30}{res}{space 2} .8922123{col 42}{space 2}  .313983{col 53}{space 1}    2.84{col 62}{space 3}0.004{col 70}{space 4} .2768169{col 83}{space 3} 1.507608
+{txt}prop_age_cat_3_seasonal_fill {c |}{col 30}{res}{space 2} 1.092538{col 42}{space 2} .3300579{col 53}{space 1}    3.31{col 62}{space 3}0.001{col 70}{space 4} .4456364{col 83}{space 3}  1.73944
+{txt}prop_age_cat_4_seasonal_fill {c |}{col 30}{res}{space 2} .6241777{col 42}{space 2} .4148482{col 53}{space 1}    1.50{col 62}{space 3}0.132{col 70}{space 4}-.1889099{col 83}{space 3} 1.437265
+{txt}prop_age_cat_5_seasonal_fill {c |}{col 30}{res}{space 2}        0{col 42}{txt}  (omitted)
+{space 28} {c |}
+{space 15}mode_prov_num {c |}
+{space 17}Free State  {c |}{col 30}{res}{space 2}    .0352{col 42}{space 2} .1220963{col 53}{space 1}    0.29{col 62}{space 3}0.773{col 70}{space 4}-.2041044{col 83}{space 3} .2745045
+{txt}{space 20}Gauteng  {c |}{col 30}{res}{space 2} .2461706{col 42}{space 2} .0685747{col 53}{space 1}    3.59{col 62}{space 3}0.000{col 70}{space 4} .1117666{col 83}{space 3} .3805747
+{txt}{space 14}KwaZulu-Natal  {c |}{col 30}{res}{space 2} .0549315{col 42}{space 2} .0926158{col 53}{space 1}    0.59{col 62}{space 3}0.553{col 70}{space 4}-.1265921{col 83}{space 3} .2364552
+{txt}{space 20}Limpopo  {c |}{col 30}{res}{space 2} .2845774{col 42}{space 2} .0678953{col 53}{space 1}    4.19{col 62}{space 3}0.000{col 70}{space 4} .1515051{col 83}{space 3} .4176497
+{txt}{space 17}Mpumalanga  {c |}{col 30}{res}{space 2}-.0086983{col 42}{space 2} .0665618{col 53}{space 1}   -0.13{col 62}{space 3}0.896{col 70}{space 4} -.139157{col 83}{space 3} .1217605
+{txt}{space 17}North West  {c |}{col 30}{res}{space 2} .1890719{col 42}{space 2}  .069698{col 53}{space 1}    2.71{col 62}{space 3}0.007{col 70}{space 4} .0524664{col 83}{space 3} .3256774
+{txt}{space 14}Northern Cape  {c |}{col 30}{res}{space 2}-.0328198{col 42}{space 2}  .069317{col 53}{space 1}   -0.47{col 62}{space 3}0.636{col 70}{space 4}-.1686786{col 83}{space 3}  .103039
+{txt}{space 15}Western Cape  {c |}{col 30}{res}{space 2} -.202558{col 42}{space 2} .0714851{col 53}{space 1}   -2.83{col 62}{space 3}0.005{col 70}{space 4}-.3426664{col 83}{space 3}-.0624497
+{txt}{space 28} {c |}
+{space 20}rainfall {c |}{col 30}{res}{space 2}-.0000629{col 42}{space 2} .0000843{col 53}{space 1}   -0.75{col 62}{space 3}0.456{col 70}{space 4}-.0002281{col 83}{space 3} .0001023
+{txt}{space 23}_cons {c |}{col 30}{res}{space 2}-1.728261{col 42}{space 2} .2715087{col 53}{space 1}   -6.37{col 62}{space 3}0.000{col 70}{space 4}-2.260408{col 83}{space 3}-1.196113
+{col 1}{txt}ln(firm_size_year_seasona~l){col 30}{c |}{res}{space 2}        1{col 42}{txt}  (exposure)
+{hline 29}{c +}{hline 11}{hline 11}{hline 9}{hline 8}{hline 13}{hline 12}
+{space 20}/lnalpha {c |}{col 30}{res}{space 2}-2.673661{col 42}{space 2} .0930973{col 70}{space 4}-2.856128{col 83}{space 3}-2.491193
+{txt}{hline 29}{c +}{hline 11}{hline 11}{hline 9}{hline 8}{hline 13}{hline 12}
+                       alpha {c |}{col 30}{res}{space 2} .0689992{col 42}{space 2} .0064236{col 70}{space 4} .0574909{col 83}{space 3} .0828111
+{txt}{hline 29}{c BT}{hline 11}{hline 11}{hline 9}{hline 8}{hline 13}{hline 12}
+
+{com}.                 estimates store reg6
+{txt}
+{com}.         summ prop_affected_all if taxyear==2013 & e(sample)==1
+
+{txt}    Variable {c |}        Obs        Mean    Std. dev.       Min        Max
+{hline 13}{c +}{hline 57}
+prop_affe~ll {c |}{res}        750    .7445987    .3258671          0          1
+{txt}
+{com}.         estout reg* using "nb_entr_w_CIT_Survivor.xls", replace  cells(b(star fmt(3)) se(par)) stats(r2_p N ,fmt(3 0 0 0) label ("Pseudo R-squared" "N" )) nobaselevels varlabels(_cons Constant) starlevels(* 0.1 ** 0.05 *** 0.01) 
+{res}{txt}(output written to {browse  `"nb_entr_w_CIT_Survivor.xls"'})
+
+{com}. 
+. * coef plot - full model with dynamic offset variable
+.         coefplot reg6, vertical keep(2012.taxyear#c.prop_affected_all 2013.taxyear#c.prop_affected_all 2014.taxyear#c.prop_affected_all 2015.taxyear#c.prop_affected_all 2016.taxyear#c.prop_affected_all 2017.taxyear#c.prop_affected_all) coeflabels(2012.taxyear#c.prop_affected_all = "-2" ///
+>         2013.taxyear#c.prop_affected_all = "-1"  2014.taxyear#c.prop_affected_all = "0" 2015.taxyear#c.prop_affected_all = "1" ///
+>         2016.taxyear#c.prop_affected_all = "2"  2017.taxyear#c.prop_affected_all = "3" , wrap(2)) ///
+>         baselevels omitted nolabel xtitle(Event time) ///
+>         /*ytitle(Entry)*/ /*scheme(plotplain)*/ msymbol(O) title("") mcolor(gs1) yline(0, lcolor("gs10") lpattern(dash)) ciopts(lcolor("gs1")) graphregion(fcolor(white)) fcolor(white) lcolor(white) xscale(lcolor("gs1")) yscale(lcolor("gs1")) xlabel(, labcolor("gs1") noticks) ylabel(, labcolor("gs1")  grid glcolor(gs10) glwidth(vvthin) noticks)
+{res}{txt}
+{com}.         
+.         graph export "nb_entr_w_CIT_Survivor.png", replace
+{txt}{p 0 4 2}
+file {bf}
+nb_entr_w_CIT_Survivor.png{rm}
+saved as
+PNG
+format
+{p_end}
+
+{com}.         graph save "nb_entr_w_CIT_Survivor.gph", replace 
+{res}{txt}(file nb_entr_w_CIT_Survivor.gph saved)
+
+{com}.         
+. 
+.                 
+. ********************************************************************************
+. *                                                                       Exit                                                                            *
+. ********************************************************************************
+.         
+. *nbreg unweighted
+.         estimates clear
+{res}{txt}
+{com}.         nbreg exit_agri_new c.prop_affected_all##ib(2013).taxyear gender_fill prop_age_cat_* i.mode_prov_num rainfall, cluster(taxrefno) exposure(L.firm_size_year)
+{txt}note: {bf:prop_age_cat_5_seasonal_fill} omitted because of collinearity.
+
+Fitting Poisson model:
+{res}
+{txt}Iteration 0:{space 3}log pseudolikelihood = {res: -13519.84}  
+Iteration 1:{space 3}log pseudolikelihood = {res:-13419.655}  
+Iteration 2:{space 3}log pseudolikelihood = {res:-13419.467}  
+Iteration 3:{space 3}log pseudolikelihood = {res:-13419.467}  
+{res}
+{txt}Fitting constant-only model:
+{res}
+{txt}Iteration 0:{space 3}log pseudolikelihood = {res:-10730.821}  
+Iteration 1:{space 3}log pseudolikelihood = {res:-9780.0717}  
+Iteration 2:{space 3}log pseudolikelihood = {res:-9605.5916}  
+Iteration 3:{space 3}log pseudolikelihood = {res:-9588.4352}  
+Iteration 4:{space 3}log pseudolikelihood = {res:-9588.4124}  
+Iteration 5:{space 3}log pseudolikelihood = {res:-9588.4124}  
+{res}
+{txt}Fitting full model:
+{res}
+{txt}Iteration 0:{space 3}log pseudolikelihood = {res:-9471.7705}  
+Iteration 1:{space 3}log pseudolikelihood = {res:-9379.3941}  
+Iteration 2:{space 3}log pseudolikelihood = {res:-9364.1737}  
+Iteration 3:{space 3}log pseudolikelihood = {res:-9364.1601}  
+Iteration 4:{space 3}log pseudolikelihood = {res:-9364.1601}  
+{res}
+{txt}Negative binomial regression{col 49}Number of obs{col 67}= {res}     3,172
+{txt}{col 49}Wald chi2({res}25{txt}){col 67}= {res}    267.55
+{txt}{col 1}Dispersion{col 22}= {res}mean{txt}{col 49}Prob > chi2{col 67}= {res}    0.0000
+{txt}Log pseudolikelihood = {res}-9364.1601{txt}{col 49}Pseudo R2{col 67}= {res}    0.0234
+
+{txt}{ralign 94:(Std. Err. adjusted for {res:875} clusters in taxrefno)}
+{hline 29}{c TT}{hline 11}{hline 11}{hline 9}{hline 8}{hline 13}{hline 12}
+{col 30}{c |}{col 42}    Robust
+{col 1}               exit_agri_new{col 30}{c |}      Coef.{col 42}   Std. Err.{col 54}      z{col 62}   P>|z|{col 70}     [95% Con{col 83}f. Interval]
+{hline 29}{c +}{hline 11}{hline 11}{hline 9}{hline 8}{hline 13}{hline 12}
+{space 11}prop_affected_all {c |}{col 30}{res}{space 2} .3857283{col 42}{space 2} .0763963{col 53}{space 1}    5.05{col 62}{space 3}0.000{col 70}{space 4} .2359942{col 83}{space 3} .5354623
+{txt}{space 28} {c |}
+{space 21}taxyear {c |}
+{space 23}2012  {c |}{col 30}{res}{space 2} .1025571{col 42}{space 2} .0929648{col 53}{space 1}    1.10{col 62}{space 3}0.270{col 70}{space 4}-.0796505{col 83}{space 3} .2847647
+{txt}{space 23}2014  {c |}{col 30}{res}{space 2}-.0765244{col 42}{space 2} .0737372{col 53}{space 1}   -1.04{col 62}{space 3}0.299{col 70}{space 4}-.2210466{col 83}{space 3} .0679978
+{txt}{space 23}2015  {c |}{col 30}{res}{space 2}-.0711544{col 42}{space 2} .0742003{col 53}{space 1}   -0.96{col 62}{space 3}0.338{col 70}{space 4}-.2165844{col 83}{space 3} .0742756
+{txt}{space 23}2016  {c |}{col 30}{res}{space 2}-.0219707{col 42}{space 2} .0810771{col 53}{space 1}   -0.27{col 62}{space 3}0.786{col 70}{space 4}-.1808788{col 83}{space 3} .1369374
+{txt}{space 23}2017  {c |}{col 30}{res}{space 2} .0487388{col 42}{space 2}  .074836{col 53}{space 1}    0.65{col 62}{space 3}0.515{col 70}{space 4}-.0979371{col 83}{space 3} .1954147
+{txt}{space 28} {c |}
+{space 1}taxyear#c.prop_affected_all {c |}
+{space 23}2012  {c |}{col 30}{res}{space 2}-.1068948{col 42}{space 2} .1097174{col 53}{space 1}   -0.97{col 62}{space 3}0.330{col 70}{space 4}-.3219369{col 83}{space 3} .1081473
+{txt}{space 23}2014  {c |}{col 30}{res}{space 2} .1780781{col 42}{space 2} .0877308{col 53}{space 1}    2.03{col 62}{space 3}0.042{col 70}{space 4}  .006129{col 83}{space 3} .3500272
+{txt}{space 23}2015  {c |}{col 30}{res}{space 2} .0541932{col 42}{space 2} .0889192{col 53}{space 1}    0.61{col 62}{space 3}0.542{col 70}{space 4}-.1200852{col 83}{space 3} .2284716
+{txt}{space 23}2016  {c |}{col 30}{res}{space 2}-.0229579{col 42}{space 2} .0970178{col 53}{space 1}   -0.24{col 62}{space 3}0.813{col 70}{space 4}-.2131093{col 83}{space 3} .1671935
+{txt}{space 23}2017  {c |}{col 30}{res}{space 2}-.1113639{col 42}{space 2} .0910333{col 53}{space 1}   -1.22{col 62}{space 3}0.221{col 70}{space 4} -.289786{col 83}{space 3} .0670582
+{txt}{space 28} {c |}
+{space 17}gender_fill {c |}{col 30}{res}{space 2} .1043828{col 42}{space 2} .0424804{col 53}{space 1}    2.46{col 62}{space 3}0.014{col 70}{space 4} .0211227{col 83}{space 3} .1876429
+{txt}prop_age_cat_1_seasonal_fill {c |}{col 30}{res}{space 2} .1701433{col 42}{space 2} .0979105{col 53}{space 1}    1.74{col 62}{space 3}0.082{col 70}{space 4}-.0217577{col 83}{space 3} .3620443
+{txt}prop_age_cat_2_seasonal_fill {c |}{col 30}{res}{space 2} .2861483{col 42}{space 2} .0980762{col 53}{space 1}    2.92{col 62}{space 3}0.004{col 70}{space 4} .0939226{col 83}{space 3} .4783741
+{txt}prop_age_cat_3_seasonal_fill {c |}{col 30}{res}{space 2} .2856191{col 42}{space 2} .1015435{col 53}{space 1}    2.81{col 62}{space 3}0.005{col 70}{space 4} .0865976{col 83}{space 3} .4846406
+{txt}prop_age_cat_4_seasonal_fill {c |}{col 30}{res}{space 2} .1880987{col 42}{space 2} .1070531{col 53}{space 1}    1.76{col 62}{space 3}0.079{col 70}{space 4}-.0217215{col 83}{space 3} .3979189
+{txt}prop_age_cat_5_seasonal_fill {c |}{col 30}{res}{space 2}        0{col 42}{txt}  (omitted)
+{space 28} {c |}
+{space 15}mode_prov_num {c |}
+{space 17}Free State  {c |}{col 30}{res}{space 2} .0390197{col 42}{space 2} .0680527{col 53}{space 1}    0.57{col 62}{space 3}0.566{col 70}{space 4}-.0943612{col 83}{space 3} .1724006
+{txt}{space 20}Gauteng  {c |}{col 30}{res}{space 2} .2007418{col 42}{space 2} .0515788{col 53}{space 1}    3.89{col 62}{space 3}0.000{col 70}{space 4} .0996492{col 83}{space 3} .3018343
+{txt}{space 14}KwaZulu-Natal  {c |}{col 30}{res}{space 2} .1165895{col 42}{space 2} .0475449{col 53}{space 1}    2.45{col 62}{space 3}0.014{col 70}{space 4} .0234033{col 83}{space 3} .2097758
+{txt}{space 20}Limpopo  {c |}{col 30}{res}{space 2}  .199744{col 42}{space 2} .0528767{col 53}{space 1}    3.78{col 62}{space 3}0.000{col 70}{space 4} .0961077{col 83}{space 3} .3033804
+{txt}{space 17}Mpumalanga  {c |}{col 30}{res}{space 2}  .071353{col 42}{space 2} .0569159{col 53}{space 1}    1.25{col 62}{space 3}0.210{col 70}{space 4}-.0402001{col 83}{space 3} .1829061
+{txt}{space 17}North West  {c |}{col 30}{res}{space 2} .1198361{col 42}{space 2} .0552728{col 53}{space 1}    2.17{col 62}{space 3}0.030{col 70}{space 4} .0115033{col 83}{space 3} .2281689
+{txt}{space 14}Northern Cape  {c |}{col 30}{res}{space 2} .0789978{col 42}{space 2} .0673452{col 53}{space 1}    1.17{col 62}{space 3}0.241{col 70}{space 4}-.0529964{col 83}{space 3}  .210992
+{txt}{space 15}Western Cape  {c |}{col 30}{res}{space 2}-.1107079{col 42}{space 2} .0477326{col 53}{space 1}   -2.32{col 62}{space 3}0.020{col 70}{space 4}-.2042621{col 83}{space 3}-.0171537
+{txt}{space 28} {c |}
+{space 20}rainfall {c |}{col 30}{res}{space 2}-.0000143{col 42}{space 2} .0000661{col 53}{space 1}   -0.22{col 62}{space 3}0.829{col 70}{space 4}-.0001439{col 83}{space 3} .0001153
+{txt}{space 23}_cons {c |}{col 30}{res}{space 2}-1.350156{col 42}{space 2} .1116455{col 53}{space 1}  -12.09{col 62}{space 3}0.000{col 70}{space 4}-1.568977{col 83}{space 3}-1.131335
+{col 1}{txt}ln(L.firm_size_year_seaso~l){col 30}{c |}{res}{space 2}        1{col 42}{txt}  (exposure)
+{hline 29}{c +}{hline 11}{hline 11}{hline 9}{hline 8}{hline 13}{hline 12}
+{space 20}/lnalpha {c |}{col 30}{res}{space 2}-2.278026{col 42}{space 2} .0678971{col 70}{space 4}-2.411102{col 83}{space 3} -2.14495
+{txt}{hline 29}{c +}{hline 11}{hline 11}{hline 9}{hline 8}{hline 13}{hline 12}
+                       alpha {c |}{col 30}{res}{space 2} .1024863{col 42}{space 2} .0069585{col 70}{space 4} .0897164{col 83}{space 3} .1170739
+{txt}{hline 29}{c BT}{hline 11}{hline 11}{hline 9}{hline 8}{hline 13}{hline 12}
+
+{com}.                 estimates store reg6
+{txt}
+{com}.         summ prop_affected_all if taxyear==2013 & e(sample)==1
+
+{txt}    Variable {c |}        Obs        Mean    Std. dev.       Min        Max
+{hline 13}{c +}{hline 57}
+prop_affe~ll {c |}{res}        514    .7365402     .322513          0          1
+{txt}
+{com}.         estout reg* using "nb_exit_uw_CIT_Survivor.xls", replace  cells(b(star fmt(3)) se(par)) stats(r2_p N ,fmt(3 0 0 0) label ("Pseudo R-squared" "N" )) nobaselevels varlabels(_cons Constant) starlevels(* 0.1 ** 0.05 *** 0.01) 
+{res}{txt}(output written to {browse  `"nb_exit_uw_CIT_Survivor.xls"'})
+
+{com}. 
+. * coef plot - full model with dynamic offset variable
+.         coefplot reg6, vertical keep(2012.taxyear#c.prop_affected_all 2013.taxyear#c.prop_affected_all 2014.taxyear#c.prop_affected_all 2015.taxyear#c.prop_affected_all 2016.taxyear#c.prop_affected_all 2017.taxyear#c.prop_affected_all) coeflabels(2012.taxyear#c.prop_affected_all = "-2" ///
+>         2013.taxyear#c.prop_affected_all = "-1"  2014.taxyear#c.prop_affected_all = "0" 2015.taxyear#c.prop_affected_all = "1" ///
+>         2016.taxyear#c.prop_affected_all = "2"  2017.taxyear#c.prop_affected_all = "3" , wrap(2)) ///
+>         baselevels omitted nolabel xtitle(Event time) ///
+>         /*ytitle(Entry)*/ /*scheme(plotplain)*/ msymbol(O) title("") mcolor(gs1) yline(0, lcolor("gs10") lpattern(dash)) ciopts(lcolor("gs1")) graphregion(fcolor(white)) fcolor(white) lcolor(white) xscale(lcolor("gs1")) yscale(lcolor("gs1")) xlabel(, labcolor("gs1") noticks) ylabel(, labcolor("gs1")  grid glcolor(gs10) glwidth(vvthin) noticks)
+{res}{txt}
+{com}.         
+.         graph export "nb_exit_uw_CIT_Survivor.png", replace
+{txt}{p 0 4 2}
+file {bf}
+nb_exit_uw_CIT_Survivor.png{rm}
+saved as
+PNG
+format
+{p_end}
+
+{com}.         graph save "nb_exit_uw_CIT_Survivor.gph", replace 
+{res}{txt}(file nb_exit_uw_CIT_Survivor.gph saved)
+
+{com}. 
+.         
+. *nbreg weighted
+.         estimates clear
+{res}{txt}
+{com}.         nbreg exit_agri_new c.prop_affected_all##ib(2013).taxyear  gender_fill prop_age_cat_* i.mode_prov_num rainfall [pw=firm_size_year], cluster(taxrefno) exposure(L.firm_size_year)
+{txt}note: {bf:prop_age_cat_5_seasonal_fill} omitted because of collinearity.
+
+Fitting Poisson model:
+{res}
+{txt}Iteration 0:{space 3}log pseudolikelihood = {res:-3911470.3}  
+Iteration 1:{space 3}log pseudolikelihood = {res:  -3712003}  
+Iteration 2:{space 3}log pseudolikelihood = {res:-3711059.5}  
+Iteration 3:{space 3}log pseudolikelihood = {res:-3711059.1}  
+{res}
+{txt}Fitting constant-only model:
+{res}
+{txt}Iteration 0:{space 3}log pseudolikelihood = {res:-2211045.1}  
+Iteration 1:{space 3}log pseudolikelihood = {res:-1992312.7}  
+Iteration 2:{space 3}log pseudolikelihood = {res:-1981501.5}  
+Iteration 3:{space 3}log pseudolikelihood = {res:-1973148.8}  
+Iteration 4:{space 3}log pseudolikelihood = {res:-1973110.3}  
+Iteration 5:{space 3}log pseudolikelihood = {res:-1973110.3}  
+{res}
+{txt}Fitting full model:
+{res}
+{txt}Iteration 0:{space 3}log pseudolikelihood = {res:-1933862.5}  
+Iteration 1:{space 3}log pseudolikelihood = {res:-1896171.3}  
+Iteration 2:{space 3}log pseudolikelihood = {res:-1895856.8}  
+Iteration 3:{space 3}log pseudolikelihood = {res:-1895856.4}  
+Iteration 4:{space 3}log pseudolikelihood = {res:-1895856.4}  
+{res}
+{txt}Negative binomial regression{col 49}Number of obs{col 67}= {res}     3,172
+{txt}{col 49}Wald chi2({res}25{txt}){col 67}= {res}    346.07
+{txt}{col 1}Dispersion{col 22}= {res}mean{txt}{col 49}Prob > chi2{col 67}= {res}    0.0000
+{txt}Log pseudolikelihood = {res}-1895856.4{txt}{col 49}Pseudo R2{col 67}= {res}    0.0392
+
+{txt}{ralign 94:(Std. Err. adjusted for {res:875} clusters in taxrefno)}
+{hline 29}{c TT}{hline 11}{hline 11}{hline 9}{hline 8}{hline 13}{hline 12}
+{col 30}{c |}{col 42}    Robust
+{col 1}               exit_agri_new{col 30}{c |}      Coef.{col 42}   Std. Err.{col 54}      z{col 62}   P>|z|{col 70}     [95% Con{col 83}f. Interval]
+{hline 29}{c +}{hline 11}{hline 11}{hline 9}{hline 8}{hline 13}{hline 12}
+{space 11}prop_affected_all {c |}{col 30}{res}{space 2} .3152956{col 42}{space 2} .1105647{col 53}{space 1}    2.85{col 62}{space 3}0.004{col 70}{space 4} .0985928{col 83}{space 3} .5319985
+{txt}{space 28} {c |}
+{space 21}taxyear {c |}
+{space 23}2012  {c |}{col 30}{res}{space 2} .1359549{col 42}{space 2} .0971904{col 53}{space 1}    1.40{col 62}{space 3}0.162{col 70}{space 4}-.0545347{col 83}{space 3} .3264445
+{txt}{space 23}2014  {c |}{col 30}{res}{space 2} .0866351{col 42}{space 2} .1128089{col 53}{space 1}    0.77{col 62}{space 3}0.442{col 70}{space 4}-.1344662{col 83}{space 3} .3077364
+{txt}{space 23}2015  {c |}{col 30}{res}{space 2}-.1505478{col 42}{space 2} .0981298{col 53}{space 1}   -1.53{col 62}{space 3}0.125{col 70}{space 4}-.3428786{col 83}{space 3}  .041783
+{txt}{space 23}2016  {c |}{col 30}{res}{space 2}-.0518405{col 42}{space 2} .1061246{col 53}{space 1}   -0.49{col 62}{space 3}0.625{col 70}{space 4} -.259841{col 83}{space 3}   .15616
+{txt}{space 23}2017  {c |}{col 30}{res}{space 2}-.1782792{col 42}{space 2} .1013428{col 53}{space 1}   -1.76{col 62}{space 3}0.079{col 70}{space 4}-.3769074{col 83}{space 3} .0203489
+{txt}{space 28} {c |}
+{space 1}taxyear#c.prop_affected_all {c |}
+{space 23}2012  {c |}{col 30}{res}{space 2}-.1533132{col 42}{space 2} .1179367{col 53}{space 1}   -1.30{col 62}{space 3}0.194{col 70}{space 4} -.384465{col 83}{space 3} .0778385
+{txt}{space 23}2014  {c |}{col 30}{res}{space 2}-.0402148{col 42}{space 2} .1272309{col 53}{space 1}   -0.32{col 62}{space 3}0.752{col 70}{space 4}-.2895827{col 83}{space 3} .2091531
+{txt}{space 23}2015  {c |}{col 30}{res}{space 2} .1062906{col 42}{space 2} .1117976{col 53}{space 1}    0.95{col 62}{space 3}0.342{col 70}{space 4}-.1128286{col 83}{space 3} .3254098
+{txt}{space 23}2016  {c |}{col 30}{res}{space 2}-.0199572{col 42}{space 2} .1188307{col 53}{space 1}   -0.17{col 62}{space 3}0.867{col 70}{space 4}-.2528611{col 83}{space 3} .2129467
+{txt}{space 23}2017  {c |}{col 30}{res}{space 2} .0767122{col 42}{space 2} .1189839{col 53}{space 1}    0.64{col 62}{space 3}0.519{col 70}{space 4} -.156492{col 83}{space 3} .3099163
+{txt}{space 28} {c |}
+{space 17}gender_fill {c |}{col 30}{res}{space 2}-.3195343{col 42}{space 2} .1240419{col 53}{space 1}   -2.58{col 62}{space 3}0.010{col 70}{space 4}-.5626519{col 83}{space 3}-.0764167
+{txt}prop_age_cat_1_seasonal_fill {c |}{col 30}{res}{space 2} 1.172556{col 42}{space 2} .2352626{col 53}{space 1}    4.98{col 62}{space 3}0.000{col 70}{space 4} .7114501{col 83}{space 3} 1.633662
+{txt}prop_age_cat_2_seasonal_fill {c |}{col 30}{res}{space 2}  .551134{col 42}{space 2} .3473717{col 53}{space 1}    1.59{col 62}{space 3}0.113{col 70}{space 4} -.129702{col 83}{space 3}  1.23197
+{txt}prop_age_cat_3_seasonal_fill {c |}{col 30}{res}{space 2} .5737692{col 42}{space 2} .3703029{col 53}{space 1}    1.55{col 62}{space 3}0.121{col 70}{space 4}-.1520112{col 83}{space 3} 1.299549
+{txt}prop_age_cat_4_seasonal_fill {c |}{col 30}{res}{space 2} .4704148{col 42}{space 2} .3713477{col 53}{space 1}    1.27{col 62}{space 3}0.205{col 70}{space 4}-.2574133{col 83}{space 3} 1.198243
+{txt}prop_age_cat_5_seasonal_fill {c |}{col 30}{res}{space 2}        0{col 42}{txt}  (omitted)
+{space 28} {c |}
+{space 15}mode_prov_num {c |}
+{space 17}Free State  {c |}{col 30}{res}{space 2}-.1073755{col 42}{space 2} .1251782{col 53}{space 1}   -0.86{col 62}{space 3}0.391{col 70}{space 4}-.3527203{col 83}{space 3} .1379693
+{txt}{space 20}Gauteng  {c |}{col 30}{res}{space 2} .1909838{col 42}{space 2} .0788891{col 53}{space 1}    2.42{col 62}{space 3}0.015{col 70}{space 4}  .036364{col 83}{space 3} .3456036
+{txt}{space 14}KwaZulu-Natal  {c |}{col 30}{res}{space 2} .0558989{col 42}{space 2} .0783789{col 53}{space 1}    0.71{col 62}{space 3}0.476{col 70}{space 4}-.0977208{col 83}{space 3} .2095187
+{txt}{space 20}Limpopo  {c |}{col 30}{res}{space 2} .2897862{col 42}{space 2} .0855686{col 53}{space 1}    3.39{col 62}{space 3}0.001{col 70}{space 4} .1220748{col 83}{space 3} .4574975
+{txt}{space 17}Mpumalanga  {c |}{col 30}{res}{space 2}  -.04292{col 42}{space 2} .0746893{col 53}{space 1}   -0.57{col 62}{space 3}0.566{col 70}{space 4}-.1893083{col 83}{space 3} .1034683
+{txt}{space 17}North West  {c |}{col 30}{res}{space 2} .2825818{col 42}{space 2} .0714806{col 53}{space 1}    3.95{col 62}{space 3}0.000{col 70}{space 4} .1424824{col 83}{space 3} .4226811
+{txt}{space 14}Northern Cape  {c |}{col 30}{res}{space 2} .0699282{col 42}{space 2} .0788653{col 53}{space 1}    0.89{col 62}{space 3}0.375{col 70}{space 4} -.084645{col 83}{space 3} .2245013
+{txt}{space 15}Western Cape  {c |}{col 30}{res}{space 2}-.1357088{col 42}{space 2} .0774654{col 53}{space 1}   -1.75{col 62}{space 3}0.080{col 70}{space 4}-.2875382{col 83}{space 3} .0161206
+{txt}{space 28} {c |}
+{space 20}rainfall {c |}{col 30}{res}{space 2} .0001705{col 42}{space 2} .0000928{col 53}{space 1}    1.84{col 62}{space 3}0.066{col 70}{space 4}-.0000114{col 83}{space 3} .0003523
+{txt}{space 23}_cons {c |}{col 30}{res}{space 2}-1.631837{col 42}{space 2} .2590536{col 53}{space 1}   -6.30{col 62}{space 3}0.000{col 70}{space 4}-2.139572{col 83}{space 3}-1.124101
+{col 1}{txt}ln(L.firm_size_year_seaso~l){col 30}{c |}{res}{space 2}        1{col 42}{txt}  (exposure)
+{hline 29}{c +}{hline 11}{hline 11}{hline 9}{hline 8}{hline 13}{hline 12}
+{space 20}/lnalpha {c |}{col 30}{res}{space 2}-2.763945{col 42}{space 2} .1176795{col 70}{space 4}-2.994592{col 83}{space 3}-2.533297
+{txt}{hline 29}{c +}{hline 11}{hline 11}{hline 9}{hline 8}{hline 13}{hline 12}
+                       alpha {c |}{col 30}{res}{space 2} .0630426{col 42}{space 2} .0074188{col 70}{space 4}  .050057{col 83}{space 3} .0793968
+{txt}{hline 29}{c BT}{hline 11}{hline 11}{hline 9}{hline 8}{hline 13}{hline 12}
+
+{com}.                 estimates store reg6
+{txt}
+{com}.         summ prop_affected_all if taxyear==2013 & e(sample)==1
+
+{txt}    Variable {c |}        Obs        Mean    Std. dev.       Min        Max
+{hline 13}{c +}{hline 57}
+prop_affe~ll {c |}{res}        514    .7365402     .322513          0          1
+{txt}
+{com}.         estout reg* using "nb_exit_w_CIT_Survivor.xls", replace  cells(b(star fmt(3)) se(par)) stats(r2_p N ,fmt(3 0 0 0) label ("Pseudo R-squared" "N" )) nobaselevels varlabels(_cons Constant) starlevels(* 0.1 ** 0.05 *** 0.01) 
+{res}{txt}(output written to {browse  `"nb_exit_w_CIT_Survivor.xls"'})
+
+{com}. 
+. * coef plot - full model with dynamic offset variable
+.         coefplot reg6, vertical keep(2012.taxyear#c.prop_affected_all 2013.taxyear#c.prop_affected_all 2014.taxyear#c.prop_affected_all 2015.taxyear#c.prop_affected_all 2016.taxyear#c.prop_affected_all 2017.taxyear#c.prop_affected_all) coeflabels(2012.taxyear#c.prop_affected_all = "-2" ///
+>         2013.taxyear#c.prop_affected_all = "-1"  2014.taxyear#c.prop_affected_all = "0" 2015.taxyear#c.prop_affected_all = "1" ///
+>         2016.taxyear#c.prop_affected_all = "2"  2017.taxyear#c.prop_affected_all = "3" , wrap(2)) ///
+>         baselevels omitted nolabel xtitle(Event time) ///
+>         /*ytitle(Entry)*/ /*scheme(plotplain)*/ msymbol(O) title("") mcolor(gs1) yline(0, lcolor("gs10") lpattern(dash)) ciopts(lcolor("gs1")) graphregion(fcolor(white)) fcolor(white) lcolor(white) xscale(lcolor("gs1")) yscale(lcolor("gs1")) xlabel(, labcolor("gs1") noticks) ylabel(, labcolor("gs1")  grid glcolor(gs10) glwidth(vvthin) noticks)
+{res}{txt}
+{com}.         
+.         graph export "nb_exit_w_CIT_Survivor.png", replace
+{txt}{p 0 4 2}
+file {bf}
+nb_exit_w_CIT_Survivor.png{rm}
+saved as
+PNG
+format
+{p_end}
+
+{com}.         graph save "nb_exit_w_CIT_Survivor.gph", replace 
+{res}{txt}(file nb_exit_w_CIT_Survivor.gph saved)
+
+{com}.         
+.         restore
+{txt}
+{com}.         
+. **# Reg analysis: Non CIT Survivors
+.         
+. ********************************************************************************
+. *                                                       Total employment                                                                        *
+. ********************************************************************************
+.         cap mkdir "Z:\Workbenches\epadmin\michael_kilumelume\2024 projects\minimum wage\datasets for Marlies\Analysis using Marlies code and Michael's samples\Seasonal\Non CIT Survivors"
+{txt}
+{com}.         cd "Z:\Workbenches\epadmin\michael_kilumelume\2024 projects\minimum wage\datasets for Marlies\Analysis using Marlies code and Michael's samples\Seasonal\Non CIT Survivors"
+{res}Z:\Workbenches\epadmin\michael_kilumelume\2024 projects\minimum wage\datasets for Marlies\Analysis using Marlies code and Michael's samples\Seasonal\Non CIT Survivors
+{txt}
+{com}. 
+.         preserve 
+{txt}
+{com}.         keep if merge_CIT==1 & survivor==1  
+{txt}(72,784 observations deleted)
+
+{com}. 
+. * nbreg unweighted
+. 
+.         estimates clear 
+{res}{txt}
+{com}.         nbreg count_agri c.prop_affected_all##ib(2013).taxyear gender_fill prop_age_cat_* i.mode_prov_num rainfall, cluster(taxrefno) exposure(L.firm_size_year) 
+{txt}note: {bf:prop_age_cat_5_seasonal_fill} omitted because of collinearity.
+
+Fitting Poisson model:
+{res}
+{txt}Iteration 0:{space 3}log pseudolikelihood = {res:-85827.003}  
+Iteration 1:{space 3}log pseudolikelihood = {res: -82949.32}  
+Iteration 2:{space 3}log pseudolikelihood = {res:-82943.578}  
+Iteration 3:{space 3}log pseudolikelihood = {res:-82943.578}  
+{res}
+{txt}Fitting constant-only model:
+{res}
+{txt}Iteration 0:{space 3}log pseudolikelihood = {res:-28705.945}  
+Iteration 1:{space 3}log pseudolikelihood = {res:-27932.425}  
+Iteration 2:{space 3}log pseudolikelihood = {res:-27811.611}  
+Iteration 3:{space 3}log pseudolikelihood = {res:-27811.111}  
+Iteration 4:{space 3}log pseudolikelihood = {res:-27811.111}  
+{res}
+{txt}Fitting full model:
+{res}
+{txt}Iteration 0:{space 3}log pseudolikelihood = {res:-27739.469}  
+Iteration 1:{space 3}log pseudolikelihood = {res:-27546.534}  
+Iteration 2:{space 3}log pseudolikelihood = {res:-27531.147}  
+Iteration 3:{space 3}log pseudolikelihood = {res:-27531.099}  
+Iteration 4:{space 3}log pseudolikelihood = {res:-27531.099}  
+{res}
+{txt}Negative binomial regression{col 49}Number of obs{col 67}= {res}     6,032
+{txt}{col 49}Wald chi2({res}25{txt}){col 67}= {res}     69.46
+{txt}{col 1}Dispersion{col 22}= {res}mean{txt}{col 49}Prob > chi2{col 67}= {res}    0.0000
+{txt}Log pseudolikelihood = {res}-27531.099{txt}{col 49}Pseudo R2{col 67}= {res}    0.0101
+
+{txt}{ralign 94:(Std. Err. adjusted for {res:1,285} clusters in taxrefno)}
+{hline 29}{c TT}{hline 11}{hline 11}{hline 9}{hline 8}{hline 13}{hline 12}
+{col 30}{c |}{col 42}    Robust
+{col 1}                  count_agri{col 30}{c |}      Coef.{col 42}   Std. Err.{col 54}      z{col 62}   P>|z|{col 70}     [95% Con{col 83}f. Interval]
+{hline 29}{c +}{hline 11}{hline 11}{hline 9}{hline 8}{hline 13}{hline 12}
+{space 11}prop_affected_all {c |}{col 30}{res}{space 2}-.5860866{col 42}{space 2} .5226548{col 53}{space 1}   -1.12{col 62}{space 3}0.262{col 70}{space 4}-1.610471{col 83}{space 3} .4382979
+{txt}{space 28} {c |}
+{space 21}taxyear {c |}
+{space 23}2012  {c |}{col 30}{res}{space 2}-.4822253{col 42}{space 2} .5321522{col 53}{space 1}   -0.91{col 62}{space 3}0.365{col 70}{space 4}-1.525224{col 83}{space 3} .5607737
+{txt}{space 23}2014  {c |}{col 30}{res}{space 2}-.8833717{col 42}{space 2} .5244066{col 53}{space 1}   -1.68{col 62}{space 3}0.092{col 70}{space 4} -1.91119{col 83}{space 3} .1444464
+{txt}{space 23}2015  {c |}{col 30}{res}{space 2}-.5762917{col 42}{space 2} .4891453{col 53}{space 1}   -1.18{col 62}{space 3}0.239{col 70}{space 4}-1.534999{col 83}{space 3} .3824154
+{txt}{space 23}2016  {c |}{col 30}{res}{space 2}-.7985877{col 42}{space 2} .4732139{col 53}{space 1}   -1.69{col 62}{space 3}0.091{col 70}{space 4} -1.72607{col 83}{space 3} .1288944
+{txt}{space 23}2017  {c |}{col 30}{res}{space 2}-1.201891{col 42}{space 2} .4576061{col 53}{space 1}   -2.63{col 62}{space 3}0.009{col 70}{space 4}-2.098782{col 83}{space 3}-.3049993
+{txt}{space 28} {c |}
+{space 1}taxyear#c.prop_affected_all {c |}
+{space 23}2012  {c |}{col 30}{res}{space 2} .4745955{col 42}{space 2} .6016229{col 53}{space 1}    0.79{col 62}{space 3}0.430{col 70}{space 4}-.7045637{col 83}{space 3} 1.653755
+{txt}{space 23}2014  {c |}{col 30}{res}{space 2} .6926654{col 42}{space 2}  .610418{col 53}{space 1}    1.13{col 62}{space 3}0.256{col 70}{space 4}-.5037319{col 83}{space 3} 1.889063
+{txt}{space 23}2015  {c |}{col 30}{res}{space 2} .3515976{col 42}{space 2} .5556286{col 53}{space 1}    0.63{col 62}{space 3}0.527{col 70}{space 4}-.7374145{col 83}{space 3}  1.44061
+{txt}{space 23}2016  {c |}{col 30}{res}{space 2} .3670788{col 42}{space 2} .5314252{col 53}{space 1}    0.69{col 62}{space 3}0.490{col 70}{space 4}-.6744955{col 83}{space 3} 1.408653
+{txt}{space 23}2017  {c |}{col 30}{res}{space 2} 1.107518{col 42}{space 2} .5415981{col 53}{space 1}    2.04{col 62}{space 3}0.041{col 70}{space 4} .0460057{col 83}{space 3} 2.169031
+{txt}{space 28} {c |}
+{space 17}gender_fill {c |}{col 30}{res}{space 2}-.4043496{col 42}{space 2} .1141014{col 53}{space 1}   -3.54{col 62}{space 3}0.000{col 70}{space 4}-.6279843{col 83}{space 3} -.180715
+{txt}prop_age_cat_1_seasonal_fill {c |}{col 30}{res}{space 2} .2827872{col 42}{space 2} .2029214{col 53}{space 1}    1.39{col 62}{space 3}0.163{col 70}{space 4}-.1149313{col 83}{space 3} .6805058
+{txt}prop_age_cat_2_seasonal_fill {c |}{col 30}{res}{space 2}-.1073076{col 42}{space 2} .1619644{col 53}{space 1}   -0.66{col 62}{space 3}0.508{col 70}{space 4}-.4247521{col 83}{space 3} .2101368
+{txt}prop_age_cat_3_seasonal_fill {c |}{col 30}{res}{space 2}-.0836631{col 42}{space 2} .1612452{col 53}{space 1}   -0.52{col 62}{space 3}0.604{col 70}{space 4} -.399698{col 83}{space 3} .2323718
+{txt}prop_age_cat_4_seasonal_fill {c |}{col 30}{res}{space 2} .0303625{col 42}{space 2}   .17256{col 53}{space 1}    0.18{col 62}{space 3}0.860{col 70}{space 4} -.307849{col 83}{space 3} .3685739
+{txt}prop_age_cat_5_seasonal_fill {c |}{col 30}{res}{space 2}        0{col 42}{txt}  (omitted)
+{space 28} {c |}
+{space 15}mode_prov_num {c |}
+{space 17}Free State  {c |}{col 30}{res}{space 2} .0030724{col 42}{space 2} .1751363{col 53}{space 1}    0.02{col 62}{space 3}0.986{col 70}{space 4}-.3401885{col 83}{space 3} .3463332
+{txt}{space 20}Gauteng  {c |}{col 30}{res}{space 2}-.3384025{col 42}{space 2} .1352662{col 53}{space 1}   -2.50{col 62}{space 3}0.012{col 70}{space 4}-.6035194{col 83}{space 3}-.0732856
+{txt}{space 14}KwaZulu-Natal  {c |}{col 30}{res}{space 2} -.271094{col 42}{space 2} .1206712{col 53}{space 1}   -2.25{col 62}{space 3}0.025{col 70}{space 4}-.5076052{col 83}{space 3}-.0345827
+{txt}{space 20}Limpopo  {c |}{col 30}{res}{space 2}-.0468248{col 42}{space 2}  .174174{col 53}{space 1}   -0.27{col 62}{space 3}0.788{col 70}{space 4}-.3881995{col 83}{space 3} .2945499
+{txt}{space 17}Mpumalanga  {c |}{col 30}{res}{space 2}-.3765781{col 42}{space 2} .1220763{col 53}{space 1}   -3.08{col 62}{space 3}0.002{col 70}{space 4}-.6158433{col 83}{space 3}-.1373129
+{txt}{space 17}North West  {c |}{col 30}{res}{space 2}-.2397484{col 42}{space 2} .1423619{col 53}{space 1}   -1.68{col 62}{space 3}0.092{col 70}{space 4}-.5187727{col 83}{space 3} .0392758
+{txt}{space 14}Northern Cape  {c |}{col 30}{res}{space 2}  .155013{col 42}{space 2} .3044537{col 53}{space 1}    0.51{col 62}{space 3}0.611{col 70}{space 4}-.4417052{col 83}{space 3} .7517312
+{txt}{space 15}Western Cape  {c |}{col 30}{res}{space 2}-.0868425{col 42}{space 2} .1526279{col 53}{space 1}   -0.57{col 62}{space 3}0.569{col 70}{space 4}-.3859878{col 83}{space 3} .2123027
+{txt}{space 28} {c |}
+{space 20}rainfall {c |}{col 30}{res}{space 2}-.0001597{col 42}{space 2} .0002779{col 53}{space 1}   -0.57{col 62}{space 3}0.565{col 70}{space 4}-.0007044{col 83}{space 3} .0003849
+{txt}{space 23}_cons {c |}{col 30}{res}{space 2} 1.670758{col 42}{space 2} .5253591{col 53}{space 1}    3.18{col 62}{space 3}0.001{col 70}{space 4} .6410733{col 83}{space 3} 2.700443
+{col 1}{txt}ln(L.firm_size_year_seaso~l){col 30}{c |}{res}{space 2}        1{col 42}{txt}  (exposure)
+{hline 29}{c +}{hline 11}{hline 11}{hline 9}{hline 8}{hline 13}{hline 12}
+{space 20}/lnalpha {c |}{col 30}{res}{space 2}-.1198091{col 42}{space 2} .0840342{col 70}{space 4}-.2845132{col 83}{space 3}  .044895
+{txt}{hline 29}{c +}{hline 11}{hline 11}{hline 9}{hline 8}{hline 13}{hline 12}
+                       alpha {c |}{col 30}{res}{space 2} .8870898{col 42}{space 2} .0745459{col 70}{space 4} .7523804{col 83}{space 3} 1.045918
+{txt}{hline 29}{c BT}{hline 11}{hline 11}{hline 9}{hline 8}{hline 13}{hline 12}
+
+{com}.         estimates store reg8
+{txt}
+{com}.         summ prop_affected_all if taxyear==2013 & e(sample)==1
+
+{txt}    Variable {c |}        Obs        Mean    Std. dev.       Min        Max
+{hline 13}{c +}{hline 57}
+prop_affe~ll {c |}{res}      1,042    .7497234    .3397324          0          1
+{txt}
+{com}.         estout reg* using nb_empl_uw_non_NON_CIT_Survivor.xls, replace  cells(b(star fmt(3)) se(par)) stats(r2_p N ,fmt(3 0 0 0) label ("Pseudo R-squared" "N" )) nobaselevels varlabels(_cons Constant) starlevels(* 0.1 ** 0.05 *** 0.01) 
+{res}{txt}(output written to {browse  `"nb_empl_uw_non_NON_CIT_Survivor.xls"'})
+
+{com}. 
+. 
+.         * coef plot - full model with LAGGED dynamic offset variable
+.         coefplot reg8, vertical keep(2012.taxyear#c.prop_affected_all 2013.taxyear#c.prop_affected_all 2014.taxyear#c.prop_affected_all 2015.taxyear#c.prop_affected_all 2016.taxyear#c.prop_affected_all 2017.taxyear#c.prop_affected_all) coeflabels(2012.taxyear#c.prop_affected_all = "-2" ///
+>         2013.taxyear#c.prop_affected_all = "-1"  2014.taxyear#c.prop_affected_all = "0" 2015.taxyear#c.prop_affected_all = "1" ///
+>         2016.taxyear#c.prop_affected_all = "2"  2017.taxyear#c.prop_affected_all = "3" , wrap(2)) ///
+>         baselevels omitted nolabel xtitle(Event time) /*ytitle(Interaction coefficient)*/ ///
+>         /*scheme(plotplain)*/ msymbol(O) title("") mcolor(gs1) yline(0, lcolor("gs10") lpattern(dash)) ciopts(lcolor("gs1")) graphregion(fcolor(white)) fcolor(white) lcolor(white) xscale(lcolor("gs1")) yscale(lcolor("gs1")) xlabel(, labcolor("gs1") noticks) ylabel(, labcolor("gs1")  grid glcolor(gs10) glwidth(vvthin) noticks) 
+{res}{txt}
+{com}.         
+.         graph export "nb_empl_uw_NON_CIT_Survivor.png", replace as(png)
+{txt}{p 0 4 2}
+file {bf}
+nb_empl_uw_NON_CIT_Survivor.png{rm}
+saved as
+PNG
+format
+{p_end}
+
+{com}.         graph save "nb_empl_uw_NON_CIT_Survivor.gph", replace 
+{res}{txt}(file nb_empl_uw_NON_CIT_Survivor.gph saved)
+
+{com}.         
+. * nbreg weighted
+. 
+.         estimates clear 
+{res}{txt}
+{com}.         nbreg count_agri c.prop_affected_all##ib(2013).taxyear gender_fill prop_age_cat_* i.mode_prov_num rainfall  [pw=firm_size_year], cluster(taxrefno) exposure(L.firm_size_year) 
+{txt}note: {bf:prop_age_cat_5_seasonal_fill} omitted because of collinearity.
+
+Fitting Poisson model:
+{res}
+{txt}Iteration 0:{space 3}log pseudolikelihood = {res: -19155144}  
+Iteration 1:{space 3}log pseudolikelihood = {res: -18578696}  
+Iteration 2:{space 3}log pseudolikelihood = {res: -18576632}  
+Iteration 3:{space 3}log pseudolikelihood = {res: -18576632}  
+{res}
+{txt}Fitting constant-only model:
+{res}
+{txt}Iteration 0:{space 3}log pseudolikelihood = {res:-3419156.1}  
+Iteration 1:{space 3}log pseudolikelihood = {res:-3203032.3}  
+Iteration 2:{space 3}log pseudolikelihood = {res:-3176897.5}  
+Iteration 3:{space 3}log pseudolikelihood = {res:-3176861.8}  
+Iteration 4:{space 3}log pseudolikelihood = {res:-3176861.8}  
+{res}
+{txt}Fitting full model:
+{res}
+{txt}Iteration 0:{space 3}log pseudolikelihood = {res:-3159096.8}  
+Iteration 1:{space 3}log pseudolikelihood = {res:-3100597.2}  
+Iteration 2:{space 3}log pseudolikelihood = {res:-3069321.1}  
+Iteration 3:{space 3}log pseudolikelihood = {res:-3069063.3}  
+Iteration 4:{space 3}log pseudolikelihood = {res:-3069062.8}  
+Iteration 5:{space 3}log pseudolikelihood = {res:-3069062.8}  
+{res}
+{txt}Negative binomial regression{col 49}Number of obs{col 67}= {res}     6,032
+{txt}{col 49}Wald chi2({res}25{txt}){col 67}= {res}     87.55
+{txt}{col 1}Dispersion{col 22}= {res}mean{txt}{col 49}Prob > chi2{col 67}= {res}    0.0000
+{txt}Log pseudolikelihood = {res}-3069062.8{txt}{col 49}Pseudo R2{col 67}= {res}    0.0339
+
+{txt}{ralign 94:(Std. Err. adjusted for {res:1,285} clusters in taxrefno)}
+{hline 29}{c TT}{hline 11}{hline 11}{hline 9}{hline 8}{hline 13}{hline 12}
+{col 30}{c |}{col 42}    Robust
+{col 1}                  count_agri{col 30}{c |}      Coef.{col 42}   Std. Err.{col 54}      z{col 62}   P>|z|{col 70}     [95% Con{col 83}f. Interval]
+{hline 29}{c +}{hline 11}{hline 11}{hline 9}{hline 8}{hline 13}{hline 12}
+{space 11}prop_affected_all {c |}{col 30}{res}{space 2}-1.746376{col 42}{space 2} 1.309218{col 53}{space 1}   -1.33{col 62}{space 3}0.182{col 70}{space 4}-4.312395{col 83}{space 3} .8196436
+{txt}{space 28} {c |}
+{space 21}taxyear {c |}
+{space 23}2012  {c |}{col 30}{res}{space 2}-2.093608{col 42}{space 2} 1.110151{col 53}{space 1}   -1.89{col 62}{space 3}0.059{col 70}{space 4}-4.269464{col 83}{space 3}  .082247
+{txt}{space 23}2014  {c |}{col 30}{res}{space 2}-2.353996{col 42}{space 2} 1.154799{col 53}{space 1}   -2.04{col 62}{space 3}0.042{col 70}{space 4}-4.617362{col 83}{space 3}-.0906313
+{txt}{space 23}2015  {c |}{col 30}{res}{space 2}-2.262425{col 42}{space 2} 1.062985{col 53}{space 1}   -2.13{col 62}{space 3}0.033{col 70}{space 4}-4.345838{col 83}{space 3}-.1790121
+{txt}{space 23}2016  {c |}{col 30}{res}{space 2}-2.469255{col 42}{space 2} 1.052319{col 53}{space 1}   -2.35{col 62}{space 3}0.019{col 70}{space 4}-4.531762{col 83}{space 3}-.4067483
+{txt}{space 23}2017  {c |}{col 30}{res}{space 2}-3.118731{col 42}{space 2} 1.056157{col 53}{space 1}   -2.95{col 62}{space 3}0.003{col 70}{space 4}-5.188762{col 83}{space 3}-1.048701
+{txt}{space 28} {c |}
+{space 1}taxyear#c.prop_affected_all {c |}
+{space 23}2012  {c |}{col 30}{res}{space 2} 1.383056{col 42}{space 2} 1.337767{col 53}{space 1}    1.03{col 62}{space 3}0.301{col 70}{space 4} -1.23892{col 83}{space 3} 4.005032
+{txt}{space 23}2014  {c |}{col 30}{res}{space 2} 1.464016{col 42}{space 2} 1.430011{col 53}{space 1}    1.02{col 62}{space 3}0.306{col 70}{space 4}-1.338754{col 83}{space 3} 4.266787
+{txt}{space 23}2015  {c |}{col 30}{res}{space 2} 1.374143{col 42}{space 2} 1.319485{col 53}{space 1}    1.04{col 62}{space 3}0.298{col 70}{space 4}   -1.212{col 83}{space 3} 3.960286
+{txt}{space 23}2016  {c |}{col 30}{res}{space 2} 1.273645{col 42}{space 2}  1.30647{col 53}{space 1}    0.97{col 62}{space 3}0.330{col 70}{space 4}-1.286989{col 83}{space 3} 3.834279
+{txt}{space 23}2017  {c |}{col 30}{res}{space 2} 2.560661{col 42}{space 2} 1.359486{col 53}{space 1}    1.88{col 62}{space 3}0.060{col 70}{space 4}-.1038829{col 83}{space 3} 5.225205
+{txt}{space 28} {c |}
+{space 17}gender_fill {c |}{col 30}{res}{space 2}-.5555286{col 42}{space 2}  .302148{col 53}{space 1}   -1.84{col 62}{space 3}0.066{col 70}{space 4}-1.147728{col 83}{space 3} .0366706
+{txt}prop_age_cat_1_seasonal_fill {c |}{col 30}{res}{space 2}  1.47194{col 42}{space 2} .5545616{col 53}{space 1}    2.65{col 62}{space 3}0.008{col 70}{space 4} .3850191{col 83}{space 3} 2.558861
+{txt}prop_age_cat_2_seasonal_fill {c |}{col 30}{res}{space 2}-.9799373{col 42}{space 2} .6784649{col 53}{space 1}   -1.44{col 62}{space 3}0.149{col 70}{space 4}-2.309704{col 83}{space 3} .3498295
+{txt}prop_age_cat_3_seasonal_fill {c |}{col 30}{res}{space 2}-.2203692{col 42}{space 2}   .64101{col 53}{space 1}   -0.34{col 62}{space 3}0.731{col 70}{space 4}-1.476726{col 83}{space 3} 1.035987
+{txt}prop_age_cat_4_seasonal_fill {c |}{col 30}{res}{space 2} 1.882685{col 42}{space 2} .9209981{col 53}{space 1}    2.04{col 62}{space 3}0.041{col 70}{space 4} .0775619{col 83}{space 3} 3.687808
+{txt}prop_age_cat_5_seasonal_fill {c |}{col 30}{res}{space 2}        0{col 42}{txt}  (omitted)
+{space 28} {c |}
+{space 15}mode_prov_num {c |}
+{space 17}Free State  {c |}{col 30}{res}{space 2} .3112814{col 42}{space 2} .5162282{col 53}{space 1}    0.60{col 62}{space 3}0.547{col 70}{space 4}-.7005073{col 83}{space 3}  1.32307
+{txt}{space 20}Gauteng  {c |}{col 30}{res}{space 2}-.2850938{col 42}{space 2} .3258416{col 53}{space 1}   -0.87{col 62}{space 3}0.382{col 70}{space 4}-.9237316{col 83}{space 3} .3535439
+{txt}{space 14}KwaZulu-Natal  {c |}{col 30}{res}{space 2}-.2462283{col 42}{space 2} .3085162{col 53}{space 1}   -0.80{col 62}{space 3}0.425{col 70}{space 4}-.8509089{col 83}{space 3} .3584523
+{txt}{space 20}Limpopo  {c |}{col 30}{res}{space 2} .1494478{col 42}{space 2} .4573607{col 53}{space 1}    0.33{col 62}{space 3}0.744{col 70}{space 4}-.7469628{col 83}{space 3} 1.045858
+{txt}{space 17}Mpumalanga  {c |}{col 30}{res}{space 2}-.5261273{col 42}{space 2} .3129942{col 53}{space 1}   -1.68{col 62}{space 3}0.093{col 70}{space 4}-1.139585{col 83}{space 3} .0873301
+{txt}{space 17}North West  {c |}{col 30}{res}{space 2}-.2417275{col 42}{space 2} .3579212{col 53}{space 1}   -0.68{col 62}{space 3}0.499{col 70}{space 4}-.9432402{col 83}{space 3} .4597852
+{txt}{space 14}Northern Cape  {c |}{col 30}{res}{space 2}-.2835515{col 42}{space 2} .4571922{col 53}{space 1}   -0.62{col 62}{space 3}0.535{col 70}{space 4}-1.179632{col 83}{space 3} .6125287
+{txt}{space 15}Western Cape  {c |}{col 30}{res}{space 2} -.142022{col 42}{space 2} .3346183{col 53}{space 1}   -0.42{col 62}{space 3}0.671{col 70}{space 4}-.7978619{col 83}{space 3} .5138179
+{txt}{space 28} {c |}
+{space 20}rainfall {c |}{col 30}{res}{space 2}-.0001963{col 42}{space 2} .0005233{col 53}{space 1}   -0.38{col 62}{space 3}0.708{col 70}{space 4} -.001222{col 83}{space 3} .0008294
+{txt}{space 23}_cons {c |}{col 30}{res}{space 2} 3.232006{col 42}{space 2} 1.202764{col 53}{space 1}    2.69{col 62}{space 3}0.007{col 70}{space 4} .8746314{col 83}{space 3} 5.589381
+{col 1}{txt}ln(L.firm_size_year_seaso~l){col 30}{c |}{res}{space 2}        1{col 42}{txt}  (exposure)
+{hline 29}{c +}{hline 11}{hline 11}{hline 9}{hline 8}{hline 13}{hline 12}
+{space 20}/lnalpha {c |}{col 30}{res}{space 2} -.003502{col 42}{space 2} .1534192{col 70}{space 4}-.3041981{col 83}{space 3} .2971942
+{txt}{hline 29}{c +}{hline 11}{hline 11}{hline 9}{hline 8}{hline 13}{hline 12}
+                       alpha {c |}{col 30}{res}{space 2} .9965042{col 42}{space 2} .1528829{col 70}{space 4} .7377147{col 83}{space 3} 1.346077
+{txt}{hline 29}{c BT}{hline 11}{hline 11}{hline 9}{hline 8}{hline 13}{hline 12}
+
+{com}.         estimates store reg8
+{txt}
+{com}. summ prop_affected_all if taxyear==2013 & e(sample)==1
+
+{txt}    Variable {c |}        Obs        Mean    Std. dev.       Min        Max
+{hline 13}{c +}{hline 57}
+prop_affe~ll {c |}{res}      1,042    .7497234    .3397324          0          1
+{txt}
+{com}.         estout reg* using nb_empl_w_NON_CIT_Survivor.xls, replace  cells(b(star fmt(3)) se(par)) stats(r2_p N ,fmt(3 0 0 0) label ("Pseudo R-squared" "N" )) nobaselevels varlabels(_cons Constant) starlevels(* 0.1 ** 0.05 *** 0.01) 
+{res}{txt}(output written to {browse  `"nb_empl_w_NON_CIT_Survivor.xls"'})
+
+{com}. 
+. 
+. * coef plot - full model with LAGGED dynamic offset variable
+.         coefplot reg8, vertical keep(2012.taxyear#c.prop_affected_all 2013.taxyear#c.prop_affected_all 2014.taxyear#c.prop_affected_all 2015.taxyear#c.prop_affected_all 2016.taxyear#c.prop_affected_all 2017.taxyear#c.prop_affected_all) coeflabels(2012.taxyear#c.prop_affected_all = "-2" ///
+>         2013.taxyear#c.prop_affected_all = "-1"  2014.taxyear#c.prop_affected_all = "0" 2015.taxyear#c.prop_affected_all = "1" ///
+>         2016.taxyear#c.prop_affected_all = "2"  2017.taxyear#c.prop_affected_all = "3" , wrap(2)) ///
+>         baselevels omitted nolabel xtitle(Event time) /*ytitle(Interaction coefficient)*/ ///
+>         /*scheme(plotplain)*/ msymbol(O) title("") mcolor(gs1) yline(0, lcolor("gs10") lpattern(dash)) ciopts(lcolor("gs1")) graphregion(fcolor(white)) fcolor(white) lcolor(white) xscale(lcolor("gs1")) yscale(lcolor("gs1")) xlabel(, labcolor("gs1") noticks) ylabel(, labcolor("gs1")  grid glcolor(gs10) glwidth(vvthin) noticks) 
+{res}{txt}
+{com}.         
+.         graph export "nb_empl_w_NON_CIT_Survivor.png", replace as(png)
+{txt}{p 0 4 2}
+file {bf}
+nb_empl_w_NON_CIT_Survivor.png{rm}
+saved as
+PNG
+format
+{p_end}
+
+{com}.         graph save "nb_empl_w_NON_CIT_Survivor.gph", replace 
+{res}{txt}(file nb_empl_w_NON_CIT_Survivor.gph saved)
+
+{com}. 
+. ********************************************************************************
+. *                                                                       Entry                                                                           *
+. ********************************************************************************
+. *nbreg unweighted
+.         estimates clear
+{res}{txt}
+{com}.         nbreg entry_agri c.prop_affected_all##ib(2013).taxyear  gender_fill prop_age_cat_* i.mode_prov_num rainfall, cluster(taxrefno) exposure(firm_size_year)
+{txt}note: {bf:prop_age_cat_5_seasonal_fill} omitted because of collinearity.
+
+Fitting Poisson model:
+{res}
+{txt}Iteration 0:{space 3}log pseudolikelihood = {res:-31187.539}  
+Iteration 1:{space 3}log pseudolikelihood = {res:-29041.605}  
+Iteration 2:{space 3}log pseudolikelihood = {res: -29037.79}  
+Iteration 3:{space 3}log pseudolikelihood = {res: -29037.79}  
+{res}
+{txt}Fitting constant-only model:
+{res}
+{txt}Iteration 0:{space 3}log pseudolikelihood = {res:-22951.338}  
+Iteration 1:{space 3}log pseudolikelihood = {res:-21305.697}  
+Iteration 2:{space 3}log pseudolikelihood = {res:-21197.534}  
+Iteration 3:{space 3}log pseudolikelihood = {res:-21197.127}  
+Iteration 4:{space 3}log pseudolikelihood = {res:-21197.127}  
+{res}
+{txt}Fitting full model:
+{res}
+{txt}Iteration 0:{space 3}log pseudolikelihood = {res: -20708.33}  
+Iteration 1:{space 3}log pseudolikelihood = {res:-20493.777}  
+Iteration 2:{space 3}log pseudolikelihood = {res:-20441.627}  
+Iteration 3:{space 3}log pseudolikelihood = {res:-20441.554}  
+Iteration 4:{space 3}log pseudolikelihood = {res:-20441.554}  
+{res}
+{txt}Negative binomial regression{col 49}Number of obs{col 67}= {res}     6,823
+{txt}{col 49}Wald chi2({res}25{txt}){col 67}= {res}    850.91
+{txt}{col 1}Dispersion{col 22}= {res}mean{txt}{col 49}Prob > chi2{col 67}= {res}    0.0000
+{txt}Log pseudolikelihood = {res}-20441.554{txt}{col 49}Pseudo R2{col 67}= {res}    0.0356
+
+{txt}{ralign 94:(Std. Err. adjusted for {res:1,487} clusters in taxrefno)}
+{hline 29}{c TT}{hline 11}{hline 11}{hline 9}{hline 8}{hline 13}{hline 12}
+{col 30}{c |}{col 42}    Robust
+{col 1}         entry_agri_seasonal{col 30}{c |}      Coef.{col 42}   Std. Err.{col 54}      z{col 62}   P>|z|{col 70}     [95% Con{col 83}f. Interval]
+{hline 29}{c +}{hline 11}{hline 11}{hline 9}{hline 8}{hline 13}{hline 12}
+{space 11}prop_affected_all {c |}{col 30}{res}{space 2} .4121533{col 42}{space 2} .0502346{col 53}{space 1}    8.20{col 62}{space 3}0.000{col 70}{space 4} .3136953{col 83}{space 3} .5106114
+{txt}{space 28} {c |}
+{space 21}taxyear {c |}
+{space 23}2012  {c |}{col 30}{res}{space 2} .2094955{col 42}{space 2} .0599023{col 53}{space 1}    3.50{col 62}{space 3}0.000{col 70}{space 4} .0920892{col 83}{space 3} .3269018
+{txt}{space 23}2014  {c |}{col 30}{res}{space 2}-.0271386{col 42}{space 2} .0445587{col 53}{space 1}   -0.61{col 62}{space 3}0.542{col 70}{space 4}-.1144721{col 83}{space 3} .0601948
+{txt}{space 23}2015  {c |}{col 30}{res}{space 2} .0725574{col 42}{space 2}  .047911{col 53}{space 1}    1.51{col 62}{space 3}0.130{col 70}{space 4}-.0213463{col 83}{space 3} .1664612
+{txt}{space 23}2016  {c |}{col 30}{res}{space 2} .0209097{col 42}{space 2} .0535296{col 53}{space 1}    0.39{col 62}{space 3}0.696{col 70}{space 4}-.0840063{col 83}{space 3} .1258258
+{txt}{space 23}2017  {c |}{col 30}{res}{space 2} -.021842{col 42}{space 2} .0512753{col 53}{space 1}   -0.43{col 62}{space 3}0.670{col 70}{space 4}-.1223398{col 83}{space 3} .0786557
+{txt}{space 28} {c |}
+{space 1}taxyear#c.prop_affected_all {c |}
+{space 23}2012  {c |}{col 30}{res}{space 2}-.1116748{col 42}{space 2}  .068981{col 53}{space 1}   -1.62{col 62}{space 3}0.105{col 70}{space 4}-.2468751{col 83}{space 3} .0235254
+{txt}{space 23}2014  {c |}{col 30}{res}{space 2}-.0205816{col 42}{space 2} .0534681{col 53}{space 1}   -0.38{col 62}{space 3}0.700{col 70}{space 4}-.1253771{col 83}{space 3} .0842139
+{txt}{space 23}2015  {c |}{col 30}{res}{space 2}-.1033956{col 42}{space 2} .0570313{col 53}{space 1}   -1.81{col 62}{space 3}0.070{col 70}{space 4}-.2151749{col 83}{space 3} .0083837
+{txt}{space 23}2016  {c |}{col 30}{res}{space 2}-.1026383{col 42}{space 2} .0637219{col 53}{space 1}   -1.61{col 62}{space 3}0.107{col 70}{space 4} -.227531{col 83}{space 3} .0222544
+{txt}{space 23}2017  {c |}{col 30}{res}{space 2}-.0414234{col 42}{space 2} .0604829{col 53}{space 1}   -0.68{col 62}{space 3}0.493{col 70}{space 4}-.1599677{col 83}{space 3} .0771208
+{txt}{space 28} {c |}
+{space 17}gender_fill {c |}{col 30}{res}{space 2} .1002629{col 42}{space 2} .0316214{col 53}{space 1}    3.17{col 62}{space 3}0.002{col 70}{space 4}  .038286{col 83}{space 3} .1622397
+{txt}prop_age_cat_1_seasonal_fill {c |}{col 30}{res}{space 2} 1.390128{col 42}{space 2} .0761631{col 53}{space 1}   18.25{col 62}{space 3}0.000{col 70}{space 4} 1.240851{col 83}{space 3} 1.539405
+{txt}prop_age_cat_2_seasonal_fill {c |}{col 30}{res}{space 2} .9183205{col 42}{space 2} .0773002{col 53}{space 1}   11.88{col 62}{space 3}0.000{col 70}{space 4}  .766815{col 83}{space 3} 1.069826
+{txt}prop_age_cat_3_seasonal_fill {c |}{col 30}{res}{space 2}  .686486{col 42}{space 2} .0854122{col 53}{space 1}    8.04{col 62}{space 3}0.000{col 70}{space 4} .5190813{col 83}{space 3} .8538908
+{txt}prop_age_cat_4_seasonal_fill {c |}{col 30}{res}{space 2} .6981679{col 42}{space 2} .0886901{col 53}{space 1}    7.87{col 62}{space 3}0.000{col 70}{space 4} .5243384{col 83}{space 3} .8719973
+{txt}prop_age_cat_5_seasonal_fill {c |}{col 30}{res}{space 2}        0{col 42}{txt}  (omitted)
+{space 28} {c |}
+{space 15}mode_prov_num {c |}
+{space 17}Free State  {c |}{col 30}{res}{space 2} .1851886{col 42}{space 2} .0487114{col 53}{space 1}    3.80{col 62}{space 3}0.000{col 70}{space 4}  .089716{col 83}{space 3} .2806612
+{txt}{space 20}Gauteng  {c |}{col 30}{res}{space 2} .2670553{col 42}{space 2} .0476618{col 53}{space 1}    5.60{col 62}{space 3}0.000{col 70}{space 4} .1736399{col 83}{space 3} .3604708
+{txt}{space 14}KwaZulu-Natal  {c |}{col 30}{res}{space 2} .0551637{col 42}{space 2} .0349674{col 53}{space 1}    1.58{col 62}{space 3}0.115{col 70}{space 4}-.0133711{col 83}{space 3} .1236985
+{txt}{space 20}Limpopo  {c |}{col 30}{res}{space 2} .1881426{col 42}{space 2} .0446378{col 53}{space 1}    4.21{col 62}{space 3}0.000{col 70}{space 4} .1006542{col 83}{space 3} .2756311
+{txt}{space 17}Mpumalanga  {c |}{col 30}{res}{space 2} .1112723{col 42}{space 2} .0400885{col 53}{space 1}    2.78{col 62}{space 3}0.006{col 70}{space 4} .0327002{col 83}{space 3} .1898444
+{txt}{space 17}North West  {c |}{col 30}{res}{space 2}  .223145{col 42}{space 2} .0473422{col 53}{space 1}    4.71{col 62}{space 3}0.000{col 70}{space 4}  .130356{col 83}{space 3} .3159341
+{txt}{space 14}Northern Cape  {c |}{col 30}{res}{space 2}  .001761{col 42}{space 2} .0479703{col 53}{space 1}    0.04{col 62}{space 3}0.971{col 70}{space 4}-.0922591{col 83}{space 3} .0957812
+{txt}{space 15}Western Cape  {c |}{col 30}{res}{space 2}-.1595949{col 42}{space 2}  .036687{col 53}{space 1}   -4.35{col 62}{space 3}0.000{col 70}{space 4}-.2315001{col 83}{space 3}-.0876897
+{txt}{space 28} {c |}
+{space 20}rainfall {c |}{col 30}{res}{space 2} .0000433{col 42}{space 2} .0000523{col 53}{space 1}    0.83{col 62}{space 3}0.407{col 70}{space 4}-.0000591{col 83}{space 3} .0001457
+{txt}{space 23}_cons {c |}{col 30}{res}{space 2}-1.858026{col 42}{space 2}  .089973{col 53}{space 1}  -20.65{col 62}{space 3}0.000{col 70}{space 4} -2.03437{col 83}{space 3}-1.681682
+{col 1}{txt}ln(firm_size_year_seasona~l){col 30}{c |}{res}{space 2}        1{col 42}{txt}  (exposure)
+{hline 29}{c +}{hline 11}{hline 11}{hline 9}{hline 8}{hline 13}{hline 12}
+{space 20}/lnalpha {c |}{col 30}{res}{space 2}-1.985948{col 42}{space 2} .0524878{col 70}{space 4}-2.088822{col 83}{space 3}-1.883074
+{txt}{hline 29}{c +}{hline 11}{hline 11}{hline 9}{hline 8}{hline 13}{hline 12}
+                       alpha {c |}{col 30}{res}{space 2} .1372504{col 42}{space 2}  .007204{col 70}{space 4} .1238329{col 83}{space 3} .1521218
+{txt}{hline 29}{c BT}{hline 11}{hline 11}{hline 9}{hline 8}{hline 13}{hline 12}
+
+{com}.                 estimates store reg6
+{txt}
+{com}.         summ prop_affected_all if taxyear==2013 & e(sample)==1
+
+{txt}    Variable {c |}        Obs        Mean    Std. dev.       Min        Max
+{hline 13}{c +}{hline 57}
+prop_affe~ll {c |}{res}      1,160     .749374    .3386056          0          1
+{txt}
+{com}.         estout reg* using "nb_entr_uw_NON_CIT_Survivor.xls", replace  cells(b(star fmt(3)) se(par)) stats(r2_p N ,fmt(3 0 0 0) label ("Pseudo R-squared" "N" )) nobaselevels varlabels(_cons Constant) starlevels(* 0.1 ** 0.05 *** 0.01) 
+{res}{txt}(output written to {browse  `"nb_entr_uw_NON_CIT_Survivor.xls"'})
+
+{com}. 
+. * coef plot - full model with dynamic offset variable
+.         coefplot reg6, vertical keep(2012.taxyear#c.prop_affected_all 2013.taxyear#c.prop_affected_all 2014.taxyear#c.prop_affected_all 2015.taxyear#c.prop_affected_all 2016.taxyear#c.prop_affected_all 2017.taxyear#c.prop_affected_all) coeflabels(2012.taxyear#c.prop_affected_all = "-2" ///
+>         2013.taxyear#c.prop_affected_all = "-1"  2014.taxyear#c.prop_affected_all = "0" 2015.taxyear#c.prop_affected_all = "1" ///
+>         2016.taxyear#c.prop_affected_all = "2"  2017.taxyear#c.prop_affected_all = "3" , wrap(2)) ///
+>         baselevels omitted nolabel xtitle(Event time) ///
+>         /*ytitle(Entry)*/ /*scheme(plotplain)*/ msymbol(O) title("") mcolor(gs1) yline(0, lcolor("gs10") lpattern(dash)) ciopts(lcolor("gs1")) graphregion(fcolor(white)) fcolor(white) lcolor(white) xscale(lcolor("gs1")) yscale(lcolor("gs1")) xlabel(, labcolor("gs1") noticks) ylabel(, labcolor("gs1")  grid glcolor(gs10) glwidth(vvthin) noticks)
+{res}{txt}
+{com}.         
+.         graph export "nb_entr_uw_NON_CIT_Survivor.png", replace
+{txt}{p 0 4 2}
+file {bf}
+nb_entr_uw_NON_CIT_Survivor.png{rm}
+saved as
+PNG
+format
+{p_end}
+
+{com}.         graph save "nb_entr_uw_NON_CIT_Survivor.gph", replace 
+{res}{txt}(file nb_entr_uw_NON_CIT_Survivor.gph saved)
+
+{com}. 
+.         
+. *nbreg weighted
+.         estimates clear
+{res}{txt}
+{com}.         nbreg entry_agri c.prop_affected_all##ib(2013).taxyear  gender_fill prop_age_cat_* i.mode_prov_num rainfall [pw=firm_size_year], cluster(taxrefno) exposure(firm_size_year)
+{txt}note: {bf:prop_age_cat_5_seasonal_fill} omitted because of collinearity.
+
+Fitting Poisson model:
+{res}
+{txt}Iteration 0:{space 3}log pseudolikelihood = {res:-5584264.5}  
+Iteration 1:{space 3}log pseudolikelihood = {res:-5344228.6}  
+Iteration 2:{space 3}log pseudolikelihood = {res:-5343825.5}  
+Iteration 3:{space 3}log pseudolikelihood = {res:-5343825.5}  
+{res}
+{txt}Fitting constant-only model:
+{res}
+{txt}Iteration 0:{space 3}log pseudolikelihood = {res:-2863971.8}  
+Iteration 1:{space 3}log pseudolikelihood = {res:  -2821508}  
+Iteration 2:{space 3}log pseudolikelihood = {res:  -2647724}  
+Iteration 3:{space 3}log pseudolikelihood = {res:-2643306.9}  
+Iteration 4:{space 3}log pseudolikelihood = {res:-2643267.5}  
+Iteration 5:{space 3}log pseudolikelihood = {res:-2643267.5}  
+{res}
+{txt}Fitting full model:
+{res}
+{txt}Iteration 0:{space 3}log pseudolikelihood = {res:-2598951.8}  
+Iteration 1:{space 3}log pseudolikelihood = {res:-2540870.1}  
+Iteration 2:{space 3}log pseudolikelihood = {res:-2538035.4}  
+Iteration 3:{space 3}log pseudolikelihood = {res:  -2538035}  
+Iteration 4:{space 3}log pseudolikelihood = {res:  -2538035}  
+{res}
+{txt}Negative binomial regression{col 49}Number of obs{col 67}= {res}     6,823
+{txt}{col 49}Wald chi2({res}25{txt}){col 67}= {res}    535.93
+{txt}{col 1}Dispersion{col 22}= {res}mean{txt}{col 49}Prob > chi2{col 67}= {res}    0.0000
+{txt}Log pseudolikelihood = {res}  -2538035{txt}{col 49}Pseudo R2{col 67}= {res}    0.0398
+
+{txt}{ralign 94:(Std. Err. adjusted for {res:1,487} clusters in taxrefno)}
+{hline 29}{c TT}{hline 11}{hline 11}{hline 9}{hline 8}{hline 13}{hline 12}
+{col 30}{c |}{col 42}    Robust
+{col 1}         entry_agri_seasonal{col 30}{c |}      Coef.{col 42}   Std. Err.{col 54}      z{col 62}   P>|z|{col 70}     [95% Con{col 83}f. Interval]
+{hline 29}{c +}{hline 11}{hline 11}{hline 9}{hline 8}{hline 13}{hline 12}
+{space 11}prop_affected_all {c |}{col 30}{res}{space 2}  .320901{col 42}{space 2} .0821869{col 53}{space 1}    3.90{col 62}{space 3}0.000{col 70}{space 4} .1598176{col 83}{space 3} .4819845
+{txt}{space 28} {c |}
+{space 21}taxyear {c |}
+{space 23}2012  {c |}{col 30}{res}{space 2} .2465216{col 42}{space 2} .0797462{col 53}{space 1}    3.09{col 62}{space 3}0.002{col 70}{space 4} .0902219{col 83}{space 3} .4028212
+{txt}{space 23}2014  {c |}{col 30}{res}{space 2} .0048606{col 42}{space 2} .0638986{col 53}{space 1}    0.08{col 62}{space 3}0.939{col 70}{space 4}-.1203783{col 83}{space 3} .1300995
+{txt}{space 23}2015  {c |}{col 30}{res}{space 2} .0953124{col 42}{space 2}  .066829{col 53}{space 1}    1.43{col 62}{space 3}0.154{col 70}{space 4}-.0356701{col 83}{space 3} .2262949
+{txt}{space 23}2016  {c |}{col 30}{res}{space 2} .1986773{col 42}{space 2} .1406184{col 53}{space 1}    1.41{col 62}{space 3}0.158{col 70}{space 4}-.0769297{col 83}{space 3} .4742843
+{txt}{space 23}2017  {c |}{col 30}{res}{space 2} .0784004{col 42}{space 2} .0863911{col 53}{space 1}    0.91{col 62}{space 3}0.364{col 70}{space 4}-.0909231{col 83}{space 3}  .247724
+{txt}{space 28} {c |}
+{space 1}taxyear#c.prop_affected_all {c |}
+{space 23}2012  {c |}{col 30}{res}{space 2}-.1414902{col 42}{space 2} .0945534{col 53}{space 1}   -1.50{col 62}{space 3}0.135{col 70}{space 4}-.3268115{col 83}{space 3}  .043831
+{txt}{space 23}2014  {c |}{col 30}{res}{space 2}-.0634011{col 42}{space 2} .0782867{col 53}{space 1}   -0.81{col 62}{space 3}0.418{col 70}{space 4}-.2168403{col 83}{space 3}  .090038
+{txt}{space 23}2015  {c |}{col 30}{res}{space 2}-.1344645{col 42}{space 2} .0762783{col 53}{space 1}   -1.76{col 62}{space 3}0.078{col 70}{space 4}-.2839673{col 83}{space 3} .0150383
+{txt}{space 23}2016  {c |}{col 30}{res}{space 2}-.2714827{col 42}{space 2} .1648623{col 53}{space 1}   -1.65{col 62}{space 3}0.100{col 70}{space 4}-.5946069{col 83}{space 3} .0516416
+{txt}{space 23}2017  {c |}{col 30}{res}{space 2}-.1170817{col 42}{space 2} .0995986{col 53}{space 1}   -1.18{col 62}{space 3}0.240{col 70}{space 4}-.3122913{col 83}{space 3} .0781279
+{txt}{space 28} {c |}
+{space 17}gender_fill {c |}{col 30}{res}{space 2} -.162135{col 42}{space 2} .0883505{col 53}{space 1}   -1.84{col 62}{space 3}0.066{col 70}{space 4}-.3352988{col 83}{space 3} .0110287
+{txt}prop_age_cat_1_seasonal_fill {c |}{col 30}{res}{space 2} 2.296949{col 42}{space 2} .2523027{col 53}{space 1}    9.10{col 62}{space 3}0.000{col 70}{space 4} 1.802445{col 83}{space 3} 2.791454
+{txt}prop_age_cat_2_seasonal_fill {c |}{col 30}{res}{space 2} .9853618{col 42}{space 2}  .258843{col 53}{space 1}    3.81{col 62}{space 3}0.000{col 70}{space 4} .4780388{col 83}{space 3} 1.492685
+{txt}prop_age_cat_3_seasonal_fill {c |}{col 30}{res}{space 2} .9895973{col 42}{space 2} .3092828{col 53}{space 1}    3.20{col 62}{space 3}0.001{col 70}{space 4} .3834141{col 83}{space 3}  1.59578
+{txt}prop_age_cat_4_seasonal_fill {c |}{col 30}{res}{space 2} 1.278399{col 42}{space 2}  .328608{col 53}{space 1}    3.89{col 62}{space 3}0.000{col 70}{space 4} .6343394{col 83}{space 3} 1.922459
+{txt}prop_age_cat_5_seasonal_fill {c |}{col 30}{res}{space 2}        0{col 42}{txt}  (omitted)
+{space 28} {c |}
+{space 15}mode_prov_num {c |}
+{space 17}Free State  {c |}{col 30}{res}{space 2} .2326329{col 42}{space 2} .1865453{col 53}{space 1}    1.25{col 62}{space 3}0.212{col 70}{space 4}-.1329892{col 83}{space 3}  .598255
+{txt}{space 20}Gauteng  {c |}{col 30}{res}{space 2} .4685797{col 42}{space 2} .1027493{col 53}{space 1}    4.56{col 62}{space 3}0.000{col 70}{space 4} .2671947{col 83}{space 3} .6699646
+{txt}{space 14}KwaZulu-Natal  {c |}{col 30}{res}{space 2} .3432775{col 42}{space 2} .1212106{col 53}{space 1}    2.83{col 62}{space 3}0.005{col 70}{space 4} .1057091{col 83}{space 3}  .580846
+{txt}{space 20}Limpopo  {c |}{col 30}{res}{space 2} .4386185{col 42}{space 2} .1150009{col 53}{space 1}    3.81{col 62}{space 3}0.000{col 70}{space 4} .2132209{col 83}{space 3}  .664016
+{txt}{space 17}Mpumalanga  {c |}{col 30}{res}{space 2} .3104175{col 42}{space 2} .1012255{col 53}{space 1}    3.07{col 62}{space 3}0.002{col 70}{space 4} .1120192{col 83}{space 3} .5088158
+{txt}{space 17}North West  {c |}{col 30}{res}{space 2}  .473069{col 42}{space 2} .1202538{col 53}{space 1}    3.93{col 62}{space 3}0.000{col 70}{space 4} .2373758{col 83}{space 3} .7087622
+{txt}{space 14}Northern Cape  {c |}{col 30}{res}{space 2} .0630551{col 42}{space 2} .1110564{col 53}{space 1}    0.57{col 62}{space 3}0.570{col 70}{space 4}-.1546114{col 83}{space 3} .2807215
+{txt}{space 15}Western Cape  {c |}{col 30}{res}{space 2}-.0289836{col 42}{space 2} .0987953{col 53}{space 1}   -0.29{col 62}{space 3}0.769{col 70}{space 4}-.2226187{col 83}{space 3} .1646516
+{txt}{space 28} {c |}
+{space 20}rainfall {c |}{col 30}{res}{space 2} .0000625{col 42}{space 2} .0000923{col 53}{space 1}    0.68{col 62}{space 3}0.498{col 70}{space 4}-.0001183{col 83}{space 3} .0002433
+{txt}{space 23}_cons {c |}{col 30}{res}{space 2}-2.287563{col 42}{space 2} .2500919{col 53}{space 1}   -9.15{col 62}{space 3}0.000{col 70}{space 4}-2.777734{col 83}{space 3}-1.797392
+{col 1}{txt}ln(firm_size_year_seasona~l){col 30}{c |}{res}{space 2}        1{col 42}{txt}  (exposure)
+{hline 29}{c +}{hline 11}{hline 11}{hline 9}{hline 8}{hline 13}{hline 12}
+{space 20}/lnalpha {c |}{col 30}{res}{space 2}-2.207111{col 42}{space 2} .0771093{col 70}{space 4}-2.358242{col 83}{space 3}-2.055979
+{txt}{hline 29}{c +}{hline 11}{hline 11}{hline 9}{hline 8}{hline 13}{hline 12}
+                       alpha {c |}{col 30}{res}{space 2}  .110018{col 42}{space 2} .0084834{col 70}{space 4} .0945863{col 83}{space 3} .1279674
+{txt}{hline 29}{c BT}{hline 11}{hline 11}{hline 9}{hline 8}{hline 13}{hline 12}
+
+{com}.                 estimates store reg6
+{txt}
+{com}.         summ prop_affected_all if taxyear==2013 & e(sample)==1
+
+{txt}    Variable {c |}        Obs        Mean    Std. dev.       Min        Max
+{hline 13}{c +}{hline 57}
+prop_affe~ll {c |}{res}      1,160     .749374    .3386056          0          1
+{txt}
+{com}.         estout reg* using "nb_entr_w_NON_CIT_Survivor.xls", replace  cells(b(star fmt(3)) se(par)) stats(r2_p N ,fmt(3 0 0 0) label ("Pseudo R-squared" "N" )) nobaselevels varlabels(_cons Constant) starlevels(* 0.1 ** 0.05 *** 0.01) 
+{res}{txt}(output written to {browse  `"nb_entr_w_NON_CIT_Survivor.xls"'})
+
+{com}. 
+. * coef plot - full model with dynamic offset variable
+.         coefplot reg6, vertical keep(2012.taxyear#c.prop_affected_all 2013.taxyear#c.prop_affected_all 2014.taxyear#c.prop_affected_all 2015.taxyear#c.prop_affected_all 2016.taxyear#c.prop_affected_all 2017.taxyear#c.prop_affected_all) coeflabels(2012.taxyear#c.prop_affected_all = "-2" ///
+>         2013.taxyear#c.prop_affected_all = "-1"  2014.taxyear#c.prop_affected_all = "0" 2015.taxyear#c.prop_affected_all = "1" ///
+>         2016.taxyear#c.prop_affected_all = "2"  2017.taxyear#c.prop_affected_all = "3" , wrap(2)) ///
+>         baselevels omitted nolabel xtitle(Event time) ///
+>         /*ytitle(Entry)*/ /*scheme(plotplain)*/ msymbol(O) title("") mcolor(gs1) yline(0, lcolor("gs10") lpattern(dash)) ciopts(lcolor("gs1")) graphregion(fcolor(white)) fcolor(white) lcolor(white) xscale(lcolor("gs1")) yscale(lcolor("gs1")) xlabel(, labcolor("gs1") noticks) ylabel(, labcolor("gs1")  grid glcolor(gs10) glwidth(vvthin) noticks)
+{res}{txt}
+{com}.         
+.         graph export "nb_entr_w_NON_CIT_Survivor.png", replace
+{txt}{p 0 4 2}
+file {bf}
+nb_entr_w_NON_CIT_Survivor.png{rm}
+saved as
+PNG
+format
+{p_end}
+
+{com}.         graph save "nb_entr_w_NON_CIT_Survivor.gph", replace 
+{res}{txt}(file nb_entr_w_NON_CIT_Survivor.gph saved)
+
+{com}.         
+. 
+.                 
+. ********************************************************************************
+. *                                                                       Exit                                                                            *
+. ********************************************************************************
+.         
+. *nbreg unweighted
+.         estimates clear
+{res}{txt}
+{com}.         nbreg exit_agri_new c.prop_affected_all##ib(2013).taxyear gender_fill prop_age_cat_* i.mode_prov_num rainfall, cluster(taxrefno) exposure(L.firm_size_year)
+{txt}note: {bf:prop_age_cat_5_seasonal_fill} omitted because of collinearity.
+
+Fitting Poisson model:
+{res}
+{txt}Iteration 0:{space 3}log pseudolikelihood = {res: -25972.53}  
+Iteration 1:{space 3}log pseudolikelihood = {res:-24030.222}  
+Iteration 2:{space 3}log pseudolikelihood = {res:-24027.316}  
+Iteration 3:{space 3}log pseudolikelihood = {res:-24027.316}  
+{res}
+{txt}Fitting constant-only model:
+{res}
+{txt}Iteration 0:{space 3}log pseudolikelihood = {res:-19799.637}  
+Iteration 1:{space 3}log pseudolikelihood = {res: -18148.33}  
+Iteration 2:{space 3}log pseudolikelihood = {res: -17967.97}  
+Iteration 3:{space 3}log pseudolikelihood = {res: -17962.38}  
+Iteration 4:{space 3}log pseudolikelihood = {res: -17962.38}  
+{res}
+{txt}Fitting full model:
+{res}
+{txt}Iteration 0:{space 3}log pseudolikelihood = {res:-17626.847}  
+Iteration 1:{space 3}log pseudolikelihood = {res:-17508.047}  
+Iteration 2:{space 3}log pseudolikelihood = {res:-17499.318}  
+Iteration 3:{space 3}log pseudolikelihood = {res:-17499.299}  
+Iteration 4:{space 3}log pseudolikelihood = {res:-17499.299}  
+{res}
+{txt}Negative binomial regression{col 49}Number of obs{col 67}= {res}     6,032
+{txt}{col 49}Wald chi2({res}25{txt}){col 67}= {res}    449.90
+{txt}{col 1}Dispersion{col 22}= {res}mean{txt}{col 49}Prob > chi2{col 67}= {res}    0.0000
+{txt}Log pseudolikelihood = {res}-17499.299{txt}{col 49}Pseudo R2{col 67}= {res}    0.0258
+
+{txt}{ralign 94:(Std. Err. adjusted for {res:1,285} clusters in taxrefno)}
+{hline 29}{c TT}{hline 11}{hline 11}{hline 9}{hline 8}{hline 13}{hline 12}
+{col 30}{c |}{col 42}    Robust
+{col 1}               exit_agri_new{col 30}{c |}      Coef.{col 42}   Std. Err.{col 54}      z{col 62}   P>|z|{col 70}     [95% Con{col 83}f. Interval]
+{hline 29}{c +}{hline 11}{hline 11}{hline 9}{hline 8}{hline 13}{hline 12}
+{space 11}prop_affected_all {c |}{col 30}{res}{space 2} .3245823{col 42}{space 2} .0552102{col 53}{space 1}    5.88{col 62}{space 3}0.000{col 70}{space 4} .2163723{col 83}{space 3} .4327924
+{txt}{space 28} {c |}
+{space 21}taxyear {c |}
+{space 23}2012  {c |}{col 30}{res}{space 2} .0687465{col 42}{space 2} .0510404{col 53}{space 1}    1.35{col 62}{space 3}0.178{col 70}{space 4}-.0312909{col 83}{space 3} .1687839
+{txt}{space 23}2014  {c |}{col 30}{res}{space 2}-.1227473{col 42}{space 2} .0468214{col 53}{space 1}   -2.62{col 62}{space 3}0.009{col 70}{space 4}-.2145155{col 83}{space 3}-.0309792
+{txt}{space 23}2015  {c |}{col 30}{res}{space 2}-.1035838{col 42}{space 2} .0544962{col 53}{space 1}   -1.90{col 62}{space 3}0.057{col 70}{space 4}-.2103945{col 83}{space 3} .0032269
+{txt}{space 23}2016  {c |}{col 30}{res}{space 2}-.0899359{col 42}{space 2} .0513918{col 53}{space 1}   -1.75{col 62}{space 3}0.080{col 70}{space 4} -.190662{col 83}{space 3} .0107903
+{txt}{space 23}2017  {c |}{col 30}{res}{space 2}-.0634374{col 42}{space 2} .0542399{col 53}{space 1}   -1.17{col 62}{space 3}0.242{col 70}{space 4}-.1697456{col 83}{space 3} .0428709
+{txt}{space 28} {c |}
+{space 1}taxyear#c.prop_affected_all {c |}
+{space 23}2012  {c |}{col 30}{res}{space 2}-.0688852{col 42}{space 2} .0605242{col 53}{space 1}   -1.14{col 62}{space 3}0.255{col 70}{space 4}-.1875104{col 83}{space 3}   .04974
+{txt}{space 23}2014  {c |}{col 30}{res}{space 2} .2283654{col 42}{space 2}  .056238{col 53}{space 1}    4.06{col 62}{space 3}0.000{col 70}{space 4}  .118141{col 83}{space 3} .3385898
+{txt}{space 23}2015  {c |}{col 30}{res}{space 2}  .109684{col 42}{space 2} .0637504{col 53}{space 1}    1.72{col 62}{space 3}0.085{col 70}{space 4}-.0152645{col 83}{space 3} .2346326
+{txt}{space 23}2016  {c |}{col 30}{res}{space 2} .0756511{col 42}{space 2} .0606499{col 53}{space 1}    1.25{col 62}{space 3}0.212{col 70}{space 4}-.0432205{col 83}{space 3} .1945228
+{txt}{space 23}2017  {c |}{col 30}{res}{space 2} .0037312{col 42}{space 2} .0636935{col 53}{space 1}    0.06{col 62}{space 3}0.953{col 70}{space 4}-.1211058{col 83}{space 3} .1285682
+{txt}{space 28} {c |}
+{space 17}gender_fill {c |}{col 30}{res}{space 2} .0971597{col 42}{space 2} .0343683{col 53}{space 1}    2.83{col 62}{space 3}0.005{col 70}{space 4} .0297991{col 83}{space 3} .1645203
+{txt}prop_age_cat_1_seasonal_fill {c |}{col 30}{res}{space 2}  .323471{col 42}{space 2} .0756882{col 53}{space 1}    4.27{col 62}{space 3}0.000{col 70}{space 4} .1751249{col 83}{space 3} .4718172
+{txt}prop_age_cat_2_seasonal_fill {c |}{col 30}{res}{space 2}    .3042{col 42}{space 2} .0713137{col 53}{space 1}    4.27{col 62}{space 3}0.000{col 70}{space 4} .1644277{col 83}{space 3} .4439724
+{txt}prop_age_cat_3_seasonal_fill {c |}{col 30}{res}{space 2} .2595574{col 42}{space 2} .0781518{col 53}{space 1}    3.32{col 62}{space 3}0.001{col 70}{space 4} .1063827{col 83}{space 3}  .412732
+{txt}prop_age_cat_4_seasonal_fill {c |}{col 30}{res}{space 2} .1695437{col 42}{space 2} .0817843{col 53}{space 1}    2.07{col 62}{space 3}0.038{col 70}{space 4} .0092494{col 83}{space 3}  .329838
+{txt}prop_age_cat_5_seasonal_fill {c |}{col 30}{res}{space 2}        0{col 42}{txt}  (omitted)
+{space 28} {c |}
+{space 15}mode_prov_num {c |}
+{space 17}Free State  {c |}{col 30}{res}{space 2} .0681664{col 42}{space 2} .0564355{col 53}{space 1}    1.21{col 62}{space 3}0.227{col 70}{space 4}-.0424451{col 83}{space 3} .1787778
+{txt}{space 20}Gauteng  {c |}{col 30}{res}{space 2} .2288144{col 42}{space 2} .0583835{col 53}{space 1}    3.92{col 62}{space 3}0.000{col 70}{space 4} .1143848{col 83}{space 3}  .343244
+{txt}{space 14}KwaZulu-Natal  {c |}{col 30}{res}{space 2} .1205727{col 42}{space 2} .0365748{col 53}{space 1}    3.30{col 62}{space 3}0.001{col 70}{space 4} .0488874{col 83}{space 3}  .192258
+{txt}{space 20}Limpopo  {c |}{col 30}{res}{space 2}  .285057{col 42}{space 2} .0456768{col 53}{space 1}    6.24{col 62}{space 3}0.000{col 70}{space 4} .1955322{col 83}{space 3} .3745819
+{txt}{space 17}Mpumalanga  {c |}{col 30}{res}{space 2} .1841884{col 42}{space 2} .0467002{col 53}{space 1}    3.94{col 62}{space 3}0.000{col 70}{space 4} .0926576{col 83}{space 3} .2757191
+{txt}{space 17}North West  {c |}{col 30}{res}{space 2} .2579932{col 42}{space 2} .0518391{col 53}{space 1}    4.98{col 62}{space 3}0.000{col 70}{space 4} .1563904{col 83}{space 3}  .359596
+{txt}{space 14}Northern Cape  {c |}{col 30}{res}{space 2} .0596927{col 42}{space 2} .0490227{col 53}{space 1}    1.22{col 62}{space 3}0.223{col 70}{space 4}  -.03639{col 83}{space 3} .1557754
+{txt}{space 15}Western Cape  {c |}{col 30}{res}{space 2}-.1170043{col 42}{space 2}  .038634{col 53}{space 1}   -3.03{col 62}{space 3}0.002{col 70}{space 4}-.1927255{col 83}{space 3}-.0412831
+{txt}{space 28} {c |}
+{space 20}rainfall {c |}{col 30}{res}{space 2}-.0000527{col 42}{space 2} .0000528{col 53}{space 1}   -1.00{col 62}{space 3}0.319{col 70}{space 4}-.0001562{col 83}{space 3} .0000508
+{txt}{space 23}_cons {c |}{col 30}{res}{space 2}-1.333749{col 42}{space 2} .0839855{col 53}{space 1}  -15.88{col 62}{space 3}0.000{col 70}{space 4}-1.498358{col 83}{space 3}-1.169141
+{col 1}{txt}ln(L.firm_size_year_seaso~l){col 30}{c |}{res}{space 2}        1{col 42}{txt}  (exposure)
+{hline 29}{c +}{hline 11}{hline 11}{hline 9}{hline 8}{hline 13}{hline 12}
+{space 20}/lnalpha {c |}{col 30}{res}{space 2}-2.041349{col 42}{space 2} .0571983{col 70}{space 4}-2.153455{col 83}{space 3}-1.929242
+{txt}{hline 29}{c +}{hline 11}{hline 11}{hline 9}{hline 8}{hline 13}{hline 12}
+                       alpha {c |}{col 30}{res}{space 2} .1298534{col 42}{space 2} .0074274{col 70}{space 4} .1160824{col 83}{space 3} .1452582
+{txt}{hline 29}{c BT}{hline 11}{hline 11}{hline 9}{hline 8}{hline 13}{hline 12}
+
+{com}.                 estimates store reg6
+{txt}
+{com}.         summ prop_affected_all if taxyear==2013 & e(sample)==1
+
+{txt}    Variable {c |}        Obs        Mean    Std. dev.       Min        Max
+{hline 13}{c +}{hline 57}
+prop_affe~ll {c |}{res}      1,042    .7497234    .3397324          0          1
+{txt}
+{com}.         estout reg* using "nb_exit_uw_NON_CIT_Survivor.xls", replace  cells(b(star fmt(3)) se(par)) stats(r2_p N ,fmt(3 0 0 0) label ("Pseudo R-squared" "N" )) nobaselevels varlabels(_cons Constant) starlevels(* 0.1 ** 0.05 *** 0.01) 
+{res}{txt}(output written to {browse  `"nb_exit_uw_NON_CIT_Survivor.xls"'})
+
+{com}. 
+. * coef plot - full model with dynamic offset variable
+.         coefplot reg6, vertical keep(2012.taxyear#c.prop_affected_all 2013.taxyear#c.prop_affected_all 2014.taxyear#c.prop_affected_all 2015.taxyear#c.prop_affected_all 2016.taxyear#c.prop_affected_all 2017.taxyear#c.prop_affected_all) coeflabels(2012.taxyear#c.prop_affected_all = "-2" ///
+>         2013.taxyear#c.prop_affected_all = "-1"  2014.taxyear#c.prop_affected_all = "0" 2015.taxyear#c.prop_affected_all = "1" ///
+>         2016.taxyear#c.prop_affected_all = "2"  2017.taxyear#c.prop_affected_all = "3" , wrap(2)) ///
+>         baselevels omitted nolabel xtitle(Event time) ///
+>         /*ytitle(Entry)*/ /*scheme(plotplain)*/ msymbol(O) title("") mcolor(gs1) yline(0, lcolor("gs10") lpattern(dash)) ciopts(lcolor("gs1")) graphregion(fcolor(white)) fcolor(white) lcolor(white) xscale(lcolor("gs1")) yscale(lcolor("gs1")) xlabel(, labcolor("gs1") noticks) ylabel(, labcolor("gs1")  grid glcolor(gs10) glwidth(vvthin) noticks)
+{res}{txt}
+{com}.         
+.         graph export "nb_exit_uw_NON_CIT_Survivor.png", replace
+{txt}{p 0 4 2}
+file {bf}
+nb_exit_uw_NON_CIT_Survivor.png{rm}
+saved as
+PNG
+format
+{p_end}
+
+{com}.         graph save "nb_exit_uw_NON_CIT_Survivor.gph", replace 
+{res}{txt}(file nb_exit_uw_NON_CIT_Survivor.gph saved)
+
+{com}. 
+.         
+. *nbreg weighted
+.         estimates clear
+{res}{txt}
+{com}.         nbreg exit_agri_new c.prop_affected_all##ib(2013).taxyear  gender_fill prop_age_cat_* i.mode_prov_num rainfall [pw=firm_size_year], cluster(taxrefno) exposure(L.firm_size_year)
+{txt}note: {bf:prop_age_cat_5_seasonal_fill} omitted because of collinearity.
+
+Fitting Poisson model:
+{res}
+{txt}Iteration 0:{space 3}log pseudolikelihood = {res:  -3935009}  
+Iteration 1:{space 3}log pseudolikelihood = {res:-3783358.1}  
+Iteration 2:{space 3}log pseudolikelihood = {res:-3783109.1}  
+Iteration 3:{space 3}log pseudolikelihood = {res:-3783109.1}  
+{res}
+{txt}Fitting constant-only model:
+{res}
+{txt}Iteration 0:{space 3}log pseudolikelihood = {res:-2337062.7}  
+Iteration 1:{space 3}log pseudolikelihood = {res:-2268462.5}  
+Iteration 2:{space 3}log pseudolikelihood = {res:  -2129801}  
+Iteration 3:{space 3}log pseudolikelihood = {res:-2125747.2}  
+Iteration 4:{space 3}log pseudolikelihood = {res:-2125679.3}  
+Iteration 5:{space 3}log pseudolikelihood = {res:-2125679.3}  
+{res}
+{txt}Fitting full model:
+{res}
+{txt}Iteration 0:{space 3}log pseudolikelihood = {res:-2098965.3}  
+Iteration 1:{space 3}log pseudolikelihood = {res:-2057711.8}  
+Iteration 2:{space 3}log pseudolikelihood = {res:-2056762.6}  
+Iteration 3:{space 3}log pseudolikelihood = {res:-2056760.1}  
+Iteration 4:{space 3}log pseudolikelihood = {res:-2056760.1}  
+{res}
+{txt}Negative binomial regression{col 49}Number of obs{col 67}= {res}     6,032
+{txt}{col 49}Wald chi2({res}25{txt}){col 67}= {res}    379.78
+{txt}{col 1}Dispersion{col 22}= {res}mean{txt}{col 49}Prob > chi2{col 67}= {res}    0.0000
+{txt}Log pseudolikelihood = {res}-2056760.1{txt}{col 49}Pseudo R2{col 67}= {res}    0.0324
+
+{txt}{ralign 94:(Std. Err. adjusted for {res:1,285} clusters in taxrefno)}
+{hline 29}{c TT}{hline 11}{hline 11}{hline 9}{hline 8}{hline 13}{hline 12}
+{col 30}{c |}{col 42}    Robust
+{col 1}               exit_agri_new{col 30}{c |}      Coef.{col 42}   Std. Err.{col 54}      z{col 62}   P>|z|{col 70}     [95% Con{col 83}f. Interval]
+{hline 29}{c +}{hline 11}{hline 11}{hline 9}{hline 8}{hline 13}{hline 12}
+{space 11}prop_affected_all {c |}{col 30}{res}{space 2} .2516117{col 42}{space 2} .0864502{col 53}{space 1}    2.91{col 62}{space 3}0.004{col 70}{space 4} .0821723{col 83}{space 3}  .421051
+{txt}{space 28} {c |}
+{space 21}taxyear {c |}
+{space 23}2012  {c |}{col 30}{res}{space 2} .1249031{col 42}{space 2} .0827206{col 53}{space 1}    1.51{col 62}{space 3}0.131{col 70}{space 4}-.0372264{col 83}{space 3} .2870326
+{txt}{space 23}2014  {c |}{col 30}{res}{space 2}-.0475042{col 42}{space 2} .0778448{col 53}{space 1}   -0.61{col 62}{space 3}0.542{col 70}{space 4}-.2000772{col 83}{space 3} .1050689
+{txt}{space 23}2015  {c |}{col 30}{res}{space 2}-.1206078{col 42}{space 2} .0733847{col 53}{space 1}   -1.64{col 62}{space 3}0.100{col 70}{space 4}-.2644393{col 83}{space 3} .0232237
+{txt}{space 23}2016  {c |}{col 30}{res}{space 2}-.0775757{col 42}{space 2} .0913479{col 53}{space 1}   -0.85{col 62}{space 3}0.396{col 70}{space 4}-.2566143{col 83}{space 3}  .101463
+{txt}{space 23}2017  {c |}{col 30}{res}{space 2} .0468669{col 42}{space 2} .0846843{col 53}{space 1}    0.55{col 62}{space 3}0.580{col 70}{space 4}-.1191113{col 83}{space 3} .2128451
+{txt}{space 28} {c |}
+{space 1}taxyear#c.prop_affected_all {c |}
+{space 23}2012  {c |}{col 30}{res}{space 2}-.1295733{col 42}{space 2} .0977371{col 53}{space 1}   -1.33{col 62}{space 3}0.185{col 70}{space 4}-.3211345{col 83}{space 3} .0619879
+{txt}{space 23}2014  {c |}{col 30}{res}{space 2}  .118117{col 42}{space 2} .0960729{col 53}{space 1}    1.23{col 62}{space 3}0.219{col 70}{space 4}-.0701825{col 83}{space 3} .3064164
+{txt}{space 23}2015  {c |}{col 30}{res}{space 2} .0954423{col 42}{space 2} .0895527{col 53}{space 1}    1.07{col 62}{space 3}0.287{col 70}{space 4}-.0800778{col 83}{space 3} .2709623
+{txt}{space 23}2016  {c |}{col 30}{res}{space 2} .0794374{col 42}{space 2} .1076978{col 53}{space 1}    0.74{col 62}{space 3}0.461{col 70}{space 4}-.1316463{col 83}{space 3} .2905212
+{txt}{space 23}2017  {c |}{col 30}{res}{space 2}-.1464156{col 42}{space 2} .0996566{col 53}{space 1}   -1.47{col 62}{space 3}0.142{col 70}{space 4}-.3417389{col 83}{space 3} .0489077
+{txt}{space 28} {c |}
+{space 17}gender_fill {c |}{col 30}{res}{space 2}-.0769571{col 42}{space 2} .1041131{col 53}{space 1}   -0.74{col 62}{space 3}0.460{col 70}{space 4} -.281015{col 83}{space 3} .1271008
+{txt}prop_age_cat_1_seasonal_fill {c |}{col 30}{res}{space 2} 1.455928{col 42}{space 2} .2631523{col 53}{space 1}    5.53{col 62}{space 3}0.000{col 70}{space 4} .9401595{col 83}{space 3} 1.971698
+{txt}prop_age_cat_2_seasonal_fill {c |}{col 30}{res}{space 2} .6655448{col 42}{space 2} .2449586{col 53}{space 1}    2.72{col 62}{space 3}0.007{col 70}{space 4} .1854348{col 83}{space 3} 1.145655
+{txt}prop_age_cat_3_seasonal_fill {c |}{col 30}{res}{space 2} .8766588{col 42}{space 2} .3231321{col 53}{space 1}    2.71{col 62}{space 3}0.007{col 70}{space 4} .2433316{col 83}{space 3} 1.509986
+{txt}prop_age_cat_4_seasonal_fill {c |}{col 30}{res}{space 2} .9967043{col 42}{space 2} .3007733{col 53}{space 1}    3.31{col 62}{space 3}0.001{col 70}{space 4} .4071995{col 83}{space 3} 1.586209
+{txt}prop_age_cat_5_seasonal_fill {c |}{col 30}{res}{space 2}        0{col 42}{txt}  (omitted)
+{space 28} {c |}
+{space 15}mode_prov_num {c |}
+{space 17}Free State  {c |}{col 30}{res}{space 2} .0904108{col 42}{space 2} .2224174{col 53}{space 1}    0.41{col 62}{space 3}0.684{col 70}{space 4}-.3455194{col 83}{space 3}  .526341
+{txt}{space 20}Gauteng  {c |}{col 30}{res}{space 2} .3099319{col 42}{space 2} .1242683{col 53}{space 1}    2.49{col 62}{space 3}0.013{col 70}{space 4} .0663704{col 83}{space 3} .5534934
+{txt}{space 14}KwaZulu-Natal  {c |}{col 30}{res}{space 2} .3847811{col 42}{space 2} .1390165{col 53}{space 1}    2.77{col 62}{space 3}0.006{col 70}{space 4} .1123137{col 83}{space 3} .6572485
+{txt}{space 20}Limpopo  {c |}{col 30}{res}{space 2} .4735893{col 42}{space 2} .1393228{col 53}{space 1}    3.40{col 62}{space 3}0.001{col 70}{space 4} .2005215{col 83}{space 3} .7466571
+{txt}{space 17}Mpumalanga  {c |}{col 30}{res}{space 2} .3594568{col 42}{space 2} .1279043{col 53}{space 1}    2.81{col 62}{space 3}0.005{col 70}{space 4} .1087689{col 83}{space 3} .6101447
+{txt}{space 17}North West  {c |}{col 30}{res}{space 2} .3732842{col 42}{space 2} .1171272{col 53}{space 1}    3.19{col 62}{space 3}0.001{col 70}{space 4}  .143719{col 83}{space 3} .6028493
+{txt}{space 14}Northern Cape  {c |}{col 30}{res}{space 2} .1372452{col 42}{space 2} .1208514{col 53}{space 1}    1.14{col 62}{space 3}0.256{col 70}{space 4}-.0996192{col 83}{space 3} .3741095
+{txt}{space 15}Western Cape  {c |}{col 30}{res}{space 2} .0350024{col 42}{space 2} .1195478{col 53}{space 1}    0.29{col 62}{space 3}0.770{col 70}{space 4}-.1993069{col 83}{space 3} .2693118
+{txt}{space 28} {c |}
+{space 20}rainfall {c |}{col 30}{res}{space 2} .0000124{col 42}{space 2} .0000666{col 53}{space 1}    0.19{col 62}{space 3}0.852{col 70}{space 4}-.0001181{col 83}{space 3}  .000143
+{txt}{space 23}_cons {c |}{col 30}{res}{space 2}-2.050545{col 42}{space 2} .2695524{col 53}{space 1}   -7.61{col 62}{space 3}0.000{col 70}{space 4}-2.578858{col 83}{space 3}-1.522232
+{col 1}{txt}ln(L.firm_size_year_seaso~l){col 30}{c |}{res}{space 2}        1{col 42}{txt}  (exposure)
+{hline 29}{c +}{hline 11}{hline 11}{hline 9}{hline 8}{hline 13}{hline 12}
+{space 20}/lnalpha {c |}{col 30}{res}{space 2}-2.269033{col 42}{space 2} .0900163{col 70}{space 4}-2.445462{col 83}{space 3}-2.092604
+{txt}{hline 29}{c +}{hline 11}{hline 11}{hline 9}{hline 8}{hline 13}{hline 12}
+                       alpha {c |}{col 30}{res}{space 2} .1034121{col 42}{space 2} .0093088{col 70}{space 4} .0866861{col 83}{space 3} .1233655
+{txt}{hline 29}{c BT}{hline 11}{hline 11}{hline 9}{hline 8}{hline 13}{hline 12}
+
+{com}.                 estimates store reg6
+{txt}
+{com}.         summ prop_affected_all if taxyear==2013 & e(sample)==1
+
+{txt}    Variable {c |}        Obs        Mean    Std. dev.       Min        Max
+{hline 13}{c +}{hline 57}
+prop_affe~ll {c |}{res}      1,042    .7497234    .3397324          0          1
+{txt}
+{com}.         estout reg* using "nb_exit_w_NON_CIT_Survivor.xls", replace  cells(b(star fmt(3)) se(par)) stats(r2_p N ,fmt(3 0 0 0) label ("Pseudo R-squared" "N" )) nobaselevels varlabels(_cons Constant) starlevels(* 0.1 ** 0.05 *** 0.01) 
+{res}{txt}(output written to {browse  `"nb_exit_w_NON_CIT_Survivor.xls"'})
+
+{com}. 
+. * coef plot - full model with dynamic offset variable
+.         coefplot reg6, vertical keep(2012.taxyear#c.prop_affected_all 2013.taxyear#c.prop_affected_all 2014.taxyear#c.prop_affected_all 2015.taxyear#c.prop_affected_all 2016.taxyear#c.prop_affected_all 2017.taxyear#c.prop_affected_all) coeflabels(2012.taxyear#c.prop_affected_all = "-2" ///
+>         2013.taxyear#c.prop_affected_all = "-1"  2014.taxyear#c.prop_affected_all = "0" 2015.taxyear#c.prop_affected_all = "1" ///
+>         2016.taxyear#c.prop_affected_all = "2"  2017.taxyear#c.prop_affected_all = "3" , wrap(2)) ///
+>         baselevels omitted nolabel xtitle(Event time) ///
+>         /*ytitle(Entry)*/ /*scheme(plotplain)*/ msymbol(O) title("") mcolor(gs1) yline(0, lcolor("gs10") lpattern(dash)) ciopts(lcolor("gs1")) graphregion(fcolor(white)) fcolor(white) lcolor(white) xscale(lcolor("gs1")) yscale(lcolor("gs1")) xlabel(, labcolor("gs1") noticks) ylabel(, labcolor("gs1")  grid glcolor(gs10) glwidth(vvthin) noticks)
+{res}{txt}
+{com}.         
+.         graph export "nb_exit_w_NON_CIT_Survivor.png", replace
+{txt}{p 0 4 2}
+file {bf}
+nb_exit_w_NON_CIT_Survivor.png{rm}
+saved as
+PNG
+format
+{p_end}
+
+{com}.         graph save "nb_exit_w_NON_CIT_Survivor.gph", replace
+{res}{txt}(file nb_exit_w_NON_CIT_Survivor.gph saved)
+
+{com}. 
+.         
+.         restore
+{txt}
+{com}. 
+. **# Reg analysis: CIT Non Survivors
+. stop 
+{err}command {bf}stop{sf} is unrecognized
+{txt}{search r(199), local:r(199);}
+
+end of do-file
+
+{search r(199), local:r(199);}
+
+{com}. 

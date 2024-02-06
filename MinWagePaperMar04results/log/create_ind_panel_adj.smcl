@@ -1,0 +1,1607 @@
+{smcl}
+{txt}{sf}{ul off}{.-}
+      name:  {res}<unnamed>
+       {txt}log:  {res}F:\michael\2023 VERSION\minimum wage paper\log\create_ind_panel_adj.smcl
+  {txt}log type:  {res}smcl
+ {txt}opened on:  {res}27 Feb 2023, 13:35:54
+{txt}
+{com}. 
+. use "$saveaddress_data\merged_ind_panel", clear 
+{txt}
+{com}.         keep amt3601 amt3805  busdistmuni_geo buslocmuni_geo busmainplc_geo busprov_geo ///
+>  province_geo districtmunicip_geo localmunicip_geo mainplace_geo dateofbirth ///
+>  gender idno mainincomesourcecode natureofperson payereferenceno ///
+>  periodemployedfrom periodemployedto taxrefno taxyear totalperiodsinyearofassessment ///
+>  totalperiodsworked passportno certificateno revisionnumber kerr_income kerr_emp kerr_emp_inc FYE
+{txt}
+{com}.  
+. * create individual identifier: code from Marlies Piek: "Set_up_4_march" 
+. gen id_new=idno
+{txt}(2,611,994 missing values generated)
+
+{com}. replace id_new=passportno if id_new==""
+{txt}variable {bf}{res}id_new{sf}{txt} was {bf}{res}str13{sf}{txt} now {bf}{res}str18{sf}
+{txt}(317,788 real changes made)
+
+{com}. label var id_new "Unique identifer, from SA ID or passport no."
+{txt}
+{com}. egen n_id=group(id_new) 
+{txt}(2,294,206 missing values generated)
+
+{com}. 
+. sort idno payeref taxyear
+{txt}
+{com}. br idno payeref taxyear
+{txt}
+{com}. 
+.         destring totalperiodsinyearofassessment, gen(totpy) force
+{txt}totalperiodsinyearofassessment: contains nonnumeric characters; totpy {res}generated {txt}as {res}double
+{txt}(2294210 missing values generated)
+{res}{txt}
+{com}.         replace totpy = abs(totpy)
+{txt}(0 real changes made)
+
+{com}.         destring totalperiodsworked, gen(totwork) force
+{txt}totalperiodsworked: contains nonnumeric characters; totwork {res}generated {txt}as {res}double
+{txt}(2294210 missing values generated)
+{res}{txt}
+{com}.         replace totwork=abs(totwork) 
+{txt}(3 real changes made)
+
+{com}.         gen weight = totwork/totpy
+{txt}(2,294,956 missing values generated)
+
+{com}. 
+.         gen paye_next = 0                                                               
+{txt}
+{com}.         gen paye_prev = 0 
+{txt}
+{com}.                                                                                      
+.         replace paye_next = 1 if idno == idno[_n+1] & taxyear+1 == taxyear[_n+1] & taxyear !=2018 /*see in the next tax year*/
+{txt}(5,937,082 real changes made)
+
+{com}.                                                                                  
+.         replace paye_prev = 1 if idno == idno[_n-1] & taxyear-1 == taxyear[_n-1] & taxyear !=2010 /*seen in the previous taxyear*/   
+{txt}(5,937,082 real changes made)
+
+{com}.         
+.         cap drop taxyear_start_date
+{txt}
+{com}.         gen taxyear_start_date = (monthly(strofreal(taxyear) + "/" + "01", "YM") -12) + 2
+{txt}
+{com}. 
+.         cap drop taxyear_end_date 
+{txt}
+{com}.         gen taxyear_end_date = taxyear_start_date +12
+{txt}
+{com}.         
+.         cap drop taxyear_start_date_tmp 
+{txt}
+{com}.         cap drop taxyear_end_date_tmp 
+{txt}
+{com}.         gen taxyear_start_date_tmp =dofm(taxyear_start_date)
+{txt}
+{com}.         gen taxyear_end_date_tmp =dofm((taxyear_end_date))-1
+{txt}
+{com}.         
+.         cap drop taxyear_start_date 
+{txt}
+{com}.         cap drop taxyear_end_date 
+{txt}
+{com}.         
+.         ren taxyear_start_date_tmp taxyear_start_date 
+{res}{txt}
+{com}.         format taxyear_start_date %tdDD/NN/CCYY
+{txt}
+{com}.         cap ren taxyear_end_date_tmp taxyear_end_date 
+{txt}
+{com}.         format taxyear_end_date %tdDD/NN/CCYY
+{txt}
+{com}.         
+.         gen c_taxyear_start_date =  taxyear_start_date                       
+{txt}
+{com}.         gen c_taxyear_end_date =  taxyear_end_date
+{txt}
+{com}.     format c_taxyear_start_date %tdDD/NN/CCYY
+{txt}
+{com}.         format c_taxyear_end_date %tdDD/NN/CCYY
+{txt}
+{com}.         
+.         generate days_in_year = c_taxyear_end_date - c_taxyear_start_date
+{txt}
+{com}.                                                                                                                                         
+.                         
+.         gen start_imp = taxyear_start_date if weight>=1                              /*Start date for workers working full taxyear or more*/
+{txt}(2,695,140 missing values generated)
+
+{com}.         gen end_imp = taxyear_end_date if weight>=1                                  /*end date for worker working full taxyear or more */
+{txt}(2,695,140 missing values generated)
+
+{com}.         format start_imp %tdDD/NN/CCYY
+{txt}
+{com}.         format end_imp %tdDD/NN/CCYY
+{txt}
+{com}.  
+. 
+.         
+. 
+. 
+.   
+.  /******************************************************************************
+>     X.1.1. IMPUTE
+> ********************************************************************************/
+.                                                                                 
+. /******************************************************************************
+> Impute only for id's with no-unity weight not seen both previously and after
+> Using next period data
+> ********************************************************************************/
+.         gen c_start_imp = start_imp
+{txt}(2,695,140 missing values generated)
+
+{com}.         gen c_end_imp = end_imp
+{txt}(2,695,140 missing values generated)
+
+{com}.     format c_start_imp %tdDD/NN/CCYY
+{txt}
+{com}.         format c_end_imp %tdDD/NN/CCYY
+{txt}
+{com}.  
+. 
+.         sort idno payeref taxyear
+{txt}
+{com}. 
+.         replace c_end_imp = c_taxyear_start_date[_n+1] -1 if paye_next ==1 & paye_prev == 0 & weight <1 & c_end_imp ==.
+{txt}(854,001 real changes made)
+
+{com}.         replace c_start_imp = c_end_imp - weight*days_in_year if c_start_imp == . & c_end_imp!=. 
+{txt}(854,001 real changes made)
+
+{com}. 
+.                                                                                     /* Using previous period data*/
+.         replace c_start_imp = c_taxyear_end_date[_n-1] +1 if paye_prev ==1 & paye_next == 0 & weight<1 & c_start_imp ==.
+{txt}(341,853 real changes made)
+
+{com}.         replace c_end_imp = c_start_imp + weight*days_in_year if c_end_imp == . & c_start_imp!=. 
+{txt}(341,853 real changes made)
+
+{com}.         
+. 
+.         replace c_start_imp = round(c_start_imp)
+{txt}(580,119 real changes made)
+
+{com}.         replace c_end_imp = round(c_end_imp)
+{txt}(214,725 real changes made)
+
+{com}.                                                                                                                                                                 
+. 
+. 
+. 
+. /*******************************************************************************
+> Same firm dates work done with old approach to calculate actual days worked. 
+> ********************************************************************************/
+.         
+.         gen tag_unimp = 1 if weight !=. & c_start_imp == . & c_end_imp == .
+{txt}(10,983,534 missing values generated)
+
+{com}.         replace tag_unimp = 0 if tag_unimp == .
+{txt}(10,983,534 real changes made)
+
+{com}.         
+.         replace c_start_imp = c_taxyear_start_date if tag_unimp == 1
+{txt}(1,499,286 real changes made)
+
+{com}.         replace c_end_imp = c_taxyear_end_date if tag_unimp == 1
+{txt}(1,499,286 real changes made)
+
+{com}.         
+. 
+.         save "$saveaddress_data\IRP5_imputingweights_fulldata_DELETE1.dta", replace
+{txt}{p 0 4 2}
+file {bf}
+F:\michael\2023 VERSION\minimum wage paper\data\\IRP5_imputingweights_fulldata_DELETE1.dta{rm}
+saved
+{p_end}
+
+{com}.         forvalues year= 2010/2018 {c -(}
+{txt}  2{com}.         use if taxyear==`year' using "$saveaddress_data\IRP5_imputingweights_fulldata_DELETE1.dta", clear 
+{txt}  3{com}.         rename  amt3601 a3601_income 
+{txt}  4{com}.         rename c_end_imp ind_end
+{txt}  5{com}.         rename c_start_imp ind_start
+{txt}  6{com}.         rename c_taxyear_start_date taxyear_start
+{txt}  7{com}.         rename c_taxyear_end_date taxyear_end
+{txt}  8{com}.         
+.         capture drop tag_endmissing
+{txt}  9{com}.                         gen tag_endmissing=1*(ind_end==.)
+{txt} 10{com}.                         capture drop tag_startmissing
+{txt} 11{com}.                         gen tag_startmissing=1*(ind_start==.)
+{txt} 12{com}.                         capture drop tag_startsafter
+{txt} 13{com}.                         gen tag_startsafter = 1*(taxyear_end<ind_start) 
+{txt} 14{com}.                         capture drop tag_endsbefore
+{txt} 15{com}.                         gen tag_endsbefore = 1*(taxyear_start>ind_end)
+{txt} 16{com}. 
+.                         di in red "Clean up ending and starting dates"
+{txt} 17{com}.                         capture drop ind_end_orig
+{txt} 18{com}.                         gen ind_end_orig = ind_end
+{txt} 19{com}.                         capture drop ind_start_orig
+{txt} 20{com}.                         gen ind_start_orig = ind_start
+{txt} 21{com}.                         di in red "Replace start and end if start>end"
+{txt} 22{com}.                         replace ind_end = ind_start_orig if ind_start_orig>ind_end_orig
+{txt} 23{com}.                         replace ind_start = ind_end_orig if ind_end_orig<ind_start_orig
+{txt} 24{com}. 
+.                         di in red "Make dates missing if end and start are either after or before start of tax year"
+{txt} 25{com}.                         replace ind_end = . if tag_endsbefore==1 | tag_startsafter==1  
+{txt} 26{com}.                         replace ind_start = . if tag_endsbefore==1 | tag_startsafter==1  
+{txt} 27{com}.                         di in red "Replace dates with date of firms tax year end if ends after"
+{txt} 28{com}.                         replace ind_end = taxyear_end if ind_end>taxyear_end & ind_end!=.
+{txt} 29{com}.                         di in red "Replace start date with date of firm start if  person started employment before firm fin statements"
+{txt} 30{com}.                         replace ind_start = taxyear_start if ind_start<taxyear_start & ind_start!=. 
+{txt} 31{com}. 
+.                 
+. 
+.                         capture format %tdDD/NN/CCYY ind_start
+{txt} 32{com}.                         capture format %tdDD/NN/CCYY ind_end
+{txt} 33{com}.                         capture format %tdDD/NN/CCYY ind_start_orig
+{txt} 34{com}.                         capture format %tdDD/NN/CCYY ind_end_orig 
+{txt} 35{com}.                                                                                                                                                                 /* FK to SR: What is going on here? */
+.                         rename FYE firm_end                                               //for now
+{txt} 36{com}.                         format %tdDD/NN/CCYY firm_end
+{txt} 37{com}.                         
+.                         
+. /*******************************************************************************
+> THIS IS A PROBLEM AREA
+> ********************************************************************************/
+.                         di in red "Generate firm start and end dates"
+{txt} 38{com}.                                                                                              /*these dates need to be updated with each inclusion of a leap year*/
+.                         
+. /* *****************************************************************
+>         I1. ISSUE - TO DO 
+>         ****************************************************************
+>         Write program that auto-generates firm start date from firm end
+>         date.
+>         
+>         Author: FK
+> ***************************************************************** */
+.              cap drop firm_end_tmp 
+{txt} 39{com}.                         gen firm_end_tmp = mofd(firm_end)
+{txt} 40{com}.                         format firm_end_tmp %tmDD/NN/CCYY
+{txt} 41{com}.                         cap drop firm_start_tmp 
+{txt} 42{com}.                         gen firm_start_tmp =  firm_end_tmp - 11
+{txt} 43{com}.                         format firm_start_tmp %tmDD/NN/CCYY
+{txt} 44{com}.                         gen firm_start = dofm(firm_start_tmp)
+{txt} 45{com}.                         format firm_start %tdDD/NN/CCYY
+{txt} 46{com}.                         drop firm_start_tmp firm_end_tmp 
+{txt} 47{com}. 
+.         
+. 
+. 
+.                         di in red "Generate individual in firm data"
+{txt} 48{com}.                         capture drop indfirm_start
+{txt} 49{com}.                         gen indfirm_start = firm_start*(firm_start>=ind_start) + ind_start*(ind_start>firm_start)
+{txt} 50{com}.                         replace indfirm_start = . if ind_end<firm_start
+{txt} 51{com}.                         replace indfirm_start = . if ind_start>firm_end
+{txt} 52{com}. 
+.                         capture drop indfirm_end
+{txt} 53{com}.                         gen indfirm_end = firm_end*(firm_end<=ind_end) + ind_end*(ind_end<firm_end)
+{txt} 54{com}.                         replace indfirm_end = . if ind_end<firm_start
+{txt} 55{com}.                         replace indfirm_end = . if ind_start>firm_end
+{txt} 56{com}.                         format %tdDD/NN/CCYY indfirm_end
+{txt} 57{com}.                         format %tdDD/NN/CCYY indfirm_start
+{txt} 58{com}. 
+.                         di in red "Generate Days Worked and days in firm, days after firm fin year and days before firm fin year" 
+{txt} 59{com}.                         capture drop  ind_days
+{txt} 60{com}.                         gen ind_days = ind_end-ind_start+1
+{txt} 61{com}.                         capture drop  ind_firm
+{txt} 62{com}.                         gen ind_firm = indfirm_end-indfirm_start+1
+{txt} 63{com}.                         capture drop  ind_firm_after
+{txt} 64{com}.                         gen ind_firm_after = ind_end-indfirm_end 
+{txt} 65{com}.                     *replace ind_firm_after = ind_end-ind_start+1 if ind_end>firm_start & ind_start>firm_start & ind_firm_after==.
+.                         capture drop  ind_firm_before 
+{txt} 66{com}.                         gen ind_firm_before = indfirm_start - ind_start
+{txt} 67{com}.                         *replace ind_firm_before = ind_end-ind_start+1 if ind_end<firm_start & ind_start<firm_start & ind_firm_before==. 
+. 
+.                         di in red "Proportion of time in firm" 
+{txt} 68{com}.                         capture drop prop_in_firm
+{txt} 69{com}.                         gen prop_in_firm = ind_firm/ind_days if tag_unimp == 0
+{txt} 70{com}.                         capture drop prop_before_firm
+{txt} 71{com}.                         gen prop_before_firm =ind_firm_before/ind_days if tag_unimp == 0
+{txt} 72{com}.                         capture drop prop_after_firm
+{txt} 73{com}.                         gen prop_after_firm = ind_firm_after/ind_days if tag_unimp == 0
+{txt} 74{com}. 
+.                         replace prop_after_firm = ind_days/ind_days if ind_start>firm_end & tag_unimp == 0
+{txt} 75{com}.                         replace prop_before_firm = ind_days/ind_days if ind_end<firm_start & tag_unimp == 0 
+{txt} 76{com}.                         replace prop_after_firm = 0 if prop_after_firm==. & tag_unimp == 0
+{txt} 77{com}.                         replace prop_before_firm = 0 if prop_before_firm==. & tag_unimp == 0
+{txt} 78{com}.                         /*capture rename  grossnfundincomeamnt grossnretfundincomeamnt*/
+.                         di in red "Generate prop_in_firm, prop_after_firm and prop_before_firm for those with unimputed days but with weights" 
+{txt} 79{com}.                                 replace prop_in_firm = (ind_firm*weight)/ind_days if tag_unimp == 1
+{txt} 80{com}.                                 replace prop_before_firm =(ind_firm_before*weight)/ind_days if tag_unimp == 1
+{txt} 81{com}.                                 replace prop_after_firm = (ind_firm_after*weight)/ind_days if tag_unimp == 1
+{txt} 82{com}. 
+.                                 replace prop_after_firm = ind_days/ind_days if ind_start>firm_end & tag_unimp == 1
+{txt} 83{com}.                                 replace prop_before_firm = ind_days/ind_days if ind_end<firm_start & tag_unimp == 1
+{txt} 84{com}.                                 replace prop_after_firm = 0 if prop_after_firm==. & tag_unimp == 1
+{txt} 85{com}.                                 replace prop_before_firm = 0 if prop_before_firm==. & tag_unimp == 1    
+{txt} 86{com}.                                 
+.                                 save "$saveaddress_data\IRP5_`year'_temp_DELETE2.dta", replace 
+{txt} 87{com}.                                 keep if prop_in_firm<. /*&  prop_in_firm>0 */
+{txt} 88{com}.                                                                                                                                                                 /* FK to SR: WHY IS THIS COMMENTED OUT??? WHAT IS GOING ON?? */
+.                                                                                                                                                                 /* FK to SR, FK to MK: I have attempted to correct this somewhat only using the pieterse kerr and 3601 measures.  */ 
+.                                                                                                                                                                         
+.                         ds kerr_income  a3601_income                                                                                                                                    
+{txt} 89{com}.                         foreach var in `r(varlist)' {c -(} 
+{txt} 90{com}.                                 replace `var' = `var'*prop_in_firm
+{txt} 91{com}.                         {c )-} 
+{txt} 92{com}.                         
+.                         drop prop_before_firm prop_after_firm ind_firm_before ind_firm_after
+{txt} 93{com}.                         drop if firm_end==. & firm_start==. 
+{txt} 94{com}.                         save "$saveaddress_data\IRP5_`year'_infirm.dta", replace 
+{txt} 95{com}.                         local altbefore = "after"
+{txt} 96{com}.                         local altafter = "before"
+{txt} 97{com}.                         foreach reldate in before after {c -(} 
+{txt} 98{com}.                                 use "$saveaddress_data\IRP5_`year'_temp_DELETE2.dta", clear 
+{txt} 99{com}.                                 keep if prop_`reldate'_firm>0  & prop_`reldate'_firm<. 
+{txt}100{com}.                                 ds kerr_income  a3601_income 
+{txt}101{com}.                                 
+.                                 foreach var in `r(varlist)' {c -(} 
+{txt}102{com}.                                         replace `var' = `var'*prop_`reldate'_firm
+{txt}103{com}.                                 {c )-} 
+{txt}104{com}.                                 drop prop_in_firm prop_`alt`reldate''_firm ind_firm ind_firm_`alt`reldate'' 
+{txt}105{com}.                                 gen tag_`reldate'=1 
+{txt}106{com}.                                 *drop if firm_end==. & firm_start==. 
+.                                 save "$saveaddress_data\IRP5_`year'_`reldate'.dta", replace                             
+{txt}107{com}.                         {c )-}
+{txt}108{com}.                 
+.         {c )-}
+{res}{err}Clean up ending and starting dates
+Replace start and end if start>end
+{txt}(0 real changes made)
+(0 real changes made)
+{err}Make dates missing if end and start are either after or before start of tax year
+{txt}(0 real changes made)
+(0 real changes made)
+{err}Replace dates with date of firms tax year end if ends after
+{txt}(0 real changes made)
+{err}Replace start date with date of firm start if  person started employment before firm fin statements
+{txt}(0 real changes made)
+{res}{err}Generate firm start and end dates
+{txt}(690,428 missing values generated)
+(690,428 missing values generated)
+(690,428 missing values generated)
+{err}Generate individual in firm data
+{txt}(690,428 missing values generated)
+(0 real changes made)
+(377 real changes made, 377 to missing)
+(690,428 missing values generated)
+(0 real changes made)
+(377 real changes made, 377 to missing)
+{err}Generate Days Worked and days in firm, days after firm fin year and days before firm fin year
+{txt}(690,805 missing values generated)
+(690,805 missing values generated)
+(690,805 missing values generated)
+{err}Proportion of time in firm
+{txt}(791,620 missing values generated)
+(791,620 missing values generated)
+(791,620 missing values generated)
+(366 real changes made)
+(690,428 real changes made)
+(690,428 real changes made)
+(366 real changes made)
+{err}Generate prop_in_firm, prop_after_firm and prop_before_firm for those with unimputed days but with weights
+{txt}(100,815 real changes made)
+(100,815 real changes made)
+(100,815 real changes made)
+(11 real changes made)
+(0 real changes made)
+(0 real changes made)
+(11 real changes made)
+{p 0 4 2}
+file {bf}
+F:\michael\2023 VERSION\minimum wage paper\data\\IRP5_2010_temp_DELETE2.dta{rm}
+saved
+{p_end}
+(690,805 observations deleted)
+{col 1}kerr_income{col 15}a3601_income
+(434,563 real changes made)
+(431,022 real changes made)
+(0 observations deleted)
+{p 0 4 2}
+file {bf}
+F:\michael\2023 VERSION\minimum wage paper\data\\IRP5_2010_infirm.dta{rm}
+saved
+{p_end}
+(297,951 observations deleted)
+{col 1}kerr_income{col 15}a3601_income
+(396,460 real changes made)
+(393,360 real changes made)
+{p 0 4 2}
+file {bf}
+F:\michael\2023 VERSION\minimum wage paper\data\\IRP5_2010_before.dta{rm}
+saved
+{p_end}
+(1,385,476 observations deleted)
+{col 1}kerr_income{col 15}a3601_income
+(1,122 real changes made)
+(1,121 real changes made)
+{p 0 4 2}
+file {bf}
+F:\michael\2023 VERSION\minimum wage paper\data\\IRP5_2010_after.dta{rm}
+saved
+{p_end}
+{res}{err}Clean up ending and starting dates
+Replace start and end if start>end
+{txt}(0 real changes made)
+(0 real changes made)
+{err}Make dates missing if end and start are either after or before start of tax year
+{txt}(0 real changes made)
+(0 real changes made)
+{err}Replace dates with date of firms tax year end if ends after
+{txt}(0 real changes made)
+{err}Replace start date with date of firm start if  person started employment before firm fin statements
+{txt}(0 real changes made)
+{res}{err}Generate firm start and end dates
+{txt}(590,137 missing values generated)
+(590,137 missing values generated)
+(590,137 missing values generated)
+{err}Generate individual in firm data
+{txt}(590,137 missing values generated)
+(3,381 real changes made, 3,381 to missing)
+(322 real changes made, 322 to missing)
+(590,137 missing values generated)
+(3,381 real changes made, 3,381 to missing)
+(322 real changes made, 322 to missing)
+{err}Generate Days Worked and days in firm, days after firm fin year and days before firm fin year
+{txt}(593,840 missing values generated)
+(593,840 missing values generated)
+(593,840 missing values generated)
+{err}Proportion of time in firm
+{txt}(711,694 missing values generated)
+(711,694 missing values generated)
+(711,694 missing values generated)
+(310 real changes made)
+(593,518 real changes made)
+(593,518 real changes made)
+(310 real changes made)
+{err}Generate prop_in_firm, prop_after_firm and prop_before_firm for those with unimputed days but with weights
+{txt}(117,854 real changes made)
+(117,854 real changes made)
+(117,854 real changes made)
+(12 real changes made)
+(0 real changes made)
+(0 real changes made)
+(12 real changes made)
+{p 0 4 2}
+file {bf}
+F:\michael\2023 VERSION\minimum wage paper\data\\IRP5_2011_temp_DELETE2.dta{rm}
+saved
+{p_end}
+(593,840 observations deleted)
+{col 1}kerr_income{col 15}a3601_income
+(456,113 real changes made)
+(452,178 real changes made)
+(0 observations deleted)
+{p 0 4 2}
+file {bf}
+F:\michael\2023 VERSION\minimum wage paper\data\\IRP5_2011_infirm.dta{rm}
+saved
+{p_end}
+(388,520 observations deleted)
+{col 1}kerr_income{col 15}a3601_income
+(402,996 real changes made)
+(399,703 real changes made)
+{p 0 4 2}
+file {bf}
+F:\michael\2023 VERSION\minimum wage paper\data\\IRP5_2011_before.dta{rm}
+saved
+{p_end}
+(1,384,634 observations deleted)
+{col 1}kerr_income{col 15}a3601_income
+(2,024 real changes made)
+(2,023 real changes made)
+{p 0 4 2}
+file {bf}
+F:\michael\2023 VERSION\minimum wage paper\data\\IRP5_2011_after.dta{rm}
+saved
+{p_end}
+{res}{err}Clean up ending and starting dates
+Replace start and end if start>end
+{txt}(0 real changes made)
+(0 real changes made)
+{err}Make dates missing if end and start are either after or before start of tax year
+{txt}(0 real changes made)
+(0 real changes made)
+{err}Replace dates with date of firms tax year end if ends after
+{txt}(0 real changes made)
+{err}Replace start date with date of firm start if  person started employment before firm fin statements
+{txt}(0 real changes made)
+{res}{err}Generate firm start and end dates
+{txt}(357,639 missing values generated)
+(357,639 missing values generated)
+(357,639 missing values generated)
+{err}Generate individual in firm data
+{txt}(357,639 missing values generated)
+(6,650 real changes made, 6,650 to missing)
+(183 real changes made, 183 to missing)
+(357,639 missing values generated)
+(6,650 real changes made, 6,650 to missing)
+(183 real changes made, 183 to missing)
+{err}Generate Days Worked and days in firm, days after firm fin year and days before firm fin year
+{txt}(364,472 missing values generated)
+(364,472 missing values generated)
+(364,472 missing values generated)
+{err}Proportion of time in firm
+{txt}(514,382 missing values generated)
+(514,382 missing values generated)
+(514,382 missing values generated)
+(182 real changes made)
+(364,289 real changes made)
+(364,289 real changes made)
+(182 real changes made)
+{err}Generate prop_in_firm, prop_after_firm and prop_before_firm for those with unimputed days but with weights
+{txt}(149,910 real changes made)
+(149,910 real changes made)
+(149,910 real changes made)
+(1 real change made)
+(0 real changes made)
+(0 real changes made)
+(1 real change made)
+{p 0 4 2}
+file {bf}
+F:\michael\2023 VERSION\minimum wage paper\data\\IRP5_2012_temp_DELETE2.dta{rm}
+saved
+{p_end}
+(364,472 observations deleted)
+{col 1}kerr_income{col 15}a3601_income
+(639,319 real changes made)
+(633,986 real changes made)
+(0 observations deleted)
+{p 0 4 2}
+file {bf}
+F:\michael\2023 VERSION\minimum wage paper\data\\IRP5_2012_infirm.dta{rm}
+saved
+{p_end}
+(439,002 observations deleted)
+{col 1}kerr_income{col 15}a3601_income
+(580,183 real changes made)
+(575,463 real changes made)
+{p 0 4 2}
+file {bf}
+F:\michael\2023 VERSION\minimum wage paper\data\\IRP5_2012_before.dta{rm}
+saved
+{p_end}
+(1,384,890 observations deleted)
+{col 1}kerr_income{col 15}a3601_income
+(1,907 real changes made)
+(1,906 real changes made)
+{p 0 4 2}
+file {bf}
+F:\michael\2023 VERSION\minimum wage paper\data\\IRP5_2012_after.dta{rm}
+saved
+{p_end}
+{res}{err}Clean up ending and starting dates
+Replace start and end if start>end
+{txt}(0 real changes made)
+(0 real changes made)
+{err}Make dates missing if end and start are either after or before start of tax year
+{txt}(0 real changes made)
+(0 real changes made)
+{err}Replace dates with date of firms tax year end if ends after
+{txt}(0 real changes made)
+{err}Replace start date with date of firm start if  person started employment before firm fin statements
+{txt}(0 real changes made)
+{res}{err}Generate firm start and end dates
+{txt}(154,903 missing values generated)
+(154,903 missing values generated)
+(154,903 missing values generated)
+{err}Generate individual in firm data
+{txt}(154,903 missing values generated)
+(10,633 real changes made, 10,633 to missing)
+(199 real changes made, 199 to missing)
+(154,903 missing values generated)
+(10,633 real changes made, 10,633 to missing)
+(199 real changes made, 199 to missing)
+{err}Generate Days Worked and days in firm, days after firm fin year and days before firm fin year
+{txt}(165,735 missing values generated)
+(165,735 missing values generated)
+(165,735 missing values generated)
+{err}Proportion of time in firm
+{txt}(326,256 missing values generated)
+(326,256 missing values generated)
+(326,256 missing values generated)
+(193 real changes made)
+(165,536 real changes made)
+(165,536 real changes made)
+(193 real changes made)
+{err}Generate prop_in_firm, prop_after_firm and prop_before_firm for those with unimputed days but with weights
+{txt}(160,521 real changes made)
+(160,521 real changes made)
+(160,521 real changes made)
+(6 real changes made)
+(0 real changes made)
+(0 real changes made)
+(6 real changes made)
+{p 0 4 2}
+file {bf}
+F:\michael\2023 VERSION\minimum wage paper\data\\IRP5_2013_temp_DELETE2.dta{rm}
+saved
+{p_end}
+(165,735 observations deleted)
+{col 1}kerr_income{col 15}a3601_income
+(759,156 real changes made)
+(752,925 real changes made)
+(0 observations deleted)
+{p 0 4 2}
+file {bf}
+F:\michael\2023 VERSION\minimum wage paper\data\\IRP5_2013_infirm.dta{rm}
+saved
+{p_end}
+(527,748 observations deleted)
+{col 1}kerr_income{col 15}a3601_income
+(690,642 real changes made)
+(684,844 real changes made)
+{p 0 4 2}
+file {bf}
+F:\michael\2023 VERSION\minimum wage paper\data\\IRP5_2013_before.dta{rm}
+saved
+{p_end}
+(1,384,340 observations deleted)
+{col 1}kerr_income{col 15}a3601_income
+(2,441 real changes made)
+(2,436 real changes made)
+{p 0 4 2}
+file {bf}
+F:\michael\2023 VERSION\minimum wage paper\data\\IRP5_2013_after.dta{rm}
+saved
+{p_end}
+{res}{err}Clean up ending and starting dates
+Replace start and end if start>end
+{txt}(0 real changes made)
+(0 real changes made)
+{err}Make dates missing if end and start are either after or before start of tax year
+{txt}(0 real changes made)
+(0 real changes made)
+{err}Replace dates with date of firms tax year end if ends after
+{txt}(0 real changes made)
+{err}Replace start date with date of firm start if  person started employment before firm fin statements
+{txt}(0 real changes made)
+{res}{err}Generate firm start and end dates
+{txt}(88,725 missing values generated)
+(88,725 missing values generated)
+(88,725 missing values generated)
+{err}Generate individual in firm data
+{txt}(88,725 missing values generated)
+(8,938 real changes made, 8,938 to missing)
+(0 real changes made)
+(88,725 missing values generated)
+(8,938 real changes made, 8,938 to missing)
+(0 real changes made)
+{err}Generate Days Worked and days in firm, days after firm fin year and days before firm fin year
+{txt}(97,663 missing values generated)
+(97,663 missing values generated)
+(97,663 missing values generated)
+{err}Proportion of time in firm
+{txt}(274,239 missing values generated)
+(274,239 missing values generated)
+(274,239 missing values generated)
+(0 real changes made)
+(97,663 real changes made)
+(97,663 real changes made)
+(0 real changes made)
+{err}Generate prop_in_firm, prop_after_firm and prop_before_firm for those with unimputed days but with weights
+{txt}(176,576 real changes made)
+(176,576 real changes made)
+(176,576 real changes made)
+(0 real changes made)
+(0 real changes made)
+(0 real changes made)
+(0 real changes made)
+{p 0 4 2}
+file {bf}
+F:\michael\2023 VERSION\minimum wage paper\data\\IRP5_2014_temp_DELETE2.dta{rm}
+saved
+{p_end}
+(97,663 observations deleted)
+{col 1}kerr_income{col 15}a3601_income
+(791,879 real changes made)
+(786,048 real changes made)
+(0 observations deleted)
+{p 0 4 2}
+file {bf}
+F:\michael\2023 VERSION\minimum wage paper\data\\IRP5_2014_infirm.dta{rm}
+saved
+{p_end}
+(566,489 observations deleted)
+{col 1}kerr_income{col 15}a3601_income
+(720,524 real changes made)
+(715,209 real changes made)
+{p 0 4 2}
+file {bf}
+F:\michael\2023 VERSION\minimum wage paper\data\\IRP5_2014_before.dta{rm}
+saved
+{p_end}
+(1,384,098 observations deleted)
+{col 1}kerr_income{col 15}a3601_income
+(2,881 real changes made)
+(2,875 real changes made)
+{p 0 4 2}
+file {bf}
+F:\michael\2023 VERSION\minimum wage paper\data\\IRP5_2014_after.dta{rm}
+saved
+{p_end}
+{res}{err}Clean up ending and starting dates
+Replace start and end if start>end
+{txt}(0 real changes made)
+(0 real changes made)
+{err}Make dates missing if end and start are either after or before start of tax year
+{txt}(0 real changes made)
+(0 real changes made)
+{err}Replace dates with date of firms tax year end if ends after
+{txt}(0 real changes made)
+{err}Replace start date with date of firm start if  person started employment before firm fin statements
+{txt}(0 real changes made)
+{res}{err}Generate firm start and end dates
+{txt}(46,977 missing values generated)
+(46,977 missing values generated)
+(46,977 missing values generated)
+{err}Generate individual in firm data
+{txt}(46,977 missing values generated)
+(10,503 real changes made, 10,503 to missing)
+(1 real change made, 1 to missing)
+(46,977 missing values generated)
+(10,503 real changes made, 10,503 to missing)
+(1 real change made, 1 to missing)
+{err}Generate Days Worked and days in firm, days after firm fin year and days before firm fin year
+{txt}(57,481 missing values generated)
+(57,481 missing values generated)
+(57,481 missing values generated)
+{err}Proportion of time in firm
+{txt}(241,956 missing values generated)
+(241,956 missing values generated)
+(241,956 missing values generated)
+(1 real change made)
+(57,480 real changes made)
+(57,480 real changes made)
+(1 real change made)
+{err}Generate prop_in_firm, prop_after_firm and prop_before_firm for those with unimputed days but with weights
+{txt}(184,475 real changes made)
+(184,475 real changes made)
+(184,475 real changes made)
+(0 real changes made)
+(0 real changes made)
+(0 real changes made)
+(0 real changes made)
+{p 0 4 2}
+file {bf}
+F:\michael\2023 VERSION\minimum wage paper\data\\IRP5_2015_temp_DELETE2.dta{rm}
+saved
+{p_end}
+(57,481 observations deleted)
+{col 1}kerr_income{col 15}a3601_income
+(834,853 real changes made)
+(828,193 real changes made)
+(0 observations deleted)
+{p 0 4 2}
+file {bf}
+F:\michael\2023 VERSION\minimum wage paper\data\\IRP5_2015_infirm.dta{rm}
+saved
+{p_end}
+(561,019 observations deleted)
+{col 1}kerr_income{col 15}a3601_income
+(760,176 real changes made)
+(754,176 real changes made)
+{p 0 4 2}
+file {bf}
+F:\michael\2023 VERSION\minimum wage paper\data\\IRP5_2015_before.dta{rm}
+saved
+{p_end}
+(1,383,078 observations deleted)
+{col 1}kerr_income{col 15}a3601_income
+(3,898 real changes made)
+(3,894 real changes made)
+{p 0 4 2}
+file {bf}
+F:\michael\2023 VERSION\minimum wage paper\data\\IRP5_2015_after.dta{rm}
+saved
+{p_end}
+{res}{err}Clean up ending and starting dates
+Replace start and end if start>end
+{txt}(0 real changes made)
+(0 real changes made)
+{err}Make dates missing if end and start are either after or before start of tax year
+{txt}(0 real changes made)
+(0 real changes made)
+{err}Replace dates with date of firms tax year end if ends after
+{txt}(0 real changes made)
+{err}Replace start date with date of firm start if  person started employment before firm fin statements
+{txt}(0 real changes made)
+{res}{err}Generate firm start and end dates
+Generate individual in firm data
+{txt}(11,154 real changes made, 11,154 to missing)
+(161 real changes made, 161 to missing)
+(11,154 real changes made, 11,154 to missing)
+(161 real changes made, 161 to missing)
+{err}Generate Days Worked and days in firm, days after firm fin year and days before firm fin year
+{txt}(11,315 missing values generated)
+(11,315 missing values generated)
+(11,315 missing values generated)
+{err}Proportion of time in firm
+{txt}(220,133 missing values generated)
+(220,133 missing values generated)
+(220,133 missing values generated)
+(155 real changes made)
+(11,154 real changes made)
+(11,154 real changes made)
+(155 real changes made)
+{err}Generate prop_in_firm, prop_after_firm and prop_before_firm for those with unimputed days but with weights
+{txt}(208,818 real changes made)
+(208,818 real changes made)
+(208,818 real changes made)
+(6 real changes made)
+(0 real changes made)
+(0 real changes made)
+(6 real changes made)
+{p 0 4 2}
+file {bf}
+F:\michael\2023 VERSION\minimum wage paper\data\\IRP5_2016_temp_DELETE2.dta{rm}
+saved
+{p_end}
+(11,315 observations deleted)
+{col 1}kerr_income{col 15}a3601_income
+(870,922 real changes made)
+(863,894 real changes made)
+(0 observations deleted)
+{p 0 4 2}
+file {bf}
+F:\michael\2023 VERSION\minimum wage paper\data\\IRP5_2016_infirm.dta{rm}
+saved
+{p_end}
+(570,311 observations deleted)
+{col 1}kerr_income{col 15}a3601_income
+(797,024 real changes made)
+(790,505 real changes made)
+{p 0 4 2}
+file {bf}
+F:\michael\2023 VERSION\minimum wage paper\data\\IRP5_2016_before.dta{rm}
+saved
+{p_end}
+(1,382,095 observations deleted)
+{col 1}kerr_income{col 15}a3601_income
+(4,716 real changes made)
+(4,674 real changes made)
+{p 0 4 2}
+file {bf}
+F:\michael\2023 VERSION\minimum wage paper\data\\IRP5_2016_after.dta{rm}
+saved
+{p_end}
+{res}{err}Clean up ending and starting dates
+Replace start and end if start>end
+{txt}(0 real changes made)
+(0 real changes made)
+{err}Make dates missing if end and start are either after or before start of tax year
+{txt}(0 real changes made)
+(0 real changes made)
+{err}Replace dates with date of firms tax year end if ends after
+{txt}(0 real changes made)
+{err}Replace start date with date of firm start if  person started employment before firm fin statements
+{txt}(0 real changes made)
+{res}{err}Generate firm start and end dates
+{txt}(24,254 missing values generated)
+(24,254 missing values generated)
+(24,254 missing values generated)
+{err}Generate individual in firm data
+{txt}(24,254 missing values generated)
+(17,921 real changes made, 17,921 to missing)
+(0 real changes made)
+(24,254 missing values generated)
+(17,921 real changes made, 17,921 to missing)
+(0 real changes made)
+{err}Generate Days Worked and days in firm, days after firm fin year and days before firm fin year
+{txt}(42,175 missing values generated)
+(42,175 missing values generated)
+(42,175 missing values generated)
+{err}Proportion of time in firm
+{txt}(244,617 missing values generated)
+(244,617 missing values generated)
+(244,617 missing values generated)
+(0 real changes made)
+(42,175 real changes made)
+(42,175 real changes made)
+(0 real changes made)
+{err}Generate prop_in_firm, prop_after_firm and prop_before_firm for those with unimputed days but with weights
+{txt}(202,442 real changes made)
+(202,442 real changes made)
+(202,442 real changes made)
+(0 real changes made)
+(0 real changes made)
+(0 real changes made)
+(0 real changes made)
+{p 0 4 2}
+file {bf}
+F:\michael\2023 VERSION\minimum wage paper\data\\IRP5_2017_temp_DELETE2.dta{rm}
+saved
+{p_end}
+(42,175 observations deleted)
+{col 1}kerr_income{col 15}a3601_income
+(843,081 real changes made)
+(836,460 real changes made)
+(0 observations deleted)
+{p 0 4 2}
+file {bf}
+F:\michael\2023 VERSION\minimum wage paper\data\\IRP5_2017_infirm.dta{rm}
+saved
+{p_end}
+(566,620 observations deleted)
+{col 1}kerr_income{col 15}a3601_income
+(769,797 real changes made)
+(763,623 real changes made)
+{p 0 4 2}
+file {bf}
+F:\michael\2023 VERSION\minimum wage paper\data\\IRP5_2017_before.dta{rm}
+saved
+{p_end}
+(1,381,590 observations deleted)
+{col 1}kerr_income{col 15}a3601_income
+(5,390 real changes made)
+(5,356 real changes made)
+{p 0 4 2}
+file {bf}
+F:\michael\2023 VERSION\minimum wage paper\data\\IRP5_2017_after.dta{rm}
+saved
+{p_end}
+{res}{err}Clean up ending and starting dates
+Replace start and end if start>end
+{txt}(0 real changes made)
+(0 real changes made)
+{err}Make dates missing if end and start are either after or before start of tax year
+{txt}(0 real changes made)
+(0 real changes made)
+{err}Replace dates with date of firms tax year end if ends after
+{txt}(0 real changes made)
+{err}Replace start date with date of firm start if  person started employment before firm fin statements
+{txt}(0 real changes made)
+{res}{err}Generate firm start and end dates
+{txt}(341,143 missing values generated)
+(341,143 missing values generated)
+(341,143 missing values generated)
+{err}Generate individual in firm data
+{txt}(341,143 missing values generated)
+(17,345 real changes made, 17,345 to missing)
+(0 real changes made)
+(341,143 missing values generated)
+(17,345 real changes made, 17,345 to missing)
+(0 real changes made)
+{err}Generate Days Worked and days in firm, days after firm fin year and days before firm fin year
+{txt}(358,488 missing values generated)
+(358,488 missing values generated)
+(358,488 missing values generated)
+{err}Proportion of time in firm
+{txt}(556,327 missing values generated)
+(556,327 missing values generated)
+(556,327 missing values generated)
+(0 real changes made)
+(358,488 real changes made)
+(358,488 real changes made)
+(0 real changes made)
+{err}Generate prop_in_firm, prop_after_firm and prop_before_firm for those with unimputed days but with weights
+{txt}(197,839 real changes made)
+(197,839 real changes made)
+(197,839 real changes made)
+(0 real changes made)
+(0 real changes made)
+(0 real changes made)
+(0 real changes made)
+{p 0 4 2}
+file {bf}
+F:\michael\2023 VERSION\minimum wage paper\data\\IRP5_2018_temp_DELETE2.dta{rm}
+saved
+{p_end}
+(358,488 observations deleted)
+{col 1}kerr_income{col 15}a3601_income
+(622,734 real changes made)
+(618,558 real changes made)
+(0 observations deleted)
+{p 0 4 2}
+file {bf}
+F:\michael\2023 VERSION\minimum wage paper\data\\IRP5_2018_infirm.dta{rm}
+saved
+{p_end}
+(506,104 observations deleted)
+{col 1}kerr_income{col 15}a3601_income
+(520,417 real changes made)
+(517,072 real changes made)
+{p 0 4 2}
+file {bf}
+F:\michael\2023 VERSION\minimum wage paper\data\\IRP5_2018_before.dta{rm}
+saved
+{p_end}
+(1,381,957 observations deleted)
+{col 1}kerr_income{col 15}a3601_income
+(5,022 real changes made)
+(4,988 real changes made)
+{p 0 4 2}
+file {bf}
+F:\michael\2023 VERSION\minimum wage paper\data\\IRP5_2018_after.dta{rm}
+saved
+{p_end}
+
+{com}.         
+.         
+.          forvalues year= 2010/2018 {c -(} 
+{txt}  2{com}.                                 use "$saveaddress_data\IRP5_`year'_infirm.dta", clear 
+{txt}  3{com}.                                 local pre = `year'-1 
+{txt}  4{com}.                                 local post =`year'+1
+{txt}  5{com}.                                 capture   confirm file "$saveaddress_data\IRP5_`post'_before.dta"
+{txt}  6{com}.                                 if _rc==0 {c -(}
+{txt}  7{com}.                                         append using "$saveaddress_data\IRP5_`post'_before.dta", force
+{txt}  8{com}.                                 {c )-}
+{txt}  9{com}.                                 capture   confirm file "$saveaddress_data\IRP5_`pre'_after.dta" 
+{txt} 10{com}.                                 if  _rc==0 {c -(} 
+{txt} 11{com}.                                         append using "$saveaddress_data\IRP5_`pre'_after.dta", force
+{txt} 12{com}.                                 {c )-}
+{txt} 13{com}.                                 ren taxyear old_taxyear 
+{txt} 14{com}.                                 gen taxyear = `year'
+{txt} 15{com}.                                 
+.                                 preserve 
+{txt} 16{com}.                                 
+.                use "$citirp5_v4" , clear 
+{txt} 17{com}.                keep if taxyear ==`year'
+{txt} 18{com}.                tempfile cit
+{txt} 19{com}.                save `cit'
+{txt} 20{com}.                restore 
+{txt} 21{com}.                merge m:1 taxrefno taxyear using `cit'
+{txt} 22{com}. 
+.                  keep if _merge==3 
+{txt} 23{com}.                                 save "$saveaddress_data\merged_`year'.dta", replace 
+{txt} 24{com}.         {c )-}
+{res}{txt}(8,034,529 observations deleted)
+{p 0 4 2}
+file {bf}
+D:\statatemp\ST_5530_000002.tmp{rm}
+saved
+as .dta format
+{p_end}
+{res}
+{txt}{col 5}Result{col 38}# of obs.
+{col 5}{hline 41}
+{col 5}not matched{col 30}{res}       1,326,271
+{txt}{col 9}from master{col 30}{res}         591,314{txt}  (_merge==1)
+{col 9}from using{col 30}{res}         734,957{txt}  (_merge==2)
+
+{col 5}matched{col 30}{res}       1,103,321{txt}  (_merge==3)
+{col 5}{hline 41}
+(1,326,271 observations deleted)
+{p 0 4 2}
+file {bf}
+F:\michael\2023 VERSION\minimum wage paper\data\\merged_2010.dta{rm}
+saved
+{p_end}
+{res}{txt}(8,031,757 observations deleted)
+{p 0 4 2}
+file {bf}
+D:\statatemp\ST_5530_000004.tmp{rm}
+saved
+as .dta format
+{p_end}
+{res}
+{txt}{col 5}Result{col 38}# of obs.
+{col 5}{hline 41}
+{col 5}not matched{col 30}{res}       1,093,756
+{txt}{col 9}from master{col 30}{res}         358,762{txt}  (_merge==1)
+{col 9}from using{col 30}{res}         734,994{txt}  (_merge==2)
+
+{col 5}matched{col 30}{res}       1,383,860{txt}  (_merge==3)
+{col 5}{hline 41}
+(1,093,756 observations deleted)
+{p 0 4 2}
+file {bf}
+F:\michael\2023 VERSION\minimum wage paper\data\\merged_2011.dta{rm}
+saved
+{p_end}
+{res}{txt}(7,975,860 observations deleted)
+{p 0 4 2}
+file {bf}
+D:\statatemp\ST_5530_000006.tmp{rm}
+saved
+as .dta format
+{p_end}
+{res}
+{txt}{col 5}Result{col 38}# of obs.
+{col 5}{hline 41}
+{col 5}not matched{col 30}{res}         949,930
+{txt}{col 9}from master{col 30}{res}         158,839{txt}  (_merge==1)
+{col 9}from using{col 30}{res}         791,091{txt}  (_merge==2)
+
+{col 5}matched{col 30}{res}       1,725,247{txt}  (_merge==3)
+{col 5}{hline 41}
+(949,930 observations deleted)
+{p 0 4 2}
+file {bf}
+F:\michael\2023 VERSION\minimum wage paper\data\\merged_2012.dta{rm}
+saved
+{p_end}
+{res}{txt}(7,956,202 observations deleted)
+{p 0 4 2}
+file {bf}
+D:\statatemp\ST_5530_000008.tmp{rm}
+saved
+as .dta format
+{p_end}
+{res}
+{txt}{col 5}Result{col 38}# of obs.
+{col 5}{hline 41}
+{col 5}not matched{col 30}{res}         895,624
+{txt}{col 9}from master{col 30}{res}          89,094{txt}  (_merge==1)
+{col 9}from using{col 30}{res}         806,530{txt}  (_merge==2)
+
+{col 5}matched{col 30}{res}       1,954,732{txt}  (_merge==3)
+{col 5}{hline 41}
+(895,624 observations deleted)
+{p 0 4 2}
+file {bf}
+F:\michael\2023 VERSION\minimum wage paper\data\\merged_2013.dta{rm}
+saved
+{p_end}
+{res}{txt}(7,933,350 observations deleted)
+{p 0 4 2}
+file {bf}
+D:\statatemp\ST_5530_00000a.tmp{rm}
+saved
+as .dta format
+{p_end}
+{res}
+{txt}{col 5}Result{col 38}# of obs.
+{col 5}{hline 41}
+{col 5}not matched{col 30}{res}         877,577
+{txt}{col 9}from master{col 30}{res}          48,349{txt}  (_merge==1)
+{col 9}from using{col 30}{res}         829,228{txt}  (_merge==2)
+
+{col 5}matched{col 30}{res}       2,069,569{txt}  (_merge==3)
+{col 5}{hline 41}
+(877,577 observations deleted)
+{p 0 4 2}
+file {bf}
+F:\michael\2023 VERSION\minimum wage paper\data\\merged_2014.dta{rm}
+saved
+{p_end}
+{res}{txt}(7,915,908 observations deleted)
+{p 0 4 2}
+file {bf}
+D:\statatemp\ST_5530_00000c.tmp{rm}
+saved
+as .dta format
+{p_end}
+{res}
+{txt}{col 5}Result{col 38}# of obs.
+{col 5}{hline 41}
+{col 5}not matched{col 30}{res}         846,958
+{txt}{col 9}from master{col 30}{res}             414{txt}  (_merge==1)
+{col 9}from using{col 30}{res}         846,544{txt}  (_merge==2)
+
+{col 5}matched{col 30}{res}       2,148,636{txt}  (_merge==3)
+{col 5}{hline 41}
+(846,958 observations deleted)
+{p 0 4 2}
+file {bf}
+F:\michael\2023 VERSION\minimum wage paper\data\\merged_2015.dta{rm}
+saved
+{p_end}
+{res}{txt}(7,871,229 observations deleted)
+{p 0 4 2}
+file {bf}
+D:\statatemp\ST_5530_00000e.tmp{rm}
+saved
+as .dta format
+{p_end}
+{res}
+{txt}{col 5}Result{col 38}# of obs.
+{col 5}{hline 41}
+{col 5}not matched{col 30}{res}         916,824
+{txt}{col 9}from master{col 30}{res}          25,487{txt}  (_merge==1)
+{col 9}from using{col 30}{res}         891,337{txt}  (_merge==2)
+
+{col 5}matched{col 30}{res}       2,174,440{txt}  (_merge==3)
+{col 5}{hline 41}
+(916,824 observations deleted)
+{p 0 4 2}
+file {bf}
+F:\michael\2023 VERSION\minimum wage paper\data\\merged_2016.dta{rm}
+saved
+{p_end}
+{res}{txt}(7,880,874 observations deleted)
+{p 0 4 2}
+file {bf}
+D:\statatemp\ST_5530_00000g.tmp{rm}
+saved
+as .dta format
+{p_end}
+{res}
+{txt}{col 5}Result{col 38}# of obs.
+{col 5}{hline 41}
+{col 5}not matched{col 30}{res}       1,223,793
+{txt}{col 9}from master{col 30}{res}         341,564{txt}  (_merge==1)
+{col 9}from using{col 30}{res}         882,229{txt}  (_merge==2)
+
+{col 5}matched{col 30}{res}       1,889,002{txt}  (_merge==3)
+{col 5}{hline 41}
+(1,223,793 observations deleted)
+{p 0 4 2}
+file {bf}
+F:\michael\2023 VERSION\minimum wage paper\data\\merged_2017.dta{rm}
+saved
+{p_end}
+{res}{txt}(8,000,752 observations deleted)
+{p 0 4 2}
+file {bf}
+D:\statatemp\ST_5530_00000i.tmp{rm}
+saved
+as .dta format
+{p_end}
+{res}
+{txt}{col 5}Result{col 38}# of obs.
+{col 5}{hline 41}
+{col 5}not matched{col 30}{res}         766,336
+{txt}{col 9}from master{col 30}{res}             155{txt}  (_merge==1)
+{col 9}from using{col 30}{res}         766,181{txt}  (_merge==2)
+
+{col 5}matched{col 30}{res}       1,033,727{txt}  (_merge==3)
+{col 5}{hline 41}
+(766,336 observations deleted)
+{p 0 4 2}
+file {bf}
+F:\michael\2023 VERSION\minimum wage paper\data\\merged_2018.dta{rm}
+saved
+{p_end}
+
+{com}.         
+.         use "$saveaddress_data\merged_2018", clear 
+{txt}
+{com}. forval i = 2017(-1)2010{c -(}
+{txt}  2{com}. append using "$saveaddress_data\merged_`i'.dta"
+{txt}  3{com}. {c )-}
+{txt}(label {bf:{txt}_merge} already defined)
+(label {bf:{txt}ImpExpIndicator} already defined)
+(label {bf:{txt}subactivity} already defined)
+(label {bf:{txt}sezloc} already defined)
+(label {bf:{txt}yes_no} already defined)
+(label {bf:{txt}taxprac_ind} already defined)
+(label {bf:{txt}c_pymntelmn} already defined)
+(label {bf:{txt}c_mkelection} already defined)
+(label {bf:{txt}c_pyannmnthprm} already defined)
+(label {bf:{txt}c_sllsebckagr} already defined)
+(label {bf:{txt}c_crssbrdrtrns} already defined)
+(label {bf:{txt}c_fnclssres} already defined)
+(label {bf:{txt}tpsi_chtpdind} already defined)
+(label {bf:{txt}tpsi_afcpind} already defined)
+(label {bf:{txt}c_crdtdrctr} already defined)
+(label {bf:{txt}c_rotpymnts} already defined)
+(label {bf:{txt}c_chngmrktbleq} already defined)
+(label {bf:{txt}c_empdireqty} already defined)
+(label {bf:{txt}c_rrngmntinctxact} already defined)
+(label {bf:{txt}c_rcvbnftinctxact} already defined)
+(label {bf:{txt}c_cmpnymnngact} already defined)
+(label {bf:{txt}c_cmmssnemp} already defined)
+(label {bf:{txt}c_empexptr} already defined)
+(label {bf:{txt}c_rcvgfts} already defined)
+(label {bf:{txt}c_prchsgngcncrn} already defined)
+(label {bf:{txt}c_rd_gvtgrnt} already defined)
+(label {bf:{txt}c_rd_qstndst} already defined)
+(label {bf:{txt}c_trctns42_47} already defined)
+(label {bf:{txt}c_ffshrsstnc} already defined)
+(label {bf:{txt}c_shrtins} already defined)
+(label {bf:{txt}sic_5d} already defined)
+(label {bf:{txt}sic_1d} already defined)
+(label {bf:{txt}sic_2d} already defined)
+(label {bf:{txt}sic_3d} already defined)
+(label {bf:{txt}sic_4d} already defined)
+(label {bf:{txt}majordivision_labeled} already defined)
+(label {bf:{txt}division_labeled} already defined)
+(label {bf:{txt}majorgroup_labeled} already defined)
+(label {bf:{txt}group_labeled} already defined)
+(label {bf:{txt}subgroup_labeled} already defined)
+(label {bf:{txt}mne_type} already defined)
+(label {bf:{txt}province} already defined)
+(label {bf:{txt}_merge} already defined)
+(label {bf:{txt}ImpExpIndicator} already defined)
+(label {bf:{txt}subactivity} already defined)
+(label {bf:{txt}sezloc} already defined)
+(label {bf:{txt}yes_no} already defined)
+(label {bf:{txt}taxprac_ind} already defined)
+(label {bf:{txt}c_pymntelmn} already defined)
+(label {bf:{txt}c_mkelection} already defined)
+(label {bf:{txt}c_pyannmnthprm} already defined)
+(label {bf:{txt}c_sllsebckagr} already defined)
+(label {bf:{txt}c_crssbrdrtrns} already defined)
+(label {bf:{txt}c_fnclssres} already defined)
+(label {bf:{txt}tpsi_chtpdind} already defined)
+(label {bf:{txt}tpsi_afcpind} already defined)
+(label {bf:{txt}c_crdtdrctr} already defined)
+(label {bf:{txt}c_rotpymnts} already defined)
+(label {bf:{txt}c_chngmrktbleq} already defined)
+(label {bf:{txt}c_empdireqty} already defined)
+(label {bf:{txt}c_rrngmntinctxact} already defined)
+(label {bf:{txt}c_rcvbnftinctxact} already defined)
+(label {bf:{txt}c_cmpnymnngact} already defined)
+(label {bf:{txt}c_cmmssnemp} already defined)
+(label {bf:{txt}c_empexptr} already defined)
+(label {bf:{txt}c_rcvgfts} already defined)
+(label {bf:{txt}c_prchsgngcncrn} already defined)
+(label {bf:{txt}c_rd_gvtgrnt} already defined)
+(label {bf:{txt}c_rd_qstndst} already defined)
+(label {bf:{txt}c_trctns42_47} already defined)
+(label {bf:{txt}c_ffshrsstnc} already defined)
+(label {bf:{txt}c_shrtins} already defined)
+(label {bf:{txt}sic_5d} already defined)
+(label {bf:{txt}sic_1d} already defined)
+(label {bf:{txt}sic_2d} already defined)
+(label {bf:{txt}sic_3d} already defined)
+(label {bf:{txt}sic_4d} already defined)
+(label {bf:{txt}majordivision_labeled} already defined)
+(label {bf:{txt}division_labeled} already defined)
+(label {bf:{txt}majorgroup_labeled} already defined)
+(label {bf:{txt}group_labeled} already defined)
+(label {bf:{txt}subgroup_labeled} already defined)
+(label {bf:{txt}mne_type} already defined)
+(label {bf:{txt}province} already defined)
+(label {bf:{txt}_merge} already defined)
+(label {bf:{txt}ImpExpIndicator} already defined)
+(label {bf:{txt}subactivity} already defined)
+(label {bf:{txt}sezloc} already defined)
+(label {bf:{txt}yes_no} already defined)
+(label {bf:{txt}taxprac_ind} already defined)
+(label {bf:{txt}c_pymntelmn} already defined)
+(label {bf:{txt}c_mkelection} already defined)
+(label {bf:{txt}c_pyannmnthprm} already defined)
+(label {bf:{txt}c_sllsebckagr} already defined)
+(label {bf:{txt}c_crssbrdrtrns} already defined)
+(label {bf:{txt}c_fnclssres} already defined)
+(label {bf:{txt}tpsi_chtpdind} already defined)
+(label {bf:{txt}tpsi_afcpind} already defined)
+(label {bf:{txt}c_crdtdrctr} already defined)
+(label {bf:{txt}c_rotpymnts} already defined)
+(label {bf:{txt}c_chngmrktbleq} already defined)
+(label {bf:{txt}c_empdireqty} already defined)
+(label {bf:{txt}c_rrngmntinctxact} already defined)
+(label {bf:{txt}c_rcvbnftinctxact} already defined)
+(label {bf:{txt}c_cmpnymnngact} already defined)
+(label {bf:{txt}c_cmmssnemp} already defined)
+(label {bf:{txt}c_empexptr} already defined)
+(label {bf:{txt}c_rcvgfts} already defined)
+(label {bf:{txt}c_prchsgngcncrn} already defined)
+(label {bf:{txt}c_rd_gvtgrnt} already defined)
+(label {bf:{txt}c_rd_qstndst} already defined)
+(label {bf:{txt}c_trctns42_47} already defined)
+(label {bf:{txt}c_ffshrsstnc} already defined)
+(label {bf:{txt}c_shrtins} already defined)
+(label {bf:{txt}sic_5d} already defined)
+(label {bf:{txt}sic_1d} already defined)
+(label {bf:{txt}sic_2d} already defined)
+(label {bf:{txt}sic_3d} already defined)
+(label {bf:{txt}sic_4d} already defined)
+(label {bf:{txt}majordivision_labeled} already defined)
+(label {bf:{txt}division_labeled} already defined)
+(label {bf:{txt}majorgroup_labeled} already defined)
+(label {bf:{txt}group_labeled} already defined)
+(label {bf:{txt}subgroup_labeled} already defined)
+(label {bf:{txt}mne_type} already defined)
+(label {bf:{txt}province} already defined)
+(label {bf:{txt}_merge} already defined)
+(label {bf:{txt}ImpExpIndicator} already defined)
+(label {bf:{txt}subactivity} already defined)
+(label {bf:{txt}sezloc} already defined)
+(label {bf:{txt}yes_no} already defined)
+(label {bf:{txt}taxprac_ind} already defined)
+(label {bf:{txt}c_pymntelmn} already defined)
+(label {bf:{txt}c_mkelection} already defined)
+(label {bf:{txt}c_pyannmnthprm} already defined)
+(label {bf:{txt}c_sllsebckagr} already defined)
+(label {bf:{txt}c_crssbrdrtrns} already defined)
+(label {bf:{txt}c_fnclssres} already defined)
+(label {bf:{txt}tpsi_chtpdind} already defined)
+(label {bf:{txt}tpsi_afcpind} already defined)
+(label {bf:{txt}c_crdtdrctr} already defined)
+(label {bf:{txt}c_rotpymnts} already defined)
+(label {bf:{txt}c_chngmrktbleq} already defined)
+(label {bf:{txt}c_empdireqty} already defined)
+(label {bf:{txt}c_rrngmntinctxact} already defined)
+(label {bf:{txt}c_rcvbnftinctxact} already defined)
+(label {bf:{txt}c_cmpnymnngact} already defined)
+(label {bf:{txt}c_cmmssnemp} already defined)
+(label {bf:{txt}c_empexptr} already defined)
+(label {bf:{txt}c_rcvgfts} already defined)
+(label {bf:{txt}c_prchsgngcncrn} already defined)
+(label {bf:{txt}c_rd_gvtgrnt} already defined)
+(label {bf:{txt}c_rd_qstndst} already defined)
+(label {bf:{txt}c_trctns42_47} already defined)
+(label {bf:{txt}c_ffshrsstnc} already defined)
+(label {bf:{txt}c_shrtins} already defined)
+(label {bf:{txt}sic_5d} already defined)
+(label {bf:{txt}sic_1d} already defined)
+(label {bf:{txt}sic_2d} already defined)
+(label {bf:{txt}sic_3d} already defined)
+(label {bf:{txt}sic_4d} already defined)
+(label {bf:{txt}majordivision_labeled} already defined)
+(label {bf:{txt}division_labeled} already defined)
+(label {bf:{txt}majorgroup_labeled} already defined)
+(label {bf:{txt}group_labeled} already defined)
+(label {bf:{txt}subgroup_labeled} already defined)
+(label {bf:{txt}mne_type} already defined)
+(label {bf:{txt}province} already defined)
+(label {bf:{txt}_merge} already defined)
+(label {bf:{txt}ImpExpIndicator} already defined)
+(label {bf:{txt}subactivity} already defined)
+(label {bf:{txt}sezloc} already defined)
+(label {bf:{txt}yes_no} already defined)
+(label {bf:{txt}taxprac_ind} already defined)
+(label {bf:{txt}c_pymntelmn} already defined)
+(label {bf:{txt}c_mkelection} already defined)
+(label {bf:{txt}c_pyannmnthprm} already defined)
+(label {bf:{txt}c_sllsebckagr} already defined)
+(label {bf:{txt}c_crssbrdrtrns} already defined)
+(label {bf:{txt}c_fnclssres} already defined)
+(label {bf:{txt}tpsi_chtpdind} already defined)
+(label {bf:{txt}tpsi_afcpind} already defined)
+(label {bf:{txt}c_crdtdrctr} already defined)
+(label {bf:{txt}c_rotpymnts} already defined)
+(label {bf:{txt}c_chngmrktbleq} already defined)
+(label {bf:{txt}c_empdireqty} already defined)
+(label {bf:{txt}c_rrngmntinctxact} already defined)
+(label {bf:{txt}c_rcvbnftinctxact} already defined)
+(label {bf:{txt}c_cmpnymnngact} already defined)
+(label {bf:{txt}c_cmmssnemp} already defined)
+(label {bf:{txt}c_empexptr} already defined)
+(label {bf:{txt}c_rcvgfts} already defined)
+(label {bf:{txt}c_prchsgngcncrn} already defined)
+(label {bf:{txt}c_rd_gvtgrnt} already defined)
+(label {bf:{txt}c_rd_qstndst} already defined)
+(label {bf:{txt}c_trctns42_47} already defined)
+(label {bf:{txt}c_ffshrsstnc} already defined)
+(label {bf:{txt}c_shrtins} already defined)
+(label {bf:{txt}sic_5d} already defined)
+(label {bf:{txt}sic_1d} already defined)
+(label {bf:{txt}sic_2d} already defined)
+(label {bf:{txt}sic_3d} already defined)
+(label {bf:{txt}sic_4d} already defined)
+(label {bf:{txt}majordivision_labeled} already defined)
+(label {bf:{txt}division_labeled} already defined)
+(label {bf:{txt}majorgroup_labeled} already defined)
+(label {bf:{txt}group_labeled} already defined)
+(label {bf:{txt}subgroup_labeled} already defined)
+(label {bf:{txt}mne_type} already defined)
+(label {bf:{txt}province} already defined)
+(label {bf:{txt}_merge} already defined)
+(label {bf:{txt}ImpExpIndicator} already defined)
+(label {bf:{txt}subactivity} already defined)
+(label {bf:{txt}sezloc} already defined)
+(label {bf:{txt}yes_no} already defined)
+(label {bf:{txt}taxprac_ind} already defined)
+(label {bf:{txt}c_pymntelmn} already defined)
+(label {bf:{txt}c_mkelection} already defined)
+(label {bf:{txt}c_pyannmnthprm} already defined)
+(label {bf:{txt}c_sllsebckagr} already defined)
+(label {bf:{txt}c_crssbrdrtrns} already defined)
+(label {bf:{txt}c_fnclssres} already defined)
+(label {bf:{txt}tpsi_chtpdind} already defined)
+(label {bf:{txt}tpsi_afcpind} already defined)
+(label {bf:{txt}c_crdtdrctr} already defined)
+(label {bf:{txt}c_rotpymnts} already defined)
+(label {bf:{txt}c_chngmrktbleq} already defined)
+(label {bf:{txt}c_empdireqty} already defined)
+(label {bf:{txt}c_rrngmntinctxact} already defined)
+(label {bf:{txt}c_rcvbnftinctxact} already defined)
+(label {bf:{txt}c_cmpnymnngact} already defined)
+(label {bf:{txt}c_cmmssnemp} already defined)
+(label {bf:{txt}c_empexptr} already defined)
+(label {bf:{txt}c_rcvgfts} already defined)
+(label {bf:{txt}c_prchsgngcncrn} already defined)
+(label {bf:{txt}c_rd_gvtgrnt} already defined)
+(label {bf:{txt}c_rd_qstndst} already defined)
+(label {bf:{txt}c_trctns42_47} already defined)
+(label {bf:{txt}c_ffshrsstnc} already defined)
+(label {bf:{txt}c_shrtins} already defined)
+(label {bf:{txt}sic_5d} already defined)
+(label {bf:{txt}sic_1d} already defined)
+(label {bf:{txt}sic_2d} already defined)
+(label {bf:{txt}sic_3d} already defined)
+(label {bf:{txt}sic_4d} already defined)
+(label {bf:{txt}majordivision_labeled} already defined)
+(label {bf:{txt}division_labeled} already defined)
+(label {bf:{txt}majorgroup_labeled} already defined)
+(label {bf:{txt}group_labeled} already defined)
+(label {bf:{txt}subgroup_labeled} already defined)
+(label {bf:{txt}mne_type} already defined)
+(label {bf:{txt}province} already defined)
+(label {bf:{txt}_merge} already defined)
+(label {bf:{txt}ImpExpIndicator} already defined)
+(label {bf:{txt}subactivity} already defined)
+(label {bf:{txt}sezloc} already defined)
+(label {bf:{txt}yes_no} already defined)
+(label {bf:{txt}taxprac_ind} already defined)
+(label {bf:{txt}c_pymntelmn} already defined)
+(label {bf:{txt}c_mkelection} already defined)
+(label {bf:{txt}c_pyannmnthprm} already defined)
+(label {bf:{txt}c_sllsebckagr} already defined)
+(label {bf:{txt}c_crssbrdrtrns} already defined)
+(label {bf:{txt}c_fnclssres} already defined)
+(label {bf:{txt}tpsi_chtpdind} already defined)
+(label {bf:{txt}tpsi_afcpind} already defined)
+(label {bf:{txt}c_crdtdrctr} already defined)
+(label {bf:{txt}c_rotpymnts} already defined)
+(label {bf:{txt}c_chngmrktbleq} already defined)
+(label {bf:{txt}c_empdireqty} already defined)
+(label {bf:{txt}c_rrngmntinctxact} already defined)
+(label {bf:{txt}c_rcvbnftinctxact} already defined)
+(label {bf:{txt}c_cmpnymnngact} already defined)
+(label {bf:{txt}c_cmmssnemp} already defined)
+(label {bf:{txt}c_empexptr} already defined)
+(label {bf:{txt}c_rcvgfts} already defined)
+(label {bf:{txt}c_prchsgngcncrn} already defined)
+(label {bf:{txt}c_rd_gvtgrnt} already defined)
+(label {bf:{txt}c_rd_qstndst} already defined)
+(label {bf:{txt}c_trctns42_47} already defined)
+(label {bf:{txt}c_ffshrsstnc} already defined)
+(label {bf:{txt}c_shrtins} already defined)
+(label {bf:{txt}sic_5d} already defined)
+(label {bf:{txt}sic_1d} already defined)
+(label {bf:{txt}sic_2d} already defined)
+(label {bf:{txt}sic_3d} already defined)
+(label {bf:{txt}sic_4d} already defined)
+(label {bf:{txt}majordivision_labeled} already defined)
+(label {bf:{txt}division_labeled} already defined)
+(label {bf:{txt}majorgroup_labeled} already defined)
+(label {bf:{txt}group_labeled} already defined)
+(label {bf:{txt}subgroup_labeled} already defined)
+(label {bf:{txt}mne_type} already defined)
+(label {bf:{txt}province} already defined)
+(label {bf:{txt}_merge} already defined)
+(label {bf:{txt}ImpExpIndicator} already defined)
+(label {bf:{txt}subactivity} already defined)
+(label {bf:{txt}sezloc} already defined)
+(label {bf:{txt}yes_no} already defined)
+(label {bf:{txt}taxprac_ind} already defined)
+(label {bf:{txt}c_pymntelmn} already defined)
+(label {bf:{txt}c_mkelection} already defined)
+(label {bf:{txt}c_pyannmnthprm} already defined)
+(label {bf:{txt}c_sllsebckagr} already defined)
+(label {bf:{txt}c_crssbrdrtrns} already defined)
+(label {bf:{txt}c_fnclssres} already defined)
+(label {bf:{txt}tpsi_chtpdind} already defined)
+(label {bf:{txt}tpsi_afcpind} already defined)
+(label {bf:{txt}c_crdtdrctr} already defined)
+(label {bf:{txt}c_rotpymnts} already defined)
+(label {bf:{txt}c_chngmrktbleq} already defined)
+(label {bf:{txt}c_empdireqty} already defined)
+(label {bf:{txt}c_rrngmntinctxact} already defined)
+(label {bf:{txt}c_rcvbnftinctxact} already defined)
+(label {bf:{txt}c_cmpnymnngact} already defined)
+(label {bf:{txt}c_cmmssnemp} already defined)
+(label {bf:{txt}c_empexptr} already defined)
+(label {bf:{txt}c_rcvgfts} already defined)
+(label {bf:{txt}c_prchsgngcncrn} already defined)
+(label {bf:{txt}c_rd_gvtgrnt} already defined)
+(label {bf:{txt}c_rd_qstndst} already defined)
+(label {bf:{txt}c_trctns42_47} already defined)
+(label {bf:{txt}c_ffshrsstnc} already defined)
+(label {bf:{txt}c_shrtins} already defined)
+(label {bf:{txt}sic_5d} already defined)
+(label {bf:{txt}sic_1d} already defined)
+(label {bf:{txt}sic_2d} already defined)
+(label {bf:{txt}sic_3d} already defined)
+(label {bf:{txt}sic_4d} already defined)
+(label {bf:{txt}majordivision_labeled} already defined)
+(label {bf:{txt}division_labeled} already defined)
+(label {bf:{txt}majorgroup_labeled} already defined)
+(label {bf:{txt}group_labeled} already defined)
+(label {bf:{txt}subgroup_labeled} already defined)
+(label {bf:{txt}mne_type} already defined)
+(label {bf:{txt}province} already defined)
+
+{com}. 
+. save "$saveaddress_data\merged_ind_panel", replace 
+{txt}{p 0 4 2}
+file {bf}
+F:\michael\2023 VERSION\minimum wage paper\data\\merged_ind_panel.dta{rm}
+saved
+{p_end}
+
+{com}. cap log close 
+{smcl}
+{com}{sf}{ul off}

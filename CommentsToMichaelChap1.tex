@@ -1,0 +1,251 @@
+%  setwd(path <- "c:/seiro/docs/IDE/kenkyuukai/2022/MinWages/MichaelDraft/"); system("recycle c:/seiro/docs/IDE/kenkyuukai/2022/MinWages/MichaelDraft/CommentsToMichaelChap1/"); library(knitr); knit("CommentsToMichaelChap1.rnw", "CommentsToMichaelChap1.tex"); system("platex CommentsToMichaelChap1"); system("pbibtex CommentsToMichaelChap1"); system("dvipdfmx CommentsToMichaelChap1")
+
+\input{c:/seiro/settings/Rsetting/knitrPreamble/knitr_preamble.rnw}
+\renewcommand\Routcolor{\color{gray30}}
+\newtheorem{refcomment}{Comment}[section]
+\newtheorem{finding}{Finding}[section]
+\makeatletter
+\g@addto@macro{\UrlBreaks}{\UrlOrds}
+\newcommand\gobblepars{%
+    \@ifnextchar\par%
+        {\expandafter\gobblepars\@gobble}%
+        {}}
+\newenvironment{lightgrayleftbar}{%
+  \def\FrameCommand{\textcolor{lightgray}{\vrule width 1zw} \hspace{10pt}}% 
+  \MakeFramed {\advance\hsize-\width \FrameRestore}}%
+{\endMakeFramed}
+\newenvironment{palepinkleftbar}{%
+  \def\FrameCommand{\textcolor{palepink}{\vrule width 1zw} \hspace{10pt}}% 
+  \MakeFramed {\advance\hsize-\width \FrameRestore}}%
+{\endMakeFramed}
+\newcommand*\justify{%
+  \fontdimen2\font=0.4em% interword space
+  \fontdimen3\font=0.2em% interword stretch
+  \fontdimen4\font=0.1em% interword shrink
+  \fontdimen7\font=0.1em% extra space
+  \hyphenchar\font=`\-% allowing hyphenation
+}
+\makeatother
+\AtBeginDvi{\special{pdf:tounicode 90ms-RKSJ-UCS2}}
+\special{papersize= 209.9mm, 297.04mm}
+\usepackage{caption}
+\usepackage{setspace}
+\usepackage{framed}
+\usepackage{ascmac}
+\captionsetup[figure]{font={stretch=.6}} 
+\def\pgfsysdriver{pgfsys-dvipdfm.def}
+\usepackage{tikz}
+\usetikzlibrary{calc, arrows, decorations, decorations.pathreplacing, backgrounds}
+\usepackage{adjustbox}
+\tikzstyle{toprow} =
+[
+top color = gray!20, bottom color = gray!50, thick
+]
+\tikzstyle{maintable} =
+[
+top color = blue!1, bottom color = blue!20, draw = white
+%top color = green!1, bottom color = green!20, draw = white
+]
+\tikzset{
+%Define standard arrow tip
+>=stealth',
+help lines/.style={dashed, thick},
+axis/.style={<->},
+important line/.style={thick},
+connection/.style={thick, dotted},
+}
+\renewcommand{\thesection}{\arabic{section}}
+\renewcommand{\therefcomment}{\arabic{section}\alph{refcomment}}
+
+
+\begin{document}
+\setlength{\baselineskip}{12pt}
+
+\hfil Comments to ``Agricultural producer responses to minimum wage changes''\\
+
+\hfil\MonthDY\\
+\hfil{\footnotesize\currenttime}\\
+
+\hfil Seiro Ito
+
+%\setcounter{tocdepth}{3}
+%\tableofcontents
+%\newpage
+
+\setlength{\parindent}{1em}
+\vspace{2ex}
+
+\section{Overall comments}
+
+What I liked:
+\begin{itemize}
+\vspace{1.0ex}\setlength{\itemsep}{1.0ex}\setlength{\baselineskip}{12pt}
+\item	A concise discussion on the merits(/demerits) of labour demand side data and labour supply side data.
+\item	An easy-to-understand display of results using event study graphs.
+\end{itemize}
+
+\vspace{1ex}
+What I want to see more/improved:
+\begin{itemize}
+\vspace{1.0ex}\setlength{\itemsep}{1.0ex}\setlength{\baselineskip}{12pt}
+\item	Robustness to regression specifications. Please present estimates with no covariate for all the outcomes, not just for capital intensity.
+%\item	Examination of the identification assumption of common trend. Please take a look at \citet[][p.2702]{HarasztosiLindner2019} for how they did it. Need to write something along their line.
+%\item	Backing up the claim of shifts in worker composition using data.
+\item	No evidence shown on price pass-through despite the claim. Not sure we may even want to mention the price pass-through given the data is only labour demand side, not the product demand side as in \citet{HarasztosiLindner2019}.
+%\item	Insufficient discussions/efforts on showing how the profit could have increased in response to the minimum wage increase in the medium run. This claim is counterintuitive so one needs more careful backing with data.
+\item	A more thorough presentation of descriptive statistics. One may want to watch out for outliers.  For robustness, one can try to winsorise as in \citet{HarasztosiLindner2019}.
+\item	A more thorough description for reproducibility: How one can, had they gained access to data, obtain the same results. This is an important contribution to the literature and is essential for publication.
+\end{itemize}
+
+I have not received appendices and my comments may have been dealt there already.
+
+
+\section{Major points}
+
+\subsection{Sample selection and construction}
+
+It is helpful to know which sub-sectors and how many establishments are dropped, and the reasons for it. Also, I would like to see the distributions of each outcome measures and $FA$ to make sure the results are robust to outliers.
+
+\citet[][Table A12]{HarasztosiLindner2019} have only a subset data (n=2780 to 2928, or roughly 3000) that have both $FA$ and labour costs. They use this subset data to estimate relationship between $FA$ and labour costs. They then extrapolate the estimated relationship on firms only with labour costs to compute predicted $FA$, which in their final sample is about 17000 (final sample size is roughly 3000+17000=20000). They show that employment elasticities in the subset data are similar if one bases on predicted $FA$ or actual $FA$.
+
+I believe we are using only farms with job level information, equivalent to the subset data of \citet{HarasztosiLindner2019}. It may bias the estimates if it selects only the larger farms. One way to adjust for the selection bias is to weight by the farm size. One can choose weights to adjust for oversampling of large farms. Another way is to extrapolate to farms with no job level information as \citet{HarasztosiLindner2019} did.
+
+
+\subsection{Common trend assumption}
+
+Figures show no pre-trend for all outcomes. This gives confidence to DID common trend assumption. One can write about this more explicitly.
+
+\subsection{Interpretations of capital intensity}
+
+The paper interprets the increase of capital intensity (Fig 3 panel d, e) as an increase in capital. This can be the case, but capital intensity $\frac{K}{L}$ can increase if $L$ decreases. It can increase even if $K$ decreases so long as $L$ decreases more. Given the estimated negative employment effects, capital intensity should increase even in the absence of increases in $K$.
+
+To understand more clearly, please give the definition of capital intensity. Is it capital (ZAR) / number of employees, or capital / labour costs ? The latter increases directly with minimum wage, while the former does not. I assumed the former.
+
+\begin{lightgrayleftbar}
+According to Panel (e), low-capital low-wage farms experienced a rapid increase in capital accumulation compared to low-capital high-wage farms. Similarly, the capital intensity increased at a high rate for high-capital low-wage farms compared to high-capital high-wage farms.
+\end{lightgrayleftbar}
+
+A more straightforward interpretation of results is:
+
+\begin{quotation}
+Conditional on baseline capital intensity $\frac{K}{L}$, the farms with larger exposure saw an increased level of capital intensity than the less exposed farms.
+\end{quotation}
+Or,
+\begin{quotation}
+After controlling for the differences in initial levels of capital intensity, the farms with larger exposure saw an increased level of capital intensity than the less exposed farms.
+\end{quotation}
+
+The differences with your explanation are:
+\begin{enumerate}
+\vspace{1.0ex}\setlength{\itemsep}{1.0ex}\setlength{\baselineskip}{12pt}
+\item	Controlling for $K/L$ cannot be understood as controlling for levels of $K$. So one cannot express it using only $K$.
+\item	Even if we pick firms with the same $L$, so variations in $K/L$ translate to variations in $K$, the results hold not only in a comparison of low $K$ low wage vs. low $K$ high wage, but also in a comparison of low $K$ low wage vs. high $K$ high wage. Conditioning on the baseline $K/L$ means that we can ignore the differences in baseline $K/L$ when we discuss about the coefficient on $FA$. More rigorously, conditioning on baseline $K/L$ partials out correlation between baseline $K/L$ and outcome, correlation between baseline $K/L$ and $FA$, so any correlation by way of baseline $K/L$ is netted out from the estimate on $FA$. 
+\end{enumerate}
+
+
+\begin{lightgrayleftbar}
+Our results therefore show evidence of capital accumulation over time among low-wage farms following the minimum wage hike.
+\end{lightgrayleftbar}
+
+One can look at $K_{t}$ to check if the above interpretation is correct. We can follow \citet[][p.2712]{HarasztosiLindner2019} who decomposes labour costs to see minimum wage incidence:
+\[
+\frac{\Delta LaborCost}{Revenue_{2000}}
+=
+\frac{\Delta Revenue}{Revenue_{2000}}
+-\frac{\Delta Material}{Revenue_{2000}}
+-\frac{\Delta Misc}{Revenue_{2000}}
+-
+\frac{\Delta Depr}{Revenue_{2000}}
+-\frac{\Delta Profit}{Revenue_{2000}}.
+\]
+Using the similar normalisation, one can compute $\frac{K_{t}}{\mbox{revenue}_{2010}}$. This normalisation works as ``fraction of revenue'' (comparable across farms) which allows us to compare the evolution of capital across farms. I am not sure if one needs to deflate it for inflation.
+%$\frac{Depr_{t}}{Revenue_{2000}}$ under certain assumptions that connect capital stock and depreciation. However, this may not be a productive route because depreciation is volatile while capital stock is not.
+
+\subsection{Labour productivity}
+
+Profit per employee is used for labour productivity. This is not the standard measure of labour productivity. The standard measure is revenue per employee.
+
+Even with the standard measure, revenue per employee increases with an increase in revenues or a decrease in employment, or both. It is useful to use pre-event revenue for the denominator as in \citet[][p.2712]{HarasztosiLindner2019}. I would use $\frac{\Delta Revenue}{Revenue_{2000}}-\frac{\Delta LaborCost}{Revenue_{2000}}$ as a proxy to labour productivity changes.
+
+\subsection{Worker composition}
+
+There is no evidence shown about the claim on worker composition effects. Together with results on factor substitution between capital and labour, it may hint how farms adjusted, if we consider higher skill contents of labour are generally tied to higher capital intensity.
+
+\subsection{Profits}
+
+It is suggested that the more exposed farms saw increased profits in medium run. This is puzzling as one would expect the opposite. One may need more robustness checks to convince readers. If the results survive, one needs to come up with convincing explanations on how it happened. Digging in costs, elasticities (factor substitution), and revenues may provide clues.
+
+\subsection{TFP estimation}
+
+TFP is estimated as an OLS residual of C-D production function. The empirical literature of TFP cares about endogeneity, omitted variable, and selection biases. OLS obviously gives biased estimates, given capital and labour are endogenous to production. If one uses an industry level price as a deflator, the deviation from it introduces an omitted variable bias. Selection bias is also obvious as firms enter and exit. There are ways to control for these biases. But I do not think one should pursue it here because the underlying reasoning requires serious reading of papers. 
+
+I would like to suggest not to emphasize the findings related to TFP, or one can even move the relevant part to the appendix. Relatedly, given the possible bias, I am not confident to include pre-policy mean TFP in $\bfX_{it}$ in the estimating equation.
+
+\subsection{Elasticity estimates}
+
+To connect with existing studies, one may want to follow \citet{HarasztosiLindner2019} to estimate minimum wage elasticity of employment, etc. and discuss the differences.
+
+
+
+
+\section{Minor points}
+
+\begin{enumerate}
+\vspace{1.0ex}\setlength{\itemsep}{1.0ex}\setlength{\baselineskip}{12pt}
+\item	References appearing on pages 1, 3 are missing.
+\item	One may want to list the downside of using the labour demand side data, not just the upside. (p.2) It includes: Small coverage of informal sector and micro/small scale producers, concentration of jobs to the higher pay scale and more permanent employment. This downside is relevant for the external validity or the discussions of relevant population that we are estimating on.
+\item	One may want references for 
+\begin{lightgrayleftbar}
+Secondly, while South African minimum wage literature extensively focuses on the employment channel, (p.2).
+\end{lightgrayleftbar}
+\item	One needs to write why:
+\begin{lightgrayleftbar}
+Finally, with our rich data, coupled with a focus on the agricultural sector, where employers are likely to face monopsonistic competition in the labour market (p.2)
+\end{lightgrayleftbar}
+\textcolor{red}{due to geographical sparsity of potential employers,} ... Is it how you reason?
+\item	Just add the estimation strategy is usual:
+\begin{lightgrayleftbar}
+Using the Difference-in-differences estimation technique,
+\end{lightgrayleftbar}
+\textcolor{red}{Following the existing literature, we use the difference-...} 
+\item	In \citet{Manning2006}, for example, there is a sign condition when a minimum wage increase leads to increased employment.
+\begin{lightgrayleftbar}
+So, in monopsony theories, minimum wage increases \textcolor{red}{can} lead to increased employment.
+\end{lightgrayleftbar}
+\item	 Explicit assumptions are due. Monopsonic firms may still be price takers in product markets, like some agricultural producers in SA.
+\begin{lightgrayleftbar}
+In addition, monopsonistic market power allows firms to pass some of the minimum wage costs to consumers through output prices.
+\end{lightgrayleftbar}
+This may be changed to:\\
+\begin{quotation}
+In addition, \textcolor{red}{if} monopsonistic \textcolor{red}{firms have} a market power \textcolor{red}{in the product markets that} allows \sout{firms} \textcolor{red}{them} to pass some of the minimum wage costs to consumers \sout{through} \textcolor{red}{, one may find increases in} output prices.
+\end{quotation}
+I am not sure if we need this sentence at all because we cannot convincingly show how the prices changed.
+\item	One may want to add a short, clear message for the paragraph: 
+\begin{lightgrayleftbar}
+Employment adjustment is the most widely studied channel of minimum wage transmission. The effect of minimum wages on employment is a contentious topic among empirical economists. As predicted by monopsony and search models, some studies show evidence of an increase in employment following an increase in minimum wages. Although Levin-Waldman and McCarthy (1998) find that minimum wages do not result in job destruction, they present evidence of increased unemployment through hindrances on job creation. However, many of the studies report that minimum wages have a negative effect on the employment of low skilled workers (Neumark and Washer, 2006; Neumark et al., 2014). Moreover, a few studies find that minimum wages have no significant effect on employment. 
+\end{lightgrayleftbar}
+\citet{Manning2021}'s assessment is useful.
+\item	I understand what you mean but the description is not precise:
+\begin{lightgrayleftbar}
+Furthermore, in line with the competitive model predictions, the pass-through was lower in tradeable than non-tradeable sectors. (p.4)
+\end{lightgrayleftbar}
+This may be changed to:\\
+\begin{quotation}
+Furthermore, the pass-through was lower in tradeable than non-tradeable sectors, which suggests that the tradeables sector is more in line with the competitive model predictions.
+\end{quotation}
+\item	Impacts on exits are found only among low rated firms.
+\begin{lightgrayleftbar}
+A negative impact of minimum wages on revenue and profit increases \sout{firm} exit \textcolor{red}{of low rated firms} (Luca and Luca, 2019).
+\end{lightgrayleftbar}
+\item	One may want a little more description of minimum wage unification (of sectors A and B) in 2013, or at least point to papers for reference.
+\end{enumerate}
+
+
+{\footnotesize\bibliographystyle{aer}
+\setlength{\baselineskip}{8pt}
+\bibliography{c:/seiro/settings/TeX/seiro}
+}
+
+
+\end{document}

@@ -1,0 +1,63 @@
+DROP
+
+*KEEP ONLY AGRIC SUBSECTORS 
+	keep if imp_mic_sic7_3d ==11 | imp_mic_sic7_3d== 12 | imp_mic_sic7_3d ==13| imp_mic_sic7_3d== 14 | imp_mic_sic7_3d== 15 
+*DROP 2008 2009  2010 and 2018 
+	drop if taxyear == 2008 | taxyear == 2009 | taxyear== 2010 |  taxyear ==2018 
+	tab taxyear 
+*DROP DUPLICATES 
+*VALUE-ADDED  
+	replace value_added=x_labcost+g_grossprofit if value_added==.|value_added<0
+	replace value_added=. if value_added==.|value_added<0
+	cap drop value_added
+	drop if g_cos == 0 | g_cos==. 
+	drop if g_sales == 0 | g_sales == .
+	drop if value_added== 0 | value_added ==. 
+*EMPLOYMENT
+	cap drop employment
+	drop if irp5_kerr_weight_b == 0 | irp5_kerr_weight_b==. 
+*COST OF SALE  
+	cap drop cost_sales  
+	drop if g_cos == 0 | g_cos == . 
+*LABOUR COST 
+	sum x_labcost
+	drop if x_labcost==0 | x_labcost== .
+*DROP FIRMS ENTERING AFTER THE POLICY 
+	sort n_fid taxyear 
+	br n_fid taxyear  
+	cap drop n
+	  * bys automatically sorts by firmID [n_fid] (egen n_fid=group(taxrefno))
+	  * n is n-th obs of the firm: bysort taxrefno: gen n= _n 	
+	bys n_fid: gen n= _n 
+	gen entry_after_tg = 0
+	  * entry_after_tg == 1 when entered & taxyear > 2013
+	replace entry_after_tg = 1 if n==1 & taxyear > 2013 
+	  * copy max(entry_after_tg) to all entries in a firm
+	bys n_fid: egen drop_afer = max(entry_after_tg)
+	drop if drop_afer== 1
+	if "`dataset'"== "balanced"{
+		*Create rectangular dataset for a balanced panel 
+		drop if taxrefno ==""
+	}
+	if "`dataset'" == "survivors" {
+		keep if N == 7 
+	}
+
+ENTRY and EXIT definition
+
+	sort taxrefno taxyear 
+	bys n_fid: gen n = _n 
+	bys n_fid: gen N = _N
+	gen entry = 0 
+	  * entry == 1 if 1st year of obs
+	replace entry = 1 if n ==1 
+	label var entry "Firm entry"
+	gen exit =0 
+	  * exit == 1 if last year of data
+	replace exit = 1 if N==n & n!=.
+	labe var exit "Firm exit"
+	  * exit == 0 if 2011-2012
+	replace exit = 0 if taxyear <2013 
+
+ltrain, lnon_wage_labcosts, lawage, llabcost_pe, , loprofit, lmaterials, l_labcost, , loprofits_pe, , lrevenue, lrev_pe
+	

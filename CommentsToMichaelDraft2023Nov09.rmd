@@ -1,0 +1,205 @@
+---
+title: "Comments on Michael's draft"
+subtitle: " of Nov 02, 2023"
+author: "Seiro Ito"
+date: "`r format(Sys.time(), '%m %d, %Y% %R')`"
+output:
+  xaringan::moon_reader:
+    lib_dir: libs
+    nature:
+      highlightStyle: github
+      countIncrementalSlides: false
+    self_contained: true
+# path <- "c:/seiro/docs/IDE/kenkyuukai/2022/MinWages/MichaelDraft/"; rmarkdown::render(paste0(path, "CommentsToMichaelDraft2023Nov09.Rmd"))
+---
+```{r, load_refs, eval = F, include=FALSE, cache=FALSE}
+library(RefManageR)
+BibOptions(check.entries = FALSE,
+           bib.style = "authoryear",
+           cite.style = "alphabetic",
+           style = "markdown",
+           hyperlink = FALSE,
+           dashed = FALSE)
+myBib <- ReadBib("./seiro.bib", check = FALSE)
+```
+
+Agenda for today's meeting  
+
+1. Michael's draft for the last year's project.
+
+--
+
+1. Revision plans on current draft. 
+
+--
+
+  * Need to add more on sections of data, estimation method, and robustness checks.  
+
+--
+
+1. This year's project: Attaching concentration information to CIT data set.  
+
+--
+
+  * This will be done as a contracted work funded by IDE.  
+
+--
+
+  * For contracting, we need to agree on the date of a short summary report submission after completing the work. Last date of submission is January 29, Monday, 2024. 
+
+--
+
+  * Need to attach to each firm the total number of employees in a given "district" by 
+  * two digit SIC7 code  
+  * all industries  
+
+--
+
+3. Presentation on concentration and labour market power literature  
+
+---
+
+Overall comments:
+
+1. Please refer to my comments on previous version. Some may still be valid.  
+
+--
+
+1. On the results  
+  * I like the focus on employment, production (revenue), and revenue per employee.  
+
+--
+
+  * It shows no impact on number of employees, total capital values, total labor costs.  
+
+--
+
+  * Outcomes of interest not being examimed: Profits, skill mix of employees, firm exits/entries (Marlies?).  
+
+--
+
+  * Nothing on whether we use the balanced or unbalanced panel. 
+
+--
+
+1. Mechanism  
+  * We did not give supports to the conjecture that farms are keeping only high skilled employees.  
+
+--
+
+  * We did not discuss the overall employment costs in agriculture (can be argued with exits and entries).  
+
+--
+
+  * For example, how much employment was lost by exits, assuming all NAs after 2013 are exits?  
+
+---
+Please add to the data section.  
+
+--
+
+1. Define the variables clearly. A subsection headed as "Definitions" can be helpful. 
+
+--
+
+1. Explain how you selected the estimation sample from the raw data. A subsection headed as "Sample selection" can be helpful. 
+
+--
+
+1. Explain how we define exits and entries, show descriptive stats.  
+
+--
+
+All values in monetary units  
+
+--
+
+ * Did you use a deflator? Labor costs may ideally be deflated with wage deflator, capital with capital cost index or such, and revenue with CPI.  
+
+--
+
+Employment  
+
+* Used all employees, "blue collar" equivalent, part time workers? 
+
+--
+
+* Impacts on employment may require normalisation: Number of employee relative to pre-period or other variable that gives farm size. Using the number of employees as LHS is reasonable only when the impact is the same irrespective of farm size.  
+
+
+--
+
+Capital  
+
+ * Did you factor in depreciation (say, 5% per annum)?  
+ 
+ 
+
+---
+Small points on presentation 
+
+
+--
+
+ * In Table 1, replace labour cost and capital expenditure with each divided by sales revenue, which give cost shares of labour and capital. To show the size comparison between matched and unmatched, revenue suffices. 
+
+--
+
+ * In doing so, present averages (and/or medians) of individual farms. 
+
+--
+
+ * Total costs of all farms in Table 2 are not informative. 
+
+--
+
+ * The sample Table 2 based is not explained. Matched or all farms? 
+
+--
+
+ * Farm employment is informative, but it needs another statistic to compare with, such as total population or total employees of all industries.  
+
+--
+
+ * Many small values are collapsed and not observable in Figure 2. Use log (1+value) in both x and y. 
+
+--
+
+ * The event study graphs usually normalise the period -1 (2012) value to zero while your graph sets 2013 value to zero. See [Miller (2023)](https://www.aeaweb.org/articles/pdf/doi/10.1257/jep.37.2.203).  
+
+---
+On results
+
+
+1. Placebo tests: One can use farms only with $FA=0$ and depict the year effect estimates $\alpha_{t}$ of
+$$y_{it}=\alpha_{t}+\mathbf{\delta'x_{it}}+\varepsilon_{it}.$$
+
+--
+
+1. Can we define skill levels (high or low) in some way and estimate the impacts on skill mix?  
+
+--
+
+1. Want to know more about the costs of minimum wages. Using the unbalanced panel (if done by Marlies, then refer to her results): 
+
+--
+
+  * Can we examine employment impacts on the intensive margins (sum over surviving farms) and the extensive margins (sum over entrants minus sum over exiters)? 
+
+--
+
+  * Can we examine employment impacts as a whole (sum of intensive and extensive margins)? 
+
+---
+On introduction
+
+
+* Section on previous work needs to align with what we do in this paper. Namely, we may want to pick only the papers with employment impacts.  
+
+--
+
+* Need to update the literature. There are papers published in major journals since HL 2019. Most studies show zero or small employment impacts. Some explicitly show disemployment stayed low due to reallocation to bigger, more productive surviving firms (Dustmann et al. 2022 for Germany, Engbom and Moser 2022 for Brazil). 
+
+--
+
+* For theoretical models, we may want to focus only on competitive case and monopsony/oligopsony/monopolistically competitive cases. These are the models people discuss about and labor market power is getting more attentions these days.  

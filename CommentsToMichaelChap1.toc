@@ -1,0 +1,8 @@
+\contentsline {section}{\numberline {1}Overall comments}{2}{section.2}%
+\contentsline {section}{\numberline {2}Major points}{2}{section.3}%
+\contentsline {subsection}{\numberline {II.1}TFP estimation}{2}{subsection.4}%
+\contentsline {subsection}{\numberline {II.2}Elasticity estimates}{2}{subsection.5}%
+\contentsline {subsection}{\numberline {II.3}Sample choice}{2}{subsection.6}%
+\contentsline {subsection}{\numberline {II.4}Interpretations of capital intensity}{2}{subsection.7}%
+\contentsline {subsection}{\numberline {II.5}Labour productivity}{3}{subsection.8}%
+\contentsline {section}{\numberline {3}Minor points}{3}{section.11}%

@@ -1,0 +1,1442 @@
+-------------------------------------------------------------------------------
+      name:  <unnamed>
+       log:  F:\michael\2023 VERSION\minimum wage paper\log\create_analysis.smc
+> l
+  log type:  smcl
+ opened on:   2 Mar 2023, 20:53:30
+
+.  
+. foreach dataset in unbalanced balanced survivors {
+  2. use  "$saveaddress_data\analysis_firm.dta", clear 
+  3. 
+. cap drop _merge 
+  4. merge 1:1 taxrefno taxyear using "Z:\Master Data\Auxillary capital stock\I
+> mputed_capital_stock_beta.dta",  keepusing(pi_iv_fixed_pd_10) keep(master mat
+> ched)
+  5. drop _merge 
+  6. 
+. * To do : Merge in perpertual inventory capital variable
+. 
+. tab taxyear 
+  7. /*************************************************************************
+> ******
+> *Drop firms that entered after the policy.
+> **The anlysis dataset will have a will only have firms available before the t
+> he policy
+> *****************************************************************************
+> ***/
+. sort n_fid taxyear 
+  8. br n_fid taxyear  
+  9. cap drop n
+ 10. bys n_fid: gen n= _n 
+ 11. 
+. gen entry_after_tg = 0
+ 12. replace entry_after_tg = 1 if n==1 & taxyear > 2013 
+ 13. 
+. bys n_fid: egen drop_afer = max(entry_after_tg)
+ 14. drop if drop_afer== 1
+ 15. 
+. tab taxyear 
+ 16. 
+. cap drop n
+ 17. 
+. /****************************************************************************
+> **** 
+> *keep only agric firms 
+> *****************************************************************************
+> ***/
+. keep if imp_mic_sic7_3d ==11 | imp_mic_sic7_3d== 12 | imp_mic_sic7_3d ==13| i
+> mp_mic_sic7_3d== 14 | imp_mic_sic7_3d== 15 
+ 18. tab taxyear 
+ 19. drop if taxyear== 2010 |  taxyear ==2018 
+ 20. tab taxyear 
+ 21. 
+. /****************************************************************************
+> ***
+> Generate fin_year_month variable 
+> *****************************************************************************
+> ***/
+. cap drop fin_year_month  
+ 22. gen fin_year_month = month(FYE)
+ 23. tab taxyear 
+ 24. cap drop n 
+ 25. bysort taxrefno: gen n= _n 
+ 26. count if n ==1          
+ 27. 
+. *provinces 
+. drop if busprov_geo == "EXCEPTION"
+ 28. tab taxyear 
+ 29. cap drop busprov_geo_num
+ 30. egen busprov_geo_num = group(busprov_geo)
+ 31. bys taxrefno: egen busprov_geo_num_imp = mode(busprov_geo_num) 
+ 32. 
+. *rainfall
+. cap drop province 
+ 33. gen province =  busprov_geo 
+ 34. cap drop _merge
+ 35. sort taxyear province 
+ 36. preserve 
+ 37. use "$saveaddress_data\Annual rainfall by province in line with taxyears.d
+> ta", clear 
+ 38. sort taxyear province 
+ 39. tempfile rainfall 
+ 40. save `rainfall'
+ 41. restore 
+ 42. 
+. merge m:1 taxyear province using `rainfall'
+ 43. 
+. 
+. 
+. /****************************************************************************
+> ****
+> create a CPI variable 
+> *****************************************************************************
+> ***/
+. cap drop cpi 
+ 44. gen cpi = .
+ 45. replace cpi = (92.98/71.13) if taxyear ==2011 
+ 46. replace cpi = (92.98/74.97) if taxyear ==2012
+ 47. replace cpi = (92.98/79.13) if taxyear ==2013
+ 48. replace cpi = (92.98/83.72) if taxyear ==2014
+ 49. replace cpi = (92.98/88.58) if taxyear ==2015
+ 50. replace cpi = (92.98/92.98) if taxyear ==2016
+ 51. replace cpi = (92.98/98.85) if taxyear ==2017
+ 52. 
+. /****************************************************************************
+> ***
+> Deflate using cpi  
+> *****************************************************************************
+> ***/
+. 
+. *To do : defelate the capital variable
+. gen total_labour_cost = x_labcost
+ 53. replace total_labour_cost = total_labour_cost*cpi*100 
+ 54. 
+. ren tot_kerr total_wages_kerr
+ 55. replace total_wages_kerr = total_wages_kerr*cpi*100
+ 56. 
+. ren tot_3601 total_wages_3601
+ 57. replace total_wages_3601 = total_wages_3601*cpi*100
+ 58. 
+. gen materials = g_cos
+ 59. replace materials = materials*cpi*100 
+ 60. 
+. gen revenue = g_sales 
+ 61. replace revenue = revenue*cpi*100 
+ 62. 
+. 
+. 
+. *****************************************************************************
+> ***
+. *Variable cleaning 
+. *****************************************************************************
+> *** 
+. 
+. *employment | Number of employees on a farm 
+. cap drop employment
+ 63. drop if irp5_kerr_iweight_b == 0 | irp5_kerr_iweight_b==. 
+ 64. gen employment = irp5_kerr_iweight_b
+ 65. sum employment, d
+ 66. tab taxyear 
+ 67. /*
+> *Capital 
+> *To do : Clean capital variable 
+> cap drop capital 
+> gen capital = pi_iv_fixed_pd_10 
+> sum capital, d 
+> 
+> */
+. 
+. 
+. *3.fixed capital 
+. 
+. cap drop capital 
+ 68. drop if k_ppe == 0 | k_ppe == . 
+ 69. egen capital = rowtotal(k_ppe k_faother) if k_ppe !=k_faother & ( k_ppe!=.
+>  | k_faother!=.), m
+ 70. replace capital =k_faother if capital==. & k_faother!=.
+ 71. drop if  capital<100
+ 72. sum capital
+ 73. 
+. *Wages 
+. drop if total_wages_3601 ==0 | total_wages_3601==.
+ 74. sum total_wages_3601, d
+ 75. 
+. drop if total_wages_kerr==0 | total_wages_kerr==.
+ 76. sum total_wages_kerr, d
+ 77. tab taxyear 
+ 78. 
+. *labour cost 
+. drop if total_labour_cost == 0 | total_labour_cost==. 
+ 79. sum total_labour_cost, d
+ 80. tab taxyear 
+ 81. 
+. 
+. *Operating profit 
+. drop if materials ==0 | materials ==.
+ 82. drop if materials < 0
+ 83. sum materials, d 
+ 84. drop if revenue == 0 | revenue == . 
+ 85. sum revenue, d 
+ 86. 
+. cap drop profit 
+ 87. gen profit  = revenue - materials 
+ 88. sum profit, d
+ 89. 
+. 
+. *To do : Create labour productivity variable.
+. gen revenue_2013 = revenue if taxyear ==2013 
+ 90. bys FID : egen base_revenue = min(revenue_2013)
+ 91. drop revenue_2013  
+ 92. 
+. xtset FID taxyear 
+ 93. br FID taxyear revenue 
+ 94. order FID taxyear revenue
+ 95. gen revenue_growth_rate = (revenue-l.revenue)/l.revenue
+ 96. gen revenue_growth_adj = revenue_growth_rate/base_revenue
+ 97. 
+. 
+. gen labour_cost_growth = (total_labour_cost-l.total_labour_cost)/l.total_labo
+> ur_cost 
+ 98. gen labour_cost_growth_adj  = labour_cost_growth/base_revenue
+ 99. 
+. gen labour_productivity = revenue_growth_adj - labour_cost_growth_adj
+100. 
+. 
+.  
+. 
+. 
+. /*
+> *firm size : This should be employment 
+> cap drop size 
+> gen size = employment
+> 
+> */
+. 
+. 
+. *****************************************************************************
+> ***
+. *generate fractions 
+. *****************************************************************************
+> ***
+. *capital labour ratio 
+. cap drop cap_lab_ratio
+101. gen cap_lab_ratio = capital/employment 
+102. 
+. *revenue per employee
+. cap drop revenue_per_empl 
+103. gen revenue_per_empl  = revenue/employment
+104. 
+. *operating profit per employee 
+. cap drop profit_per_empl
+105. gen profit_per_empl = profit/employment
+106. 
+. *labour cost per employee 
+. cap drop lab_cost_per_empl
+107. gen lab_cost_per_empl = total_labour_cost/employment
+108. 
+. *****************************************************************************
+> ***
+. *generate logs 
+. *****************************************************************************
+> ***
+. *log capital labour ratiop 
+. cap drop log_cap_lab_ratio
+109. gen log_cap_lab_ratio = log(cap_lab_ratio)
+110. 
+. *log revenue per employees
+. cap drop log_revenue_per_empl 
+111. gen log_revenue_per_empl = log(revenue_per_empl)
+112. 
+. *log profits per employee
+. cap drop log_profit_per_empl
+113. gen log_profit_per_empl = log(profit_per_empl)
+114. 
+. *log labour cost
+. cap drop log_labcost
+115. gen log_labcost = log(total_labour_cost)
+116. 
+. *log labour cost per employee 
+. cap drop log_lab_cost_per_empl 
+117. gen log_lab_cost_per_empl  = log(lab_cost_per_empl)
+118. 
+. *log total wages 
+. cap drop log_total_wages 
+119. gen log_total_wages = log(total_wages_3601)
+120. 
+. *log average wage 
+. cap drop  avg_wage 
+121. gen avg_wage = log_total_wages/ employment
+122. gen log_avg_wage = log(avg_wage)
+123. 
+. *log materials
+. cap drop log_materials
+124. gen log_materials = log(materials) 
+125. 
+. *log revenue 
+. cap drop log_revenue
+126. gen log_revenue = log(revenue)
+127. 
+. *log revenue per employee
+. cap drop log_revenue_per_empl 
+128. gen log_revenue_per_empl  = log(revenue_per_empl)
+129. 
+. *log profits 
+. cap drop log_profit
+130. gen log_profit = log(profit)
+131. 
+. *non wage labour costs 
+. gen non_wage_labcosts = total_labour_cost - total_wages_3601
+132. gen lnon_wage_labcosts = log(non_wage_labcosts)
+133. 
+. *employee training expenses (medium to large firms ony )
+. cap drop ltrain 
+134. gen ltrain = log(ITR14_x_training)
+135. 
+. *log employment
+. cap drop log_employemnt 
+136. gen log_employemnt = log(employment)
+137. 
+. *log capital 
+. cap drop log_capital 
+138. gen log_capital = log(capital)
+139. 
+. /****************************************************************************
+> 
+> *****************************************************************************
+> /
+. 
+. *1. value-added 
+. cap drop value_added
+140. drop if g_cos == 0 | g_cos==. 
+141. drop if g_sales == 0 | g_sales == .
+142. gen value_added = g_sales - g_cos 
+143. replace value_added=x_labcost+g_grossprofit if value_added==.|value_added<
+> 0
+144. replace value_added=. if value_added==.|value_added<0
+145. drop if value_added== 0 | value_added ==. 
+146. sum value_added
+147. 
+. 
+. *6 Total factor productivity  
+. gen va = log(value_added)
+148. cap drop l 
+149. gen l = log(employment)
+150. cap drop k 
+151. gen k = log(capital)
+152. 
+. 
+. xi: reg va l k, cluster(n_fid) 
+153. cap drop tfp  
+154. gen tfp = va - (_b[l]*l + _b[k]*k)
+155. 
+. 
+. *9. firm size 
+. cap drop size 
+156. gen size = .
+157. replace size =1 if employment <20 
+158. replace size =2 if employment >=20 & employment <50 
+159. replace size = 3 if employment >=50
+160. 
+. 
+. *****************************************************************************
+> ***
+. *define treatment and period 
+. *****************************************************************************
+> ***
+. *define treatment group based on fractio affected 
+. cap drop t 
+161. gen t=0 
+162. replace t = 1 if fa> 0 
+163. 
+. *Define pre and post period 
+. cap drop p 
+164. gen p = 0 
+165. replace p = 1 if taxyear >=2014
+166. 
+. *create constant controls 
+. sort n_fid taxyear 
+167. 
+. foreach var in cap_lab_ratio rainfall size tfp {
+168.         cap drop tmp_`var'
+169.         bys n_fid: egen tmp_`var' = mean(`var') if p==0 
+170.         
+.         cap drop mn_`var'
+171.         bys n_fid: egen mn_`var' = min(tmp_`var')
+172.         
+.         cap drop lmn_var
+173.         gen lmn_`var' = log(mn_`var')
+174.         
+.         cap drop tmp_*
+175.         
+. }
+176. 
+. if "`dataset'"== "balanced"{
+177. *create rectangular dataset for a balanced panel 
+. drop if taxrefno ==""
+178. egen id_new_num = group(id_new)
+179. xtset n_fid taxyear 
+180. tsfill , full
+181. 
+. local outcome_vars = "log_avg_wage log_lab_cost_per_empl log_employemnt log_c
+> apital log_profit log_revenue_per_empl labour_productivity"
+182. 
+. foreach var of local outcome_vars {
+183.     replace `var' = 0 if `var'==. & taxyear >2013 
+184. }
+185. replace fa_use =fa_use[_n-1] if fa_use==0 & taxyear > 2013 & fa_use[_n-1]!
+>  = 0 & FID==FID[_n-1]
+186. 
+. }
+187. 
+. if "`dataset'" == "survivors" {
+188. *Tag survivors  
+. br FID taxyear 
+189. bys FID : gen N = _N
+190. keep if N == 7 
+191. }
+192. 
+. 
+. save "$saveaddress_data\\analysis_`dataset'.dta", replace 
+193. }
+
+    Result                           # of obs.
+    -----------------------------------------
+    not matched                            43
+        from master                        43  (_merge==1)
+        from using                          0  (_merge==2)
+
+    matched                           219,916  (_merge==3)
+    -----------------------------------------
+
+    taxyear |      Freq.     Percent        Cum.
+------------+-----------------------------------
+       2010 |     19,793        9.00        9.00
+       2011 |     22,528       10.24       19.24
+       2012 |     22,328       10.15       29.39
+       2013 |     26,547       12.07       41.46
+       2014 |     26,701       12.14       53.60
+       2015 |     26,827       12.20       65.80
+       2016 |     26,713       12.14       77.94
+       2017 |     26,176       11.90       89.84
+       2018 |     22,346       10.16      100.00
+------------+-----------------------------------
+      Total |    219,959      100.00
+(13,617 real changes made)
+(33,221 observations deleted)
+
+    taxyear |      Freq.     Percent        Cum.
+------------+-----------------------------------
+       2010 |     19,793       10.60       10.60
+       2011 |     22,528       12.06       22.66
+       2012 |     22,328       11.96       34.62
+       2013 |     26,547       14.22       48.84
+       2014 |     23,279       12.47       61.30
+       2015 |     21,246       11.38       72.68
+       2016 |     19,432       10.41       83.09
+       2017 |     17,608        9.43       92.52
+       2018 |     13,977        7.48      100.00
+------------+-----------------------------------
+      Total |    186,738      100.00
+(153,047 observations deleted)
+
+    taxyear |      Freq.     Percent        Cum.
+------------+-----------------------------------
+       2010 |      3,201        9.50        9.50
+       2011 |      3,783       11.23       20.73
+       2012 |      3,821       11.34       32.07
+       2013 |      4,486       13.32       45.39
+       2014 |      4,183       12.42       57.80
+       2015 |      3,996       11.86       69.66
+       2016 |      3,766       11.18       80.84
+       2017 |      3,533       10.49       91.33
+       2018 |      2,922        8.67      100.00
+------------+-----------------------------------
+      Total |     33,691      100.00
+(6,123 observations deleted)
+
+    taxyear |      Freq.     Percent        Cum.
+------------+-----------------------------------
+       2011 |      3,783       13.72       13.72
+       2012 |      3,821       13.86       27.58
+       2013 |      4,486       16.27       43.86
+       2014 |      4,183       15.17       59.03
+       2015 |      3,996       14.50       73.52
+       2016 |      3,766       13.66       87.18
+       2017 |      3,533       12.82      100.00
+------------+-----------------------------------
+      Total |     27,568      100.00
+
+    taxyear |      Freq.     Percent        Cum.
+------------+-----------------------------------
+       2011 |      3,783       13.72       13.72
+       2012 |      3,821       13.86       27.58
+       2013 |      4,486       16.27       43.86
+       2014 |      4,183       15.17       59.03
+       2015 |      3,996       14.50       73.52
+       2016 |      3,766       13.66       87.18
+       2017 |      3,533       12.82      100.00
+------------+-----------------------------------
+      Total |     27,568      100.00
+  5,374
+(1,117 observations deleted)
+
+    taxyear |      Freq.     Percent        Cum.
+------------+-----------------------------------
+       2011 |      3,770       14.25       14.25
+       2012 |      3,771       14.26       28.51
+       2013 |      4,274       16.16       44.67
+       2014 |      3,966       14.99       59.66
+       2015 |      3,784       14.31       73.97
+       2016 |      3,551       13.42       87.39
+       2017 |      3,335       12.61      100.00
+------------+-----------------------------------
+      Total |     26,451      100.00
+(6,630 missing values generated)
+Warning: at least one group contains all missing values or contains multiple
+modes.  Generating missing values for the mode of these groups.  Use the
+missing, maxmode, minmode, or nummode() options to control this behavior.
+(988 missing values generated)
+(6,630 missing values generated)
+file D:\statatemp\ST_10d94_000002.tmp saved as .dta format
+
+    Result                           # of obs.
+    -----------------------------------------
+    not matched                         6,738
+        from master                     6,630  (_merge==1)
+        from using                        108  (_merge==2)
+
+    matched                            19,821  (_merge==3)
+    -----------------------------------------
+(26,559 missing values generated)
+(3,770 real changes made)
+(3,771 real changes made)
+(4,274 real changes made)
+(3,966 real changes made)
+(3,784 real changes made)
+(3,551 real changes made)
+(3,335 real changes made)
+(206 missing values generated)
+(25,190 real changes made)
+(25,589 real changes made)
+(26,236 real changes made)
+(283 missing values generated)
+(19,063 real changes made)
+(154 missing values generated)
+(25,532 real changes made)
+(267 observations deleted)
+
+                         employment
+-------------------------------------------------------------
+      Percentiles      Smallest
+ 1%            1              1
+ 5%            2              1
+10%            3              1       Obs              26,292
+25%            8              1       Sum of wgt.      26,292
+
+50%           24                      Mean           141.8592
+                        Largest       Std. dev.      530.4624
+75%           82          13099
+90%          290          13199       Variance       281390.4
+95%          603          18517       Skewness       13.61591
+99%         2005          20139       Kurtosis       297.0415
+
+    taxyear |      Freq.     Percent        Cum.
+------------+-----------------------------------
+       2011 |      3,743       14.24       14.24
+       2012 |      3,748       14.26       28.49
+       2013 |      4,248       16.16       44.65
+       2014 |      3,947       15.01       59.66
+       2015 |      3,762       14.31       73.97
+       2016 |      3,535       13.45       87.41
+       2017 |      3,309       12.59      100.00
+------------+-----------------------------------
+      Total |     26,292      100.00
+(1,363 observations deleted)
+(1 missing value generated)
+(1 real change made)
+(226 observations deleted)
+
+    Variable |        Obs        Mean    Std. dev.       Min        Max
+-------------+---------------------------------------------------------
+     capital |     24,703    1.66e+07    8.70e+07        100   5.04e+09
+(59 observations deleted)
+
+                      total_wages_3601
+-------------------------------------------------------------
+      Percentiles      Smallest
+ 1%      2115051       94.06171
+ 5%      6650833       111.0607
+10%     1.17e+07       111.0607       Obs              24,644
+25%     2.93e+07       111.0607       Sum of wgt.      24,644
+
+50%     7.54e+07                      Mean           2.88e+08
+                        Largest       Std. dev.      1.77e+09
+75%     1.96e+08       7.33e+10
+90%     4.86e+08       7.52e+10       Variance       3.15e+18
+95%     8.83e+08       8.08e+10       Skewness       29.51876
+99%     2.83e+09       9.77e+10       Kurtosis       1140.016
+(637 observations deleted)
+
+                      total_wages_kerr
+-------------------------------------------------------------
+      Percentiles      Smallest
+ 1%      2337114       41407.73
+ 5%      7005767          58536
+10%     1.24e+07       70472.33       Obs              24,007
+25%     3.10e+07       100560.4       Sum of wgt.      24,007
+
+50%     8.02e+07                      Mean           3.35e+08
+                        Largest       Std. dev.      2.24e+09
+75%     2.13e+08       8.21e+10
+90%     5.42e+08       8.97e+10       Variance       5.04e+18
+95%     1.01e+09       9.62e+10       Skewness       28.53172
+99%     3.34e+09       1.12e+11       Kurtosis       1013.126
+
+    taxyear |      Freq.     Percent        Cum.
+------------+-----------------------------------
+       2011 |      3,263       13.59       13.59
+       2012 |      3,325       13.85       27.44
+       2013 |      3,876       16.15       43.59
+       2014 |      3,682       15.34       58.92
+       2015 |      3,482       14.50       73.43
+       2016 |      3,288       13.70       87.12
+       2017 |      3,091       12.88      100.00
+------------+-----------------------------------
+      Total |     24,007      100.00
+(813 observations deleted)
+
+                      total_labour_cost
+-------------------------------------------------------------
+      Percentiles      Smallest
+ 1%      3784532       8061.491
+ 5%     1.44e+07       11633.94
+10%     2.50e+07        15548.5       Obs              23,194
+25%     5.78e+07       16209.08       Sum of wgt.      23,194
+
+50%     1.37e+08                      Mean           4.65e+08
+                        Largest       Std. dev.      3.51e+09
+75%     3.20e+08       1.46e+11
+90%     7.38e+08       1.48e+11       Variance       1.23e+19
+95%     1.28e+09       1.56e+11       Skewness       33.46348
+99%     4.34e+09       1.59e+11       Kurtosis       1276.413
+
+    taxyear |      Freq.     Percent        Cum.
+------------+-----------------------------------
+       2011 |      3,110       13.41       13.41
+       2012 |      3,213       13.85       27.26
+       2013 |      3,747       16.16       43.42
+       2014 |      3,552       15.31       58.73
+       2015 |      3,367       14.52       73.25
+       2016 |      3,191       13.76       87.01
+       2017 |      3,014       12.99      100.00
+------------+-----------------------------------
+      Total |     23,194      100.00
+(6,175 observations deleted)
+(1,670 observations deleted)
+
+                          materials
+-------------------------------------------------------------
+      Percentiles      Smallest
+ 1%     153672.1       124.0229
+ 5%      3278682       248.0459
+10%      9708391       372.0688       Obs              15,349
+25%     5.18e+07            800       Sum of wgt.      15,349
+
+50%     2.76e+08                      Mean           3.72e+09
+                        Largest       Std. dev.      2.98e+10
+75%     1.27e+09       8.65e+11
+90%     4.54e+09       8.76e+11       Variance       8.89e+20
+95%     9.89e+09       8.82e+11       Skewness        20.5427
+99%     4.81e+10       9.55e+11       Kurtosis       493.8977
+(16 observations deleted)
+
+                           revenue
+-------------------------------------------------------------
+      Percentiles      Smallest
+ 1%     1.45e+07       174484.5
+ 5%     5.86e+07       241306.2
+10%     1.15e+08       260973.8       Obs              15,333
+25%     3.44e+08       312939.8       Sum of wgt.      15,333
+
+50%     1.00e+09                      Mean           5.71e+09
+                        Largest       Std. dev.      4.15e+10
+75%     2.91e+09       1.10e+12
+90%     7.75e+09       1.10e+12       Variance       1.72e+21
+95%     1.53e+10       1.27e+12       Skewness       21.13564
+99%     6.17e+10       1.33e+12       Kurtosis       509.4604
+
+                           profit
+-------------------------------------------------------------
+      Percentiles      Smallest
+ 1%     -5271471      -5.77e+09
+ 5%     1.91e+07      -4.69e+09
+10%     5.06e+07      -3.43e+09       Obs              15,333
+25%     1.71e+08      -2.83e+09       Sum of wgt.      15,333
+
+50%     5.08e+08                      Mean           1.98e+09
+                        Largest       Std. dev.      1.47e+10
+75%     1.38e+09       5.23e+11
+90%     3.38e+09       5.79e+11       Variance       2.15e+20
+95%     5.76e+09       6.24e+11       Skewness       30.17025
+99%     1.54e+10       6.85e+11       Kurtosis       1083.713
+(12,928 missing values generated)
+(3,850 missing values generated)
+       panel variable:  FID (unbalanced)
+        time variable:  taxyear, 2011 to 2017, but with gaps
+                delta:  1 unit
+(5,418 missing values generated)
+(7,041 missing values generated)
+(5,418 missing values generated)
+(7,041 missing values generated)
+(7,041 missing values generated)
+(236 missing values generated)
+(236 missing values generated)
+(2,110 missing values generated)
+(13,220 missing values generated)
+(0 observations deleted)
+(0 observations deleted)
+(178 real changes made, 144 to missing)
+(0 real changes made)
+(202 observations deleted)
+
+    Variable |        Obs        Mean    Std. dev.       Min        Max
+-------------+---------------------------------------------------------
+ value_added |     15,131    1.84e+07    1.37e+08        243   6.85e+09
+
+Linear regression                               Number of obs     =     15,131
+                                                F(2, 4012)        =    1688.63
+                                                Prob > F          =     0.0000
+                                                R-squared         =     0.4439
+                                                Root MSE          =     1.2527
+
+                              (Std. Err. adjusted for 4,013 clusters in n_fid)
+------------------------------------------------------------------------------
+             |               Robust
+          va |      Coef.   Std. Err.      t    P>|t|     [95% Conf. Interval]
+-------------+----------------------------------------------------------------
+           l |   .4868465   .0134125    36.30   0.000     .4605505    .5131426
+           k |   .2227253   .0108763    20.48   0.000     .2014017    .2440489
+       _cons |    10.2873   .1412115    72.85   0.000     10.01044    10.56415
+------------------------------------------------------------------------------
+(15,131 missing values generated)
+(6,683 real changes made)
+(3,327 real changes made)
+(5,121 real changes made)
+(12,571 real changes made)
+(8,732 real changes made)
+(8,732 missing values generated)
+(1,520 missing values generated)
+(1,520 missing values generated)
+(9,954 missing values generated)
+(3,788 missing values generated)
+(3,788 missing values generated)
+(8,732 missing values generated)
+(1,520 missing values generated)
+(1,520 missing values generated)
+(8,732 missing values generated)
+(1,520 missing values generated)
+(1,520 missing values generated)
+file F:\michael\2023 VERSION\minimum wage
+    paper\data\\\analysis_unbalanced.dta saved
+
+    Result                           # of obs.
+    -----------------------------------------
+    not matched                            43
+        from master                        43  (_merge==1)
+        from using                          0  (_merge==2)
+
+    matched                           219,916  (_merge==3)
+    -----------------------------------------
+
+    taxyear |      Freq.     Percent        Cum.
+------------+-----------------------------------
+       2010 |     19,793        9.00        9.00
+       2011 |     22,528       10.24       19.24
+       2012 |     22,328       10.15       29.39
+       2013 |     26,547       12.07       41.46
+       2014 |     26,701       12.14       53.60
+       2015 |     26,827       12.20       65.80
+       2016 |     26,713       12.14       77.94
+       2017 |     26,176       11.90       89.84
+       2018 |     22,346       10.16      100.00
+------------+-----------------------------------
+      Total |    219,959      100.00
+(13,617 real changes made)
+(33,221 observations deleted)
+
+    taxyear |      Freq.     Percent        Cum.
+------------+-----------------------------------
+       2010 |     19,793       10.60       10.60
+       2011 |     22,528       12.06       22.66
+       2012 |     22,328       11.96       34.62
+       2013 |     26,547       14.22       48.84
+       2014 |     23,279       12.47       61.30
+       2015 |     21,246       11.38       72.68
+       2016 |     19,432       10.41       83.09
+       2017 |     17,608        9.43       92.52
+       2018 |     13,977        7.48      100.00
+------------+-----------------------------------
+      Total |    186,738      100.00
+(153,047 observations deleted)
+
+    taxyear |      Freq.     Percent        Cum.
+------------+-----------------------------------
+       2010 |      3,201        9.50        9.50
+       2011 |      3,783       11.23       20.73
+       2012 |      3,821       11.34       32.07
+       2013 |      4,486       13.32       45.39
+       2014 |      4,183       12.42       57.80
+       2015 |      3,996       11.86       69.66
+       2016 |      3,766       11.18       80.84
+       2017 |      3,533       10.49       91.33
+       2018 |      2,922        8.67      100.00
+------------+-----------------------------------
+      Total |     33,691      100.00
+(6,123 observations deleted)
+
+    taxyear |      Freq.     Percent        Cum.
+------------+-----------------------------------
+       2011 |      3,783       13.72       13.72
+       2012 |      3,821       13.86       27.58
+       2013 |      4,486       16.27       43.86
+       2014 |      4,183       15.17       59.03
+       2015 |      3,996       14.50       73.52
+       2016 |      3,766       13.66       87.18
+       2017 |      3,533       12.82      100.00
+------------+-----------------------------------
+      Total |     27,568      100.00
+
+    taxyear |      Freq.     Percent        Cum.
+------------+-----------------------------------
+       2011 |      3,783       13.72       13.72
+       2012 |      3,821       13.86       27.58
+       2013 |      4,486       16.27       43.86
+       2014 |      4,183       15.17       59.03
+       2015 |      3,996       14.50       73.52
+       2016 |      3,766       13.66       87.18
+       2017 |      3,533       12.82      100.00
+------------+-----------------------------------
+      Total |     27,568      100.00
+  5,374
+(1,117 observations deleted)
+
+    taxyear |      Freq.     Percent        Cum.
+------------+-----------------------------------
+       2011 |      3,770       14.25       14.25
+       2012 |      3,771       14.26       28.51
+       2013 |      4,274       16.16       44.67
+       2014 |      3,966       14.99       59.66
+       2015 |      3,784       14.31       73.97
+       2016 |      3,551       13.42       87.39
+       2017 |      3,335       12.61      100.00
+------------+-----------------------------------
+      Total |     26,451      100.00
+(6,630 missing values generated)
+Warning: at least one group contains all missing values or contains multiple
+modes.  Generating missing values for the mode of these groups.  Use the
+missing, maxmode, minmode, or nummode() options to control this behavior.
+(988 missing values generated)
+(6,630 missing values generated)
+file D:\statatemp\ST_10d94_000004.tmp saved as .dta format
+
+    Result                           # of obs.
+    -----------------------------------------
+    not matched                         6,738
+        from master                     6,630  (_merge==1)
+        from using                        108  (_merge==2)
+
+    matched                            19,821  (_merge==3)
+    -----------------------------------------
+(26,559 missing values generated)
+(3,770 real changes made)
+(3,771 real changes made)
+(4,274 real changes made)
+(3,966 real changes made)
+(3,784 real changes made)
+(3,551 real changes made)
+(3,335 real changes made)
+(206 missing values generated)
+(25,190 real changes made)
+(25,589 real changes made)
+(26,236 real changes made)
+(283 missing values generated)
+(19,063 real changes made)
+(154 missing values generated)
+(25,532 real changes made)
+(267 observations deleted)
+
+                         employment
+-------------------------------------------------------------
+      Percentiles      Smallest
+ 1%            1              1
+ 5%            2              1
+10%            3              1       Obs              26,292
+25%            8              1       Sum of wgt.      26,292
+
+50%           24                      Mean           141.8592
+                        Largest       Std. dev.      530.4624
+75%           82          13099
+90%          290          13199       Variance       281390.4
+95%          603          18517       Skewness       13.61591
+99%         2005          20139       Kurtosis       297.0415
+
+    taxyear |      Freq.     Percent        Cum.
+------------+-----------------------------------
+       2011 |      3,743       14.24       14.24
+       2012 |      3,748       14.26       28.49
+       2013 |      4,248       16.16       44.65
+       2014 |      3,947       15.01       59.66
+       2015 |      3,762       14.31       73.97
+       2016 |      3,535       13.45       87.41
+       2017 |      3,309       12.59      100.00
+------------+-----------------------------------
+      Total |     26,292      100.00
+(1,363 observations deleted)
+(1 missing value generated)
+(1 real change made)
+(226 observations deleted)
+
+    Variable |        Obs        Mean    Std. dev.       Min        Max
+-------------+---------------------------------------------------------
+     capital |     24,703    1.66e+07    8.70e+07        100   5.04e+09
+(59 observations deleted)
+
+                      total_wages_3601
+-------------------------------------------------------------
+      Percentiles      Smallest
+ 1%      2115051       94.06171
+ 5%      6650833       111.0607
+10%     1.17e+07       111.0607       Obs              24,644
+25%     2.93e+07       111.0607       Sum of wgt.      24,644
+
+50%     7.54e+07                      Mean           2.88e+08
+                        Largest       Std. dev.      1.77e+09
+75%     1.96e+08       7.33e+10
+90%     4.86e+08       7.52e+10       Variance       3.15e+18
+95%     8.83e+08       8.08e+10       Skewness       29.51876
+99%     2.83e+09       9.77e+10       Kurtosis       1140.016
+(637 observations deleted)
+
+                      total_wages_kerr
+-------------------------------------------------------------
+      Percentiles      Smallest
+ 1%      2337114       41407.73
+ 5%      7005767          58536
+10%     1.24e+07       70472.33       Obs              24,007
+25%     3.10e+07       100560.4       Sum of wgt.      24,007
+
+50%     8.02e+07                      Mean           3.35e+08
+                        Largest       Std. dev.      2.24e+09
+75%     2.13e+08       8.21e+10
+90%     5.42e+08       8.97e+10       Variance       5.04e+18
+95%     1.01e+09       9.62e+10       Skewness       28.53172
+99%     3.34e+09       1.12e+11       Kurtosis       1013.126
+
+    taxyear |      Freq.     Percent        Cum.
+------------+-----------------------------------
+       2011 |      3,263       13.59       13.59
+       2012 |      3,325       13.85       27.44
+       2013 |      3,876       16.15       43.59
+       2014 |      3,682       15.34       58.92
+       2015 |      3,482       14.50       73.43
+       2016 |      3,288       13.70       87.12
+       2017 |      3,091       12.88      100.00
+------------+-----------------------------------
+      Total |     24,007      100.00
+(813 observations deleted)
+
+                      total_labour_cost
+-------------------------------------------------------------
+      Percentiles      Smallest
+ 1%      3784532       8061.491
+ 5%     1.44e+07       11633.94
+10%     2.50e+07        15548.5       Obs              23,194
+25%     5.78e+07       16209.08       Sum of wgt.      23,194
+
+50%     1.37e+08                      Mean           4.65e+08
+                        Largest       Std. dev.      3.51e+09
+75%     3.20e+08       1.46e+11
+90%     7.38e+08       1.48e+11       Variance       1.23e+19
+95%     1.28e+09       1.56e+11       Skewness       33.46348
+99%     4.34e+09       1.59e+11       Kurtosis       1276.413
+
+    taxyear |      Freq.     Percent        Cum.
+------------+-----------------------------------
+       2011 |      3,110       13.41       13.41
+       2012 |      3,213       13.85       27.26
+       2013 |      3,747       16.16       43.42
+       2014 |      3,552       15.31       58.73
+       2015 |      3,367       14.52       73.25
+       2016 |      3,191       13.76       87.01
+       2017 |      3,014       12.99      100.00
+------------+-----------------------------------
+      Total |     23,194      100.00
+(6,175 observations deleted)
+(1,670 observations deleted)
+
+                          materials
+-------------------------------------------------------------
+      Percentiles      Smallest
+ 1%     153672.1       124.0229
+ 5%      3278682       248.0459
+10%      9708391       372.0688       Obs              15,349
+25%     5.18e+07            800       Sum of wgt.      15,349
+
+50%     2.76e+08                      Mean           3.72e+09
+                        Largest       Std. dev.      2.98e+10
+75%     1.27e+09       8.65e+11
+90%     4.54e+09       8.76e+11       Variance       8.89e+20
+95%     9.89e+09       8.82e+11       Skewness        20.5427
+99%     4.81e+10       9.55e+11       Kurtosis       493.8977
+(16 observations deleted)
+
+                           revenue
+-------------------------------------------------------------
+      Percentiles      Smallest
+ 1%     1.45e+07       174484.5
+ 5%     5.86e+07       241306.2
+10%     1.15e+08       260973.8       Obs              15,333
+25%     3.44e+08       312939.8       Sum of wgt.      15,333
+
+50%     1.00e+09                      Mean           5.71e+09
+                        Largest       Std. dev.      4.15e+10
+75%     2.91e+09       1.10e+12
+90%     7.75e+09       1.10e+12       Variance       1.72e+21
+95%     1.53e+10       1.27e+12       Skewness       21.13564
+99%     6.17e+10       1.33e+12       Kurtosis       509.4604
+
+                           profit
+-------------------------------------------------------------
+      Percentiles      Smallest
+ 1%     -5271471      -5.77e+09
+ 5%     1.91e+07      -4.69e+09
+10%     5.06e+07      -3.43e+09       Obs              15,333
+25%     1.71e+08      -2.83e+09       Sum of wgt.      15,333
+
+50%     5.08e+08                      Mean           1.98e+09
+                        Largest       Std. dev.      1.47e+10
+75%     1.38e+09       5.23e+11
+90%     3.38e+09       5.79e+11       Variance       2.15e+20
+95%     5.76e+09       6.24e+11       Skewness       30.17025
+99%     1.54e+10       6.85e+11       Kurtosis       1083.713
+(12,928 missing values generated)
+(3,850 missing values generated)
+       panel variable:  FID (unbalanced)
+        time variable:  taxyear, 2011 to 2017, but with gaps
+                delta:  1 unit
+(5,418 missing values generated)
+(7,041 missing values generated)
+(5,418 missing values generated)
+(7,041 missing values generated)
+(7,041 missing values generated)
+(236 missing values generated)
+(236 missing values generated)
+(2,110 missing values generated)
+(13,220 missing values generated)
+(0 observations deleted)
+(0 observations deleted)
+(178 real changes made, 144 to missing)
+(0 real changes made)
+(202 observations deleted)
+
+    Variable |        Obs        Mean    Std. dev.       Min        Max
+-------------+---------------------------------------------------------
+ value_added |     15,131    1.84e+07    1.37e+08        243   6.85e+09
+
+Linear regression                               Number of obs     =     15,131
+                                                F(2, 4012)        =    1688.63
+                                                Prob > F          =     0.0000
+                                                R-squared         =     0.4439
+                                                Root MSE          =     1.2527
+
+                              (Std. Err. adjusted for 4,013 clusters in n_fid)
+------------------------------------------------------------------------------
+             |               Robust
+          va |      Coef.   Std. Err.      t    P>|t|     [95% Conf. Interval]
+-------------+----------------------------------------------------------------
+           l |   .4868465   .0134125    36.30   0.000     .4605505    .5131426
+           k |   .2227253   .0108763    20.48   0.000     .2014017    .2440489
+       _cons |    10.2873   .1412115    72.85   0.000     10.01044    10.56415
+------------------------------------------------------------------------------
+(15,131 missing values generated)
+(6,683 real changes made)
+(3,327 real changes made)
+(5,121 real changes made)
+(12,571 real changes made)
+(8,732 real changes made)
+(8,732 missing values generated)
+(1,520 missing values generated)
+(1,520 missing values generated)
+(9,954 missing values generated)
+(3,788 missing values generated)
+(3,788 missing values generated)
+(8,732 missing values generated)
+(1,520 missing values generated)
+(1,520 missing values generated)
+(8,732 missing values generated)
+(1,520 missing values generated)
+(1,520 missing values generated)
+(0 observations deleted)
+       panel variable:  n_fid (unbalanced)
+        time variable:  taxyear, 2011 to 2017, but with gaps
+                delta:  1 unit
+(7,320 real changes made)
+(7,320 real changes made)
+(7,320 real changes made)
+(7,320 real changes made)
+(7,320 real changes made)
+(7,320 real changes made)
+(10,384 real changes made)
+(0 real changes made)
+file F:\michael\2023 VERSION\minimum wage paper\data\\\analysis_balanced.dta
+    saved
+
+    Result                           # of obs.
+    -----------------------------------------
+    not matched                            43
+        from master                        43  (_merge==1)
+        from using                          0  (_merge==2)
+
+    matched                           219,916  (_merge==3)
+    -----------------------------------------
+
+    taxyear |      Freq.     Percent        Cum.
+------------+-----------------------------------
+       2010 |     19,793        9.00        9.00
+       2011 |     22,528       10.24       19.24
+       2012 |     22,328       10.15       29.39
+       2013 |     26,547       12.07       41.46
+       2014 |     26,701       12.14       53.60
+       2015 |     26,827       12.20       65.80
+       2016 |     26,713       12.14       77.94
+       2017 |     26,176       11.90       89.84
+       2018 |     22,346       10.16      100.00
+------------+-----------------------------------
+      Total |    219,959      100.00
+(13,617 real changes made)
+(33,221 observations deleted)
+
+    taxyear |      Freq.     Percent        Cum.
+------------+-----------------------------------
+       2010 |     19,793       10.60       10.60
+       2011 |     22,528       12.06       22.66
+       2012 |     22,328       11.96       34.62
+       2013 |     26,547       14.22       48.84
+       2014 |     23,279       12.47       61.30
+       2015 |     21,246       11.38       72.68
+       2016 |     19,432       10.41       83.09
+       2017 |     17,608        9.43       92.52
+       2018 |     13,977        7.48      100.00
+------------+-----------------------------------
+      Total |    186,738      100.00
+(153,047 observations deleted)
+
+    taxyear |      Freq.     Percent        Cum.
+------------+-----------------------------------
+       2010 |      3,201        9.50        9.50
+       2011 |      3,783       11.23       20.73
+       2012 |      3,821       11.34       32.07
+       2013 |      4,486       13.32       45.39
+       2014 |      4,183       12.42       57.80
+       2015 |      3,996       11.86       69.66
+       2016 |      3,766       11.18       80.84
+       2017 |      3,533       10.49       91.33
+       2018 |      2,922        8.67      100.00
+------------+-----------------------------------
+      Total |     33,691      100.00
+(6,123 observations deleted)
+
+    taxyear |      Freq.     Percent        Cum.
+------------+-----------------------------------
+       2011 |      3,783       13.72       13.72
+       2012 |      3,821       13.86       27.58
+       2013 |      4,486       16.27       43.86
+       2014 |      4,183       15.17       59.03
+       2015 |      3,996       14.50       73.52
+       2016 |      3,766       13.66       87.18
+       2017 |      3,533       12.82      100.00
+------------+-----------------------------------
+      Total |     27,568      100.00
+
+    taxyear |      Freq.     Percent        Cum.
+------------+-----------------------------------
+       2011 |      3,783       13.72       13.72
+       2012 |      3,821       13.86       27.58
+       2013 |      4,486       16.27       43.86
+       2014 |      4,183       15.17       59.03
+       2015 |      3,996       14.50       73.52
+       2016 |      3,766       13.66       87.18
+       2017 |      3,533       12.82      100.00
+------------+-----------------------------------
+      Total |     27,568      100.00
+  5,374
+(1,117 observations deleted)
+
+    taxyear |      Freq.     Percent        Cum.
+------------+-----------------------------------
+       2011 |      3,770       14.25       14.25
+       2012 |      3,771       14.26       28.51
+       2013 |      4,274       16.16       44.67
+       2014 |      3,966       14.99       59.66
+       2015 |      3,784       14.31       73.97
+       2016 |      3,551       13.42       87.39
+       2017 |      3,335       12.61      100.00
+------------+-----------------------------------
+      Total |     26,451      100.00
+(6,630 missing values generated)
+Warning: at least one group contains all missing values or contains multiple
+modes.  Generating missing values for the mode of these groups.  Use the
+missing, maxmode, minmode, or nummode() options to control this behavior.
+(988 missing values generated)
+(6,630 missing values generated)
+file D:\statatemp\ST_10d94_000006.tmp saved as .dta format
+
+    Result                           # of obs.
+    -----------------------------------------
+    not matched                         6,738
+        from master                     6,630  (_merge==1)
+        from using                        108  (_merge==2)
+
+    matched                            19,821  (_merge==3)
+    -----------------------------------------
+(26,559 missing values generated)
+(3,770 real changes made)
+(3,771 real changes made)
+(4,274 real changes made)
+(3,966 real changes made)
+(3,784 real changes made)
+(3,551 real changes made)
+(3,335 real changes made)
+(206 missing values generated)
+(25,190 real changes made)
+(25,589 real changes made)
+(26,236 real changes made)
+(283 missing values generated)
+(19,063 real changes made)
+(154 missing values generated)
+(25,532 real changes made)
+(267 observations deleted)
+
+                         employment
+-------------------------------------------------------------
+      Percentiles      Smallest
+ 1%            1              1
+ 5%            2              1
+10%            3              1       Obs              26,292
+25%            8              1       Sum of wgt.      26,292
+
+50%           24                      Mean           141.8592
+                        Largest       Std. dev.      530.4624
+75%           82          13099
+90%          290          13199       Variance       281390.4
+95%          603          18517       Skewness       13.61591
+99%         2005          20139       Kurtosis       297.0415
+
+    taxyear |      Freq.     Percent        Cum.
+------------+-----------------------------------
+       2011 |      3,743       14.24       14.24
+       2012 |      3,748       14.26       28.49
+       2013 |      4,248       16.16       44.65
+       2014 |      3,947       15.01       59.66
+       2015 |      3,762       14.31       73.97
+       2016 |      3,535       13.45       87.41
+       2017 |      3,309       12.59      100.00
+------------+-----------------------------------
+      Total |     26,292      100.00
+(1,363 observations deleted)
+(1 missing value generated)
+(1 real change made)
+(226 observations deleted)
+
+    Variable |        Obs        Mean    Std. dev.       Min        Max
+-------------+---------------------------------------------------------
+     capital |     24,703    1.66e+07    8.70e+07        100   5.04e+09
+(59 observations deleted)
+
+                      total_wages_3601
+-------------------------------------------------------------
+      Percentiles      Smallest
+ 1%      2115051       94.06171
+ 5%      6650833       111.0607
+10%     1.17e+07       111.0607       Obs              24,644
+25%     2.93e+07       111.0607       Sum of wgt.      24,644
+
+50%     7.54e+07                      Mean           2.88e+08
+                        Largest       Std. dev.      1.77e+09
+75%     1.96e+08       7.33e+10
+90%     4.86e+08       7.52e+10       Variance       3.15e+18
+95%     8.83e+08       8.08e+10       Skewness       29.51876
+99%     2.83e+09       9.77e+10       Kurtosis       1140.016
+(637 observations deleted)
+
+                      total_wages_kerr
+-------------------------------------------------------------
+      Percentiles      Smallest
+ 1%      2337114       41407.73
+ 5%      7005767          58536
+10%     1.24e+07       70472.33       Obs              24,007
+25%     3.10e+07       100560.4       Sum of wgt.      24,007
+
+50%     8.02e+07                      Mean           3.35e+08
+                        Largest       Std. dev.      2.24e+09
+75%     2.13e+08       8.21e+10
+90%     5.42e+08       8.97e+10       Variance       5.04e+18
+95%     1.01e+09       9.62e+10       Skewness       28.53172
+99%     3.34e+09       1.12e+11       Kurtosis       1013.126
+
+    taxyear |      Freq.     Percent        Cum.
+------------+-----------------------------------
+       2011 |      3,263       13.59       13.59
+       2012 |      3,325       13.85       27.44
+       2013 |      3,876       16.15       43.59
+       2014 |      3,682       15.34       58.92
+       2015 |      3,482       14.50       73.43
+       2016 |      3,288       13.70       87.12
+       2017 |      3,091       12.88      100.00
+------------+-----------------------------------
+      Total |     24,007      100.00
+(813 observations deleted)
+
+                      total_labour_cost
+-------------------------------------------------------------
+      Percentiles      Smallest
+ 1%      3784532       8061.491
+ 5%     1.44e+07       11633.94
+10%     2.50e+07        15548.5       Obs              23,194
+25%     5.78e+07       16209.08       Sum of wgt.      23,194
+
+50%     1.37e+08                      Mean           4.65e+08
+                        Largest       Std. dev.      3.51e+09
+75%     3.20e+08       1.46e+11
+90%     7.38e+08       1.48e+11       Variance       1.23e+19
+95%     1.28e+09       1.56e+11       Skewness       33.46348
+99%     4.34e+09       1.59e+11       Kurtosis       1276.413
+
+    taxyear |      Freq.     Percent        Cum.
+------------+-----------------------------------
+       2011 |      3,110       13.41       13.41
+       2012 |      3,213       13.85       27.26
+       2013 |      3,747       16.16       43.42
+       2014 |      3,552       15.31       58.73
+       2015 |      3,367       14.52       73.25
+       2016 |      3,191       13.76       87.01
+       2017 |      3,014       12.99      100.00
+------------+-----------------------------------
+      Total |     23,194      100.00
+(6,175 observations deleted)
+(1,670 observations deleted)
+
+                          materials
+-------------------------------------------------------------
+      Percentiles      Smallest
+ 1%     153672.1       124.0229
+ 5%      3278682       248.0459
+10%      9708391       372.0688       Obs              15,349
+25%     5.18e+07            800       Sum of wgt.      15,349
+
+50%     2.76e+08                      Mean           3.72e+09
+                        Largest       Std. dev.      2.98e+10
+75%     1.27e+09       8.65e+11
+90%     4.54e+09       8.76e+11       Variance       8.89e+20
+95%     9.89e+09       8.82e+11       Skewness        20.5427
+99%     4.81e+10       9.55e+11       Kurtosis       493.8977
+(16 observations deleted)
+
+                           revenue
+-------------------------------------------------------------
+      Percentiles      Smallest
+ 1%     1.45e+07       174484.5
+ 5%     5.86e+07       241306.2
+10%     1.15e+08       260973.8       Obs              15,333
+25%     3.44e+08       312939.8       Sum of wgt.      15,333
+
+50%     1.00e+09                      Mean           5.71e+09
+                        Largest       Std. dev.      4.15e+10
+75%     2.91e+09       1.10e+12
+90%     7.75e+09       1.10e+12       Variance       1.72e+21
+95%     1.53e+10       1.27e+12       Skewness       21.13564
+99%     6.17e+10       1.33e+12       Kurtosis       509.4604
+
+                           profit
+-------------------------------------------------------------
+      Percentiles      Smallest
+ 1%     -5271471      -5.77e+09
+ 5%     1.91e+07      -4.69e+09
+10%     5.06e+07      -3.43e+09       Obs              15,333
+25%     1.71e+08      -2.83e+09       Sum of wgt.      15,333
+
+50%     5.08e+08                      Mean           1.98e+09
+                        Largest       Std. dev.      1.47e+10
+75%     1.38e+09       5.23e+11
+90%     3.38e+09       5.79e+11       Variance       2.15e+20
+95%     5.76e+09       6.24e+11       Skewness       30.17025
+99%     1.54e+10       6.85e+11       Kurtosis       1083.713
+(12,928 missing values generated)
+(3,850 missing values generated)
+       panel variable:  FID (unbalanced)
+        time variable:  taxyear, 2011 to 2017, but with gaps
+                delta:  1 unit
+(5,418 missing values generated)
+(7,041 missing values generated)
+(5,418 missing values generated)
+(7,041 missing values generated)
+(7,041 missing values generated)
+(236 missing values generated)
+(236 missing values generated)
+(2,110 missing values generated)
+(13,220 missing values generated)
+(0 observations deleted)
+(0 observations deleted)
+(178 real changes made, 144 to missing)
+(0 real changes made)
+(202 observations deleted)
+
+    Variable |        Obs        Mean    Std. dev.       Min        Max
+-------------+---------------------------------------------------------
+ value_added |     15,131    1.84e+07    1.37e+08        243   6.85e+09
+
+Linear regression                               Number of obs     =     15,131
+                                                F(2, 4012)        =    1688.63
+                                                Prob > F          =     0.0000
+                                                R-squared         =     0.4439
+                                                Root MSE          =     1.2527
+
+                              (Std. Err. adjusted for 4,013 clusters in n_fid)
+------------------------------------------------------------------------------
+             |               Robust
+          va |      Coef.   Std. Err.      t    P>|t|     [95% Conf. Interval]
+-------------+----------------------------------------------------------------
+           l |   .4868465   .0134125    36.30   0.000     .4605505    .5131426
+           k |   .2227253   .0108763    20.48   0.000     .2014017    .2440489
+       _cons |    10.2873   .1412115    72.85   0.000     10.01044    10.56415
+------------------------------------------------------------------------------
+(15,131 missing values generated)
+(6,683 real changes made)
+(3,327 real changes made)
+(5,121 real changes made)
+(12,571 real changes made)
+(8,732 real changes made)
+(8,732 missing values generated)
+(1,520 missing values generated)
+(1,520 missing values generated)
+(9,954 missing values generated)
+(3,788 missing values generated)
+(3,788 missing values generated)
+(8,732 missing values generated)
+(1,520 missing values generated)
+(1,520 missing values generated)
+(8,732 missing values generated)
+(1,520 missing values generated)
+(1,520 missing values generated)
+(11,589 observations deleted)
+file F:\michael\2023 VERSION\minimum wage paper\data\\\analysis_survivors.dta
+    saved
+
+. log close
+      name:  <unnamed>
+       log:  F:\michael\2023 VERSION\minimum wage paper\log\create_analysis.smc
+> l
+  log type:  smcl
+ closed on:   2 Mar 2023, 20:54:17
+-------------------------------------------------------------------------------
