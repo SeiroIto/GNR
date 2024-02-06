@@ -296,17 +296,6 @@ class: inverse,  middle
 ## Why did employment increase at the impact? How many employess were added at the mean farm?
 
 ---
-class: inverse,  middle
-
-## Why did survivor farms initially substitute high wage workers with low wage workers?  
-
-Technological feasibility:  
-* If low wage workers = seasonal workers, how can their tasks be substituted?  
-
-Economic rationale:  
-* If low wage workers are more affected by minimum wage increase, why does a producer want to use more of a factor whose price became more expensive?
-
----
 class: inverse, center, middle
 
 # From Marlies, Jan 29, 2024
