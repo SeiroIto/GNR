@@ -1,8 +1,8 @@
 ---
-title: "_____Memo on draft"
-subtitle: "_____of Nov 02, 2023"
-author: "_____Seiro Ito"
-date: "_____`r format(Sys.time(), '%m %d, %Y% %R')`"
+title: "_____Memo on results"
+subtitle: "_____of Feb 04, 2024"
+author: "______Seiro Ito"
+date: "________`r format(Sys.time(), '%m %d, %Y% %R')`"
 output:
   xaringan::moon_reader:
     lib_dir: libs
@@ -11,6 +11,7 @@ output:
       highlightStyle: github
       countIncrementalSlides: false
       ratio: "16:9"
+      titleSlideClass: [top, right, inverse]
     citation_package: natbib
     self_contained: true
 # setwd(path <- "c:/seiro/docs/IDE/kenkyuukai/2022/MinWages/MichaelDraft/"); rmarkdown::render(paste0(path, "Memo2024Feb07.Rmd"))
@@ -102,7 +103,12 @@ Unbalanced panel & dropping farms with a missing observation for some year.
 
 --
 
-### FYE Feb low wage $\subset$ Low wage
+### Count of workers: FYE Feb low wage $\subset$ Low wage $\subset$ All workers
+
+--
+
+### Count of farms: FYE Feb low wage $\subset$ Low wage $\subseteq$ All workers
+
 
 ---
 class: inverse, center, middle
@@ -204,7 +210,9 @@ class: inverse, center, middle
 ---
 class: inverse, center, middle
 
-## Some change from the full worker sample
+## Some changes from the full worker sample
+## Capital intensity unchanged for unbalanced
+## Average wage still unchanged
 
 ---
 class: split-three, inverse
@@ -238,7 +246,7 @@ Employment (# of employees)
 * Unbalanced: Shot up at the impact, reduced in 3-4 years.  
 * Survivor: Shot up at the impact, reduced in 3-4 years (statistically zero).  
 
-Labour costs per worker: Reduced at the impact, increased in 3-4 years.  
+Labour costs per worker: Reduced at the impact, .orange[a clear upward trend.]  
 ]]
 ---
 class: split-three, inverse
@@ -248,7 +256,7 @@ Unbalanced
 
 <img src="FromMichael2024Feb04/FebruaryFinYearEnd/GeneralResults/unbalanced/Average-wage-cluster_weight.png"
      width="300px">
-<img src="FromMichael2024Feb04/FebruaryFinYearEnd/GeneralResults/unbalanced/Non-wage-labour-cost-cluster_weight.png"
+<img src="FromMichael2024Feb04/FebruaryFinYearEnd/GeneralResults/unbalanced/Capital-cluster_weight.png"
      width="300px">
 <img src="FromMichael2024Feb04/FebruaryFinYearEnd/GeneralResults/unbalanced/Operating-profit-cluster_weight.png"
      width="300px">
@@ -258,7 +266,7 @@ Survivor
 
 <img src="FromMichael2024Feb04/FebruaryFinYearEnd/GeneralResults/survivors/Average-wage-cluster_weight.png"
      width="300px">
-<img src="FromMichael2024Feb04/FebruaryFinYearEnd/GeneralResults/survivors/Non-wage-labour-cost-cluster_weight.png" 
+<img src="FromMichael2024Feb04/FebruaryFinYearEnd/GeneralResults/survivors/Capital-cluster_weight.png" 
  width="300px">
 <img src="FromMichael2024Feb04/FebruaryFinYearEnd/GeneralResults/survivors/Operating-profit-cluster_weight.png" 
  width="300px">
@@ -268,23 +276,24 @@ Average wage
 * Unbalanced: Unchanged.  
 * Survivor: Reduced and stayed down for 4 years (statistically indistinguishable from zero).  
 
-Non-wage labour costs  
+Capital  
+* Reduced but statstically zero.  
+* Increased but statistically zero.  
+
+Non-wage labour costs (not shown)  
 * Reduced both at the impact.  
 * .orange[No clear trend.]  
 
-Operating profits unchanged.  
+Operating profits .orange[unchanged or negative (statistically zero).]  
 
 ]]
 ---
 class: inverse,  middle
 
-## Makes an economic sense that capital intensity increased. 
+## Capital intensity increased. 
+## Capital $K\uparrow$ and labour $L\downarrow$ are both imprecisely measured but combined to give capital intensity increase $\frac{K\uparrow}{L\downarrow}$.  
 
-## Employment is unchanged after 3 years, but it is relative to the control trend. Need to plot the control employment as a reference.  
-<!--Why did not survivor farms change employment after 3-4 years?  -->
-
-Economic rationale:  
-* If wage costs increased, how does a producer maintain employment, while increasing capital intensity?
+## Why did employment increase at the impact? How many employess were added at the mean farm?
 
 ---
 class: inverse,  middle

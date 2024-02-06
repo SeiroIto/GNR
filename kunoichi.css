@@ -34,11 +34,21 @@
     --title-background: url("../bkgs/bg1.jpg");
 }
 
-.title-slide {
+/*
+Original:
   width: 60%;
   text-align: left!important;
-  height:100%;
   display: table;
+ChangedTo:
+  width: 100%;
+  text-align: center!important;
+  display: block;
+*/
+.title-slide {
+  width: 100%;
+  text-align: center!important;
+  height:100%;
+  display: block;
   position: absolute;
   top: 0;
   right: 0;
@@ -64,6 +74,10 @@
 }
 
 
+/*
+Original:
+ChangedTo:
+*/
 .title-slide h1 { padding-top: 20%; font-size: 4em;}
 .title-slide h1, .title-slide h2, .title-slide h3  {
   padding-left: 4%!important;

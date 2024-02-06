@@ -1,9 +1,9 @@
 <!DOCTYPE html>
 <html lang xml:lang>
   <head>
-    <title>_____Memo on draft</title>
+    <title>_____Memo on results</title>
     <meta charset="utf-8" />
-    <meta name="author" content="_____Seiro Ito" />
+    <meta name="author" content="______Seiro Ito" />
     <script>// Pandoc 2.9 adds attributes on both header and div. We remove the former (to
 // be compatible with the behavior of Pandoc < 2.8).
 document.addEventListener('DOMContentLoaded', function(e) {
@@ -1466,24 +1466,30 @@ src: url(data:font/ttf;base64,AAEAAAAQAQAABAAAR0RFRg33DYwAAAJcAAAAmEdQT1Omc5xhAA
   </head>
   <body>
     <textarea id="source">
-class: center, middle, inverse, title-slide
+class: top, right, inverse, title-slide
 
 .title[
-# _____Memo on draft
+# _____Memo on results
 ]
 .subtitle[
-## _____of Nov 02, 2023
+## _____of Feb 04, 2024
 ]
 .author[
-### _____Seiro Ito
+### ______Seiro Ito
 ]
 .date[
-### _____02 06, 2024 17:47
+### ________02 06, 2024 20:45
 ]
 
 ---
 
 
+
+&lt;style&gt;
+.red {color: #FF0000;}
+.green {color: #00FF00;}
+.blue {color: #0000FF;}
+&lt;/style&gt;
 
 &lt;style type=&quot;text/css&quot;&gt;
 .pull-left {
@@ -1533,7 +1539,12 @@ Unbalanced panel &amp; dropping farms with a missing observation for some year.
 
 --
 
-### FYE Feb low wage `\(\subset\)` Low wage
+### Count of workers: FYE Feb low wage `\(\subset\)` Low wage `\(\subset\)` All workers
+
+--
+
+### Count of farms: FYE Feb low wage `\(\subset\)` Low wage `\(\subseteq\)` All workers
+
 
 ---
 class: inverse, center, middle
@@ -1541,6 +1552,11 @@ class: inverse, center, middle
 # From Michael, Feb 04, 2024
 
 ## Main
+
+---
+class: inverse, center, middle
+
+## Essentially, no change from the full worker sample
 
 ---
 class: split-three, inverse
@@ -1553,7 +1569,7 @@ Unbalanced
 &lt;img src=&quot;FromMichael2024Feb04/Main/GeneralResults/unbalanced/Employment-cluster_weight.png&quot;
      width=&quot;300px&quot;&gt;
 &lt;img src=&quot;FromMichael2024Feb04/Main/GeneralResults/unbalanced/Labour-cost-per-worker-cluster_weight.png&quot;
-     width=&quot;	300px&quot;&gt;
+     width=&quot;300px&quot;&gt;
 ]]
 .column.bg-indigo[.content[
 Survivor
@@ -1628,6 +1644,13 @@ class: inverse, center, middle
 ## Financial year ending at February
 
 ---
+class: inverse, center, middle
+
+## Some changes from the full worker sample
+## Capital intensity unchanged for unbalanced
+## Average wage still unchanged
+
+---
 class: split-three, inverse
 
 .column.bg-indigo[.content[
@@ -1638,7 +1661,7 @@ Unbalanced
 &lt;img src=&quot;FromMichael2024Feb04/FebruaryFinYearEnd/GeneralResults/unbalanced/Employment-cluster_weight.png&quot;
      width=&quot;300px&quot;&gt;
 &lt;img src=&quot;FromMichael2024Feb04/FebruaryFinYearEnd/GeneralResults/unbalanced/Labour-cost-per-worker-cluster_weight.png&quot;
-     width=&quot;	300px&quot;&gt;
+     width=&quot;300px&quot;&gt;
 ]]
 .column.bg-indigo[.content[
 Survivor
@@ -1652,14 +1675,14 @@ Survivor
 ]]
 .column.bg-inverse[.content[
 Capital intensity   
-* Unbalanced: Unchanged.  
+* Unbalanced: .orange[Unchanged.]  
 * Survivor: Went up in 3-4 years.  
 
 Employment (# of employees)  
 * Unbalanced: Shot up at the impact, reduced in 3-4 years.  
 * Survivor: Shot up at the impact, reduced in 3-4 years (statistically zero).  
 
-Labour costs per worker: Reduced at the impact, increased in 3-4 years.  
+Labour costs per worker: Reduced at the impact, .orange[a clear upward trend.]  
 ]]
 ---
 class: split-three, inverse
@@ -1669,7 +1692,7 @@ Unbalanced
 
 &lt;img src=&quot;FromMichael2024Feb04/FebruaryFinYearEnd/GeneralResults/unbalanced/Average-wage-cluster_weight.png&quot;
      width=&quot;300px&quot;&gt;
-&lt;img src=&quot;FromMichael2024Feb04/FebruaryFinYearEnd/GeneralResults/unbalanced/Non-wage-labour-cost-cluster_weight.png&quot;
+&lt;img src=&quot;FromMichael2024Feb04/FebruaryFinYearEnd/GeneralResults/unbalanced/Capital-cluster_weight.png&quot;
      width=&quot;300px&quot;&gt;
 &lt;img src=&quot;FromMichael2024Feb04/FebruaryFinYearEnd/GeneralResults/unbalanced/Operating-profit-cluster_weight.png&quot;
      width=&quot;300px&quot;&gt;
@@ -1679,7 +1702,7 @@ Survivor
 
 &lt;img src=&quot;FromMichael2024Feb04/FebruaryFinYearEnd/GeneralResults/survivors/Average-wage-cluster_weight.png&quot;
      width=&quot;300px&quot;&gt;
-&lt;img src=&quot;FromMichael2024Feb04/FebruaryFinYearEnd/GeneralResults/survivors/Non-wage-labour-cost-cluster_weight.png&quot; 
+&lt;img src=&quot;FromMichael2024Feb04/FebruaryFinYearEnd/GeneralResults/survivors/Capital-cluster_weight.png&quot; 
  width=&quot;300px&quot;&gt;
 &lt;img src=&quot;FromMichael2024Feb04/FebruaryFinYearEnd/GeneralResults/survivors/Operating-profit-cluster_weight.png&quot; 
  width=&quot;300px&quot;&gt;
@@ -1689,23 +1712,23 @@ Average wage
 * Unbalanced: Unchanged.  
 * Survivor: Reduced and stayed down for 4 years (statistically indistinguishable from zero).  
 
-Non-wage labour costs  
-* Reduced both at the impact.  
-* Statistically zero for 3-4 years.  
+Capital  
+* Reduced but statstically zero.  
+* Increased but statistically zero.  
 
-Operating profits unchanged.  
+Non-wage labour costs (not shown)  
+* Reduced both at the impact.  
+* .orange[No clear trend.]  
+
+Operating profits .orange[unchanged or negative (statistically zero).]  
 
 ]]
 ---
 class: inverse,  middle
 
-## Makes an economic sense that capital intensity increased. 
+## Capital intensity increased. 
+## Capital `\(K\uparrow\)` and labour `\(L\downarrow\)` are both imprecisely measured but combined to give capital intensity increase `\(\frac{K\uparrow}{L\downarrow}\)`.  
 
-## Employment is unchanged after 3 years, but it is relative to the control trend. Need to plot the control employment as a reference.  
-&lt;!--Why did not survivor farms change employment after 3-4 years?  --&gt;
-
-Economic rationale:  
-* If wage costs increased, how does a producer maintain employment, while increasing capital intensity?
 
 ---
 class: inverse,  middle
