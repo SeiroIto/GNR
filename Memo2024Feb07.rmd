@@ -16,6 +16,12 @@ output:
 # setwd(path <- "c:/seiro/docs/IDE/kenkyuukai/2022/MinWages/MichaelDraft/"); rmarkdown::render(paste0(path, "Memo2024Feb07.Rmd"))
 #  renderthis::to_pdf(paste0(path, "Memo2024Feb07.Rmd"))
 #  xaringanBuilder::build_pdf(paste0(path, "Memo2024Feb07.Rmd"))
+# git init
+# git add .    ## this adds all files
+# git commit -am "initial commit"
+# git config --global user.name "SeiroIto"
+# git remote add origin https://github.com/SeiroIto/SAMinWage.git  ## specify remote
+# git push -f origin main  ## push files to remote
 ---
 ```{r, load_refs, eval = F, include=FALSE, cache=FALSE}
 library(RefManageR)
@@ -30,6 +36,23 @@ myBib <- ReadBib("./seiro.bib", check = FALSE)
 ```{r xaringan-themer, include=FALSE, warning=FALSE}
 library(xaringanthemer)
 style_mono_light(base_color = "#23395b")
+xaringancolor::setup_colors(
+  red ="red",
+  green = "green",
+  orange = "orange",
+  blue = "blue"
+)
+```
+<style>
+.red {color: #FF0000;}
+.green {color: #00FF00;}
+.blue {color: #0000FF;}
+</style>
+```{r flair_color, echo=FALSE}
+library(flair)
+red <- "#FF0000"
+green <- "#00FF00"
+blue <- "#0000FF"
 ```
 ```{css, echo = F}
 .pull-left {
@@ -89,6 +112,11 @@ class: inverse, center, middle
 ## Main
 
 ---
+class: inverse, center, middle
+
+## Essentially, no change from the full worker sample
+
+---
 class: split-three, inverse
 
 .column.bg-indigo[.content[
@@ -99,7 +127,7 @@ Unbalanced
 <img src="FromMichael2024Feb04/Main/GeneralResults/unbalanced/Employment-cluster_weight.png"
      width="300px">
 <img src="FromMichael2024Feb04/Main/GeneralResults/unbalanced/Labour-cost-per-worker-cluster_weight.png"
-     width="	300px">
+     width="300px">
 ]]
 .column.bg-indigo[.content[
 Survivor
@@ -174,6 +202,11 @@ class: inverse, center, middle
 ## Financial year ending at February
 
 ---
+class: inverse, center, middle
+
+## Some change from the full worker sample
+
+---
 class: split-three, inverse
 
 .column.bg-indigo[.content[
@@ -184,7 +217,7 @@ Unbalanced
 <img src="FromMichael2024Feb04/FebruaryFinYearEnd/GeneralResults/unbalanced/Employment-cluster_weight.png"
      width="300px">
 <img src="FromMichael2024Feb04/FebruaryFinYearEnd/GeneralResults/unbalanced/Labour-cost-per-worker-cluster_weight.png"
-     width="	300px">
+     width="300px">
 ]]
 .column.bg-indigo[.content[
 Survivor
@@ -198,7 +231,7 @@ Survivor
 ]]
 .column.bg-inverse[.content[
 Capital intensity   
-* Unbalanced: Unchanged.  
+* Unbalanced: .orange[Unchanged.]  
 * Survivor: Went up in 3-4 years.  
 
 Employment (# of employees)  
@@ -237,7 +270,7 @@ Average wage
 
 Non-wage labour costs  
 * Reduced both at the impact.  
-* Statistically zero for 3-4 years.  
+* .orange[No clear trend.]  
 
 Operating profits unchanged.  
 
