@@ -1472,13 +1472,13 @@ class: top, right, inverse, title-slide
 # _____Memo on results
 ]
 .subtitle[
-## _____of Feb xx, 2024
+## _____of Feb 07, 2024
 ]
 .author[
 ### ______Seiro Ito
 ]
 .date[
-### ________02 07, 2024 20:33
+### ________02 08, 2024 05:20
 ]
 
 ---
@@ -1503,6 +1503,21 @@ class: top, right, inverse, title-slide
   margin-bottom: 0em;
 }
 &lt;/style&gt;
+&lt;script type=&quot;text/x-mathjax-config&quot;&gt;
+MathJax.Hub.Config({
+  TeX: {
+    Macros: {
+      E: &quot;{\\Large\\varepsilon}&quot;,
+      bfx: &quot;{\\mathbf{x}}&quot;,
+      bfX: &quot;{\\mathbf{X}}&quot;,
+      bfalpha: &quot;{\\boldsymbol{\\alpha}}&quot;,
+      bfbeta: &quot;{\\boldsymbol{\\beta}}&quot;,
+      bfgamma: &quot;{\\boldsymbol{\\gamma}}&quot;,
+      st: &quot;{\\mbox{s.t.}}&quot;
+    }
+  }
+});
+&lt;/script&gt;
 
 ## Main sample: Firm-worker (CIT-IRP5)
 
@@ -1522,7 +1537,8 @@ Base - Survivor.
 
 Base sample with NA=0.
 
---
+---
+## Main sample: Firm-worker (CIT-IRP5)
 
 ### Low wage worker subsample
 
@@ -1530,9 +1546,10 @@ Any of above &amp; workers earning `\(&lt;\)` R5400 per month for all periods
 
 ### High wage worker subsample
 
-Any of above - Low wage worker subsample
+Any of above - Low wage worker subsample  
 
 --
+
 For any sample in {Base/Balanced/Survivor/Unbalanced portion}  
 
 Low wage worker subsample + high wage worker subsample = sample
@@ -1542,24 +1559,34 @@ class: inverse
 
 ## Computing employment elasticity
 
-Out current estimate `\(\beta_{t}\)` measure impacts of sub-MW worker % on % change of `\(y_{it}\)`:
+Our current estimate `\(\beta_{t}\)` measures impacts of sub-MW worker % on % change of `\(y_{it}\)`:
+
 `\begin{equation*}
-% change in y_{it} = \alpha_{t}+\beta_{t}FA_{i}+\bfgamma&#39;\bfx_{it}+\epsilon_{it}.
+\% \mbox{ change in }y_{it} = \alpha_{t}+\beta_{t}FA_{i}+\bfgamma&#39;\bfx_{it}+\epsilon_{it}.
 \end{equation*}`
 
-### If `\(FA_{i}=1\)`, all workers are sub-MW workers, and `\(\beta_{t}\)` measures the impacts of (% change in) MW.
-&lt;p style=&quot;margin-bottom:2cm;&quot;&gt;
-### If `\(FA_{i}=.5\)`, 1/2 of workers are sub-MW workers, and `\(\beta_{t}\)` measures the impacts of (%/.5 change in) MW.
-&lt;p style=&quot;margin-bottom:2cm;&quot;&gt;
-### `\(\hat{\beta}_{t}/FA_{i}\)` gives an elasitcity of MW on outcome `\(y_{it}\)`. 
+--
 
+### If `\(FA_{i}=1\)`, all workers are sub-MW workers, and `\(\beta_{t}\)` measures the impacts of (% change in) MW.
+&lt;p style=&quot;margin-bottom:1cm;&quot;&gt;
+
+--
+
+### If `\(FA_{i}=.5\)`, 1/2 of workers are sub-MW workers, and `\(\beta_{t}\)` measures the impacts of (% change in) MW applied on 1/2 of workers. To get back the &quot;full&quot; impact (= impact when `\(FA_{i}=1\)`), `\(\frac{\beta_{t}}{.5}\)`.
+&lt;p style=&quot;margin-bottom:1cm;&quot;&gt;
+
+--
+
+### `\(\frac{\hat{\beta}_{t}}{FA_{i}}\)` gives an elasticity of MW on outcome `\(y_{it}\)`. 
+
+--
+
+* This .red[assumes MW impacts on sub-MW workers do not spill over to above-MW workers] (a kind of SUTVA).
 
 ---
 class: inverse, center, middle
 
 # From Michael, Feb 03, 2024
-
-## Main
 
 ---
 class: inverse
@@ -1572,27 +1599,67 @@ class: inverse
 ## Increased 40-50%, in line with statutory increase
 
 ---
-class: split-three, inverse
+class: split-five, inverse
 
 .column.bg-indigo[.content[
-Unbalanced
+&lt;center&gt;
+&lt;p&gt;
+&quot;Unbalanced-Survivor&quot;  
+(=Base)
+&lt;/p&gt;
+&lt;/center&gt;
 
-&lt;img src=&quot;FromMichael2024Feb04/Main/GeneralResults/unbalanced/Capital-intensity-cluster_weight.png&quot;
+&lt;img src=&quot;FromMichael2024Feb07/GeneralResults/unbalanced_survivors/Capital_intensity-cluster_weight.png&quot;
      width=&quot;300px&quot;&gt;
-&lt;img src=&quot;FromMichael2024Feb04/Main/GeneralResults/unbalanced/Employment-cluster_weight.png&quot;
+&lt;img src=&quot;FromMichael2024Feb07/GeneralResults/unbalanced_survivors/Employment-cluster_weight.png&quot;
      width=&quot;300px&quot;&gt;
-&lt;img src=&quot;FromMichael2024Feb04/Main/GeneralResults/unbalanced/Capital-cluster_weight.png&quot;
+&lt;img src=&quot;FromMichael2024Feb07/GeneralResults/unbalanced_survivors/Capital-cluster_weight.png&quot;
      width=&quot;300px&quot;&gt;
 ]]
 .column.bg-indigo[.content[
-Survivor
+&lt;center&gt;
+&lt;p&gt;
+&quot;Unbalanced&quot;  
+(=Unbalanced portion)
+&lt;/p&gt;
+&lt;/center&gt;
 
-&lt;img src=&quot;FromMichael2024Feb04/Main/GeneralResults/survivors/Capital-intensity-cluster_weight.png&quot;
+&lt;img src=&quot;FromMichael2024Feb07/GeneralResults/unbalanced/Capital_intensity-cluster_weight.png&quot;
      width=&quot;300px&quot;&gt;
-&lt;img src=&quot;FromMichael2024Feb04/Main/GeneralResults/survivors/Employment-cluster_weight.png&quot; 
+&lt;img src=&quot;FromMichael2024Feb07/GeneralResults/unbalanced/Employment-cluster_weight.png&quot; 
  width=&quot;300px&quot;&gt;
-&lt;img src=&quot;FromMichael2024Feb04/Main/GeneralResults/survivors/Capital-cluster_weight.png&quot; 
+&lt;img src=&quot;FromMichael2024Feb07/GeneralResults/unbalanced/Capital-cluster_weight.png&quot; 
  width=&quot;300px&quot;&gt;
+]]
+.column.bg-indigo[.content[
+&lt;center&gt;
+&lt;p&gt;
+&quot;Survivor&quot;  &lt;br&gt;
+(=Survivor)
+&lt;/p&gt;
+&lt;/center&gt;
+
+&lt;img src=&quot;FromMichael2024Feb07/GeneralResults/survivors/Capital_intensity-cluster_weight.png&quot;
+     width=&quot;300px&quot;&gt;
+&lt;img src=&quot;FromMichael2024Feb07/GeneralResults/survivors/Employment-cluster_weight.png&quot; 
+ width=&quot;300px&quot;&gt;
+&lt;img src=&quot;FromMichael2024Feb07/GeneralResults/survivors/Capital-cluster_weight.png&quot; 
+ width=&quot;300px&quot;&gt;
+]]
+.column.bg-indigo[.content[
+&lt;center&gt;
+&lt;p&gt;
+&quot;Balanced&quot;  &lt;br&gt;
+(=Balanced)
+&lt;/p&gt;
+&lt;/center&gt;
+
+&lt;img src=&quot;FromMichael2024Feb07/GeneralResults/balanced/Capital_intensity-cluster_weight.png&quot;
+     width=&quot;300px&quot;&gt;
+&lt;img src=&quot;FromMichael2024Feb07/GeneralResults/balanced/Employment-cluster_weight.png&quot;
+     width=&quot;300px&quot;&gt;
+&lt;img src=&quot;FromMichael2024Feb07/GeneralResults/balanced/Capital-cluster_weight.png&quot;
+     width=&quot;300px&quot;&gt;
 ]]
 .column.bg-inverse[.content[
 Capital intensity went up in 3-4 years.   
@@ -1612,21 +1679,21 @@ class: split-three, inverse
 .column.bg-indigo[.content[
 Unbalanced
 
-&lt;img src=&quot;FromMichael2024Feb04/Main/GeneralResults/unbalanced/Average-wage-low-wage-workers-cluster_weight.png&quot;
+&lt;img src=&quot;FromMichael2024Feb07/Main/GeneralResults/unbalanced/Average-wage-low-wage-workers-cluster_weight.png&quot;
      width=&quot;300px&quot;&gt;
-&lt;img src=&quot;FromMichael2024Feb04/Main/GeneralResults/unbalanced/Labour-cost-per-worker-cluster_weight.png&quot;
+&lt;img src=&quot;FromMichael2024Feb07/Main/GeneralResults/unbalanced/Labour-cost-per-worker-cluster_weight.png&quot;
      width=&quot;300px&quot;&gt;
-&lt;img src=&quot;FromMichael2024Feb04/Main/GeneralResults/unbalanced/Operating-profit-cluster_weight.png&quot;
+&lt;img src=&quot;FromMichael2024Feb07/Main/GeneralResults/unbalanced/Operating-profit-cluster_weight.png&quot;
      width=&quot;300px&quot;&gt;
 ]]
 .column.bg-indigo[.content[
 Survivor
 
-&lt;img src=&quot;FromMichael2024Feb04/Main/GeneralResults/survivors/Average-wage-low-wage-workers-cluster_weight.png&quot;
+&lt;img src=&quot;FromMichael2024Feb07/Main/GeneralResults/survivors/Average-wage-low-wage-workers-cluster_weight.png&quot;
      width=&quot;300px&quot;&gt;
-&lt;img src=&quot;FromMichael2024Feb04/Main/GeneralResults/survivors/Labour-cost-per-worker-cluster_weight.png&quot; 
+&lt;img src=&quot;FromMichael2024Feb07/Main/GeneralResults/survivors/Labour-cost-per-worker-cluster_weight.png&quot; 
  width=&quot;300px&quot;&gt;
-&lt;img src=&quot;FromMichael2024Feb04/Main/GeneralResults/survivors/Operating-profit-cluster_weight.png&quot; 
+&lt;img src=&quot;FromMichael2024Feb07/Main/GeneralResults/survivors/Operating-profit-cluster_weight.png&quot; 
  width=&quot;300px&quot;&gt;
 ]]
 .column.bg-inverse[.content[
@@ -1670,21 +1737,21 @@ class: split-three, inverse
 .column.bg-indigo[.content[
 Unbalanced
 
-&lt;img src=&quot;FromMichael2024Feb04/FebruaryFinYearEnd/GeneralResults/unbalanced/Capital-intensity-cluster_weight.png&quot;
+&lt;img src=&quot;FromMichael2024Feb07/FebruaryFinYearEnd/GeneralResults/unbalanced/Capital_intensity-cluster_weight.png&quot;
      width=&quot;300px&quot;&gt;
-&lt;img src=&quot;FromMichael2024Feb04/FebruaryFinYearEnd/GeneralResults/unbalanced/Employment-cluster_weight.png&quot;
+&lt;img src=&quot;FromMichael2024Feb07/FebruaryFinYearEnd/GeneralResults/unbalanced/Employment-cluster_weight.png&quot;
      width=&quot;300px&quot;&gt;
-&lt;img src=&quot;FromMichael2024Feb04/FebruaryFinYearEnd/GeneralResults/unbalanced/Capital-cluster_weight.png&quot;
+&lt;img src=&quot;FromMichael2024Feb07/FebruaryFinYearEnd/GeneralResults/unbalanced/Capital-cluster_weight.png&quot;
      width=&quot;300px&quot;&gt;
 ]]
 .column.bg-indigo[.content[
 Survivor
 
-&lt;img src=&quot;FromMichael2024Feb04/FebruaryFinYearEnd/GeneralResults/survivors/Capital-intensity-cluster_weight.png&quot;
+&lt;img src=&quot;FromMichael2024Feb07/FebruaryFinYearEnd/GeneralResults/survivors/Capital_intensity-cluster_weight.png&quot;
      width=&quot;300px&quot;&gt;
-&lt;img src=&quot;FromMichael2024Feb04/FebruaryFinYearEnd/GeneralResults/survivors/Employment-cluster_weight.png&quot; 
+&lt;img src=&quot;FromMichael2024Feb07/FebruaryFinYearEnd/GeneralResults/survivors/Employment-cluster_weight.png&quot; 
  width=&quot;300px&quot;&gt;
-&lt;img src=&quot;FromMichael2024Feb04/FebruaryFinYearEnd/GeneralResults/survivors/Capital-cluster_weight.png&quot; 
+&lt;img src=&quot;FromMichael2024Feb07/FebruaryFinYearEnd/GeneralResults/survivors/Capital-cluster_weight.png&quot; 
  width=&quot;300px&quot;&gt;
 ]]
 .column.bg-inverse[.content[
@@ -1706,21 +1773,21 @@ class: split-three, inverse
 .column.bg-indigo[.content[
 Unbalanced
 
-&lt;img src=&quot;FromMichael2024Feb04/FebruaryFinYearEnd/GeneralResults/unbalanced/Average-wage-low-wage-workers-cluster_weight.png&quot;
+&lt;img src=&quot;FromMichael2024Feb07/FebruaryFinYearEnd/GeneralResults/unbalanced/Average-wage-low-wage-workers-cluster_weight.png&quot;
      width=&quot;300px&quot;&gt;
-&lt;img src=&quot;FromMichael2024Feb04/FebruaryFinYearEnd/GeneralResults/unbalanced/Labour-cost-per-worker-cluster_weight.png&quot;
+&lt;img src=&quot;FromMichael2024Feb07/FebruaryFinYearEnd/GeneralResults/unbalanced/Labour-cost-per-worker-cluster_weight.png&quot;
      width=&quot;300px&quot;&gt;
-&lt;img src=&quot;FromMichael2024Feb04/FebruaryFinYearEnd/GeneralResults/unbalanced/Operating-profit-cluster_weight.png&quot;
+&lt;img src=&quot;FromMichael2024Feb07/FebruaryFinYearEnd/GeneralResults/unbalanced/Operating-profit-cluster_weight.png&quot;
      width=&quot;300px&quot;&gt;
 ]]
 .column.bg-indigo[.content[
 Survivor
 
-&lt;img src=&quot;FromMichael2024Feb04/FebruaryFinYearEnd/GeneralResults/survivors/Average-wage-low-wage-workers-cluster_weight.png&quot;
+&lt;img src=&quot;FromMichael2024Feb07/FebruaryFinYearEnd/GeneralResults/survivors/Average-wage-low-wage-workers-cluster_weight.png&quot;
      width=&quot;300px&quot;&gt;
-&lt;img src=&quot;FromMichael2024Feb04/FebruaryFinYearEnd/GeneralResults/survivors/Labour-cost-per-worker-cluster_weight.png&quot; 
+&lt;img src=&quot;FromMichael2024Feb07/FebruaryFinYearEnd/GeneralResults/survivors/Labour-cost-per-worker-cluster_weight.png&quot; 
  width=&quot;300px&quot;&gt;
-&lt;img src=&quot;FromMichael2024Feb04/FebruaryFinYearEnd/GeneralResults/survivors/Operating-profit-cluster_weight.png&quot; 
+&lt;img src=&quot;FromMichael2024Feb07/FebruaryFinYearEnd/GeneralResults/survivors/Operating-profit-cluster_weight.png&quot; 
  width=&quot;300px&quot;&gt;
 ]]
 .column.bg-inverse[.content[

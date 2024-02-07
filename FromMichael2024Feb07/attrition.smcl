@@ -1,0 +1,116 @@
+{smcl}
+{com}{sf}{ul off}{txt}{.-}
+      name:  {res}<unnamed>
+       {txt}log:  {res}Z:\Workbenches\epadmin\michael_kilumelume\2024 projects\minimum wage\log\attrition.smcl
+  {txt}log type:  {res}smcl
+ {txt}opened on:  {res} 7 Feb 2024, 17:45:11
+{txt}
+{com}.         *WITHOUT CLUSTERING 
+.         reg  exit lmn_revenue c.fa_use##c.lmn_revenue 
+{txt}{p 0 6 2}note: {bf:lmn_revenue} omitted because of collinearity.{p_end}
+
+      Source {c |}       SS           df       MS      Number of obs   ={res}    14,817
+{txt}{hline 13}{c +}{hline 34}   F(3, 14813)     = {res}     6.08
+{txt}       Model {c |} {res} 2.93081028         3   .97693676   {txt}Prob > F        ={res}    0.0004
+{txt}    Residual {c |} {res} 2379.52326    14,813  .160637498   {txt}R-squared       ={res}    0.0012
+{txt}{hline 13}{c +}{hline 34}   Adj R-squared   ={res}    0.0010
+{txt}       Total {c |} {res} 2382.45407    14,816  .160802786   {txt}Root MSE        =   {res}  .4008
+
+{txt}{hline 23}{c TT}{hline 11}{hline 11}{hline 9}{hline 8}{hline 13}{hline 12}
+{col 1}                  exit{col 24}{c |}      Coef.{col 36}   Std. Err.{col 48}      t{col 56}   P>|t|{col 64}     [95% Con{col 77}f. Interval]
+{hline 23}{c +}{hline 11}{hline 11}{hline 9}{hline 8}{hline 13}{hline 12}
+{space 11}lmn_revenue {c |}{col 24}{res}{space 2}-.0049691{col 36}{space 2} .0038654{col 47}{space 1}   -1.29{col 56}{space 3}0.199{col 64}{space 4}-.0125458{col 77}{space 3} .0026076
+{txt}{space 16}fa_use {c |}{col 24}{res}{space 2}  .129502{col 36}{space 2}  .123325{col 47}{space 1}    1.05{col 56}{space 3}0.294{col 64}{space 4}-.1122303{col 77}{space 3} .3712344
+{txt}{space 11}lmn_revenue {c |}{col 24}{res}{space 2}        0{col 36}{txt}  (omitted)
+{space 22} {c |}
+c.fa_use#c.lmn_revenue {c |}{col 24}{res}{space 2}-.0065109{col 36}{space 2} .0060061{col 47}{space 1}   -1.08{col 56}{space 3}0.278{col 64}{space 4}-.0182835{col 77}{space 3} .0052617
+{txt}{space 22} {c |}
+{space 17}_cons {c |}{col 24}{res}{space 2} .3066708{col 36}{space 2} .0794228{col 47}{space 1}    3.86{col 56}{space 3}0.000{col 64}{space 4} .1509922{col 77}{space 3} .4623494
+{txt}{hline 23}{c BT}{hline 11}{hline 11}{hline 9}{hline 8}{hline 13}{hline 12}
+{res}{txt}
+{com}.         probit exit lmn_revenue c.fa_use##c.lmn_revenue 
+
+{txt}note: {bf:lmn_revenue} omitted because of collinearity.
+{res}{txt}Iteration 0:{space 3}log likelihood = {res:-7441.5532}  
+Iteration 1:{space 3}log likelihood = {res:-7432.4566}  
+Iteration 2:{space 3}log likelihood = {res:-7432.4554}  
+Iteration 3:{space 3}log likelihood = {res:-7432.4554}  
+{res}
+{txt}Probit regression{col 49}Number of obs{col 67}= {res}    14,817
+{txt}{col 49}LR chi2({res}3{txt}){col 67}= {res}     18.20
+{txt}{col 49}Prob > chi2{col 67}= {res}    0.0004
+{txt}Log likelihood = {res}-7432.4554{txt}{col 49}Pseudo R2{col 67}= {res}    0.0012
+
+{txt}{hline 23}{c TT}{hline 11}{hline 11}{hline 9}{hline 8}{hline 13}{hline 12}
+{col 1}                  exit{col 24}{c |}      Coef.{col 36}   Std. Err.{col 48}      z{col 56}   P>|z|{col 64}     [95% Con{col 77}f. Interval]
+{hline 23}{c +}{hline 11}{hline 11}{hline 9}{hline 8}{hline 13}{hline 12}
+{space 11}lmn_revenue {c |}{col 24}{res}{space 2}-.0175263{col 36}{space 2}    .0137{col 47}{space 1}   -1.28{col 56}{space 3}0.201{col 64}{space 4}-.0443778{col 77}{space 3} .0093253
+{txt}{space 16}fa_use {c |}{col 24}{res}{space 2} .4625338{col 36}{space 2} .4364216{col 47}{space 1}    1.06{col 56}{space 3}0.289{col 64}{space 4}-.3928367{col 77}{space 3} 1.317904
+{txt}{space 11}lmn_revenue {c |}{col 24}{res}{space 2}        0{col 36}{txt}  (omitted)
+{space 22} {c |}
+c.fa_use#c.lmn_revenue {c |}{col 24}{res}{space 2}-.0233165{col 36}{space 2} .0212986{col 47}{space 1}   -1.09{col 56}{space 3}0.274{col 64}{space 4}-.0650611{col 77}{space 3} .0184281
+{txt}{space 22} {c |}
+{space 17}_cons {c |}{col 24}{res}{space 2}-.4655509{col 36}{space 2} .2810405{col 47}{space 1}   -1.66{col 56}{space 3}0.098{col 64}{space 4} -1.01638{col 77}{space 3} .0852784
+{txt}{hline 23}{c BT}{hline 11}{hline 11}{hline 9}{hline 8}{hline 13}{hline 12}
+
+{com}. 
+.         *WITH CLUSTERING
+.         reg  exit lmn_revenue c.fa_use##c.lmn_revenue , cluster(FID)
+{txt}{p 0 6 2}note: {bf:lmn_revenue} omitted because of collinearity.{p_end}
+
+Linear regression                               Number of obs     = {res}    14,817
+                                                {txt}F(3, 3481)        =  {res}    33.47
+                                                {txt}Prob > F          = {res}    0.0000
+                                                {txt}R-squared         = {res}    0.0012
+                                                {txt}Root MSE          =    {res}  .4008
+
+{txt}{ralign 88:(Std. Err. adjusted for {res:3,482} clusters in FID)}
+{hline 23}{c TT}{hline 11}{hline 11}{hline 9}{hline 8}{hline 13}{hline 12}
+{col 24}{c |}{col 36}    Robust
+{col 1}                  exit{col 24}{c |}      Coef.{col 36}   Std. Err.{col 48}      t{col 56}   P>|t|{col 64}     [95% Con{col 77}f. Interval]
+{hline 23}{c +}{hline 11}{hline 11}{hline 9}{hline 8}{hline 13}{hline 12}
+{space 11}lmn_revenue {c |}{col 24}{res}{space 2}-.0049691{col 36}{space 2} .0019484{col 47}{space 1}   -2.55{col 56}{space 3}0.011{col 64}{space 4}-.0087893{col 77}{space 3}-.0011489
+{txt}{space 16}fa_use {c |}{col 24}{res}{space 2}  .129502{col 36}{space 2} .0609545{col 47}{space 1}    2.12{col 56}{space 3}0.034{col 64}{space 4} .0099918{col 77}{space 3} .2490123
+{txt}{space 11}lmn_revenue {c |}{col 24}{res}{space 2}        0{col 36}{txt}  (omitted)
+{space 22} {c |}
+c.fa_use#c.lmn_revenue {c |}{col 24}{res}{space 2}-.0065109{col 36}{space 2}  .002918{col 47}{space 1}   -2.23{col 56}{space 3}0.026{col 64}{space 4}-.0122319{col 77}{space 3}-.0007898
+{txt}{space 22} {c |}
+{space 17}_cons {c |}{col 24}{res}{space 2} .3066708{col 36}{space 2}  .040685{col 47}{space 1}    7.54{col 56}{space 3}0.000{col 64}{space 4}  .226902{col 77}{space 3} .3864397
+{txt}{hline 23}{c BT}{hline 11}{hline 11}{hline 9}{hline 8}{hline 13}{hline 12}
+{res}{txt}
+{com}.         probit exit lmn_revenue c.fa_use##c.lmn_revenue , cluster(FID)
+
+{txt}note: {bf:lmn_revenue} omitted because of collinearity.
+{res}{txt}Iteration 0:{space 3}log pseudolikelihood = {res:-7441.5532}  
+Iteration 1:{space 3}log pseudolikelihood = {res:-7432.4566}  
+Iteration 2:{space 3}log pseudolikelihood = {res:-7432.4554}  
+Iteration 3:{space 3}log pseudolikelihood = {res:-7432.4554}  
+{res}
+{txt}Probit regression{col 49}Number of obs{col 67}= {res}    14,817
+{txt}{col 49}Wald chi2({res}3{txt}){col 67}= {res}    102.48
+{txt}{col 49}Prob > chi2{col 67}= {res}    0.0000
+{txt}Log pseudolikelihood = {res}-7432.4554{txt}{col 49}Pseudo R2{col 67}= {res}    0.0012
+
+{txt}{ralign 88:(Std. Err. adjusted for {res:3,482} clusters in FID)}
+{hline 23}{c TT}{hline 11}{hline 11}{hline 9}{hline 8}{hline 13}{hline 12}
+{col 24}{c |}{col 36}    Robust
+{col 1}                  exit{col 24}{c |}      Coef.{col 36}   Std. Err.{col 48}      z{col 56}   P>|z|{col 64}     [95% Con{col 77}f. Interval]
+{hline 23}{c +}{hline 11}{hline 11}{hline 9}{hline 8}{hline 13}{hline 12}
+{space 11}lmn_revenue {c |}{col 24}{res}{space 2}-.0175263{col 36}{space 2} .0068002{col 47}{space 1}   -2.58{col 56}{space 3}0.010{col 64}{space 4}-.0308544{col 77}{space 3}-.0041982
+{txt}{space 16}fa_use {c |}{col 24}{res}{space 2} .4625338{col 36}{space 2} .2113399{col 47}{space 1}    2.19{col 56}{space 3}0.029{col 64}{space 4} .0483151{col 77}{space 3} .8767525
+{txt}{space 11}lmn_revenue {c |}{col 24}{res}{space 2}        0{col 36}{txt}  (omitted)
+{space 22} {c |}
+c.fa_use#c.lmn_revenue {c |}{col 24}{res}{space 2}-.0233165{col 36}{space 2} .0101626{col 47}{space 1}   -2.29{col 56}{space 3}0.022{col 64}{space 4}-.0432349{col 77}{space 3}-.0033981
+{txt}{space 22} {c |}
+{space 17}_cons {c |}{col 24}{res}{space 2}-.4655509{col 36}{space 2} .1414753{col 47}{space 1}   -3.29{col 56}{space 3}0.001{col 64}{space 4}-.7428374{col 77}{space 3}-.1882645
+{txt}{hline 23}{c BT}{hline 11}{hline 11}{hline 9}{hline 8}{hline 13}{hline 12}
+
+{com}.         
+.         log close 
+      {txt}name:  {res}<unnamed>
+       {txt}log:  {res}Z:\Workbenches\epadmin\michael_kilumelume\2024 projects\minimum wage\log\attrition.smcl
+  {txt}log type:  {res}smcl
+ {txt}closed on:  {res} 7 Feb 2024, 17:45:13
+{txt}{.-}
+{smcl}
+{txt}{sf}{ul off}
