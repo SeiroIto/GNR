@@ -132,12 +132,12 @@ Our current estimate $\beta_{t}$ measures impacts of sub-MW worker % on % change
 --
 
 ### If $FA_{i}=1$, all workers are sub-MW workers, and $\beta_{t}$ measures the impacts of (% change in) MW.
-<p style="margin-bottom:1cm;">
+<p style="margin-bottom:.75cm;">
 
 --
 
 ### If $FA_{i}=.5$, 1/2 of workers are sub-MW workers, and $\beta_{t}$ measures the impacts of (% change in) MW applied on 1/2 of workers. To get back the "full" impact (= impact when $FA_{i}=1$), $\frac{\beta_{t}}{.5}$.
-<p style="margin-bottom:1cm;">
+<p style="margin-bottom:.75cm;">
 
 --
 
@@ -145,22 +145,38 @@ Our current estimate $\beta_{t}$ measures impacts of sub-MW worker % on % change
 
 --
 
-* This .red[assumes MW impacts on sub-MW workers do not spill over to above-MW workers] (a kind of SUTVA).
+* This .red[assumes MW impacts on sub-MW workers do not spill over to above-MW workers.] <!--(similar but different from SUTVA, because the treatment is at the farm level and above-MW workers are in the same treatment unit while SUTVA asks if impacts spill over to other treatment units)-->
 
 ---
 class: inverse, center, middle
 
-# From Michael, Feb 03, 2024
+# From Michael, Feb 07, 2024
 
 ---
 class: inverse
 
-## Essentially, no change from the full worker sample
+## Capital intensity did not rise. Capital did not change.
+<p style="margin-bottom:1cm;">
 
 --
 
-## Except we are looking at wages of low wage workers
-## Increased 40-50%, in line with statutory increase
+## High wage and non-seasonal workers took a cut in wage at the impact. 
+<p style="margin-bottom:1cm;">
+
+--
+
+## Low wage employment reduced. 
+<p style="margin-bottom:1cm;">
+
+--
+
+## Survivor and other samples show different patterns. 
+<p style="margin-bottom:1cm;">
+
+--
+
+## Survivors did not decrease seasonal worker wages and seasonal employment while others decreased (though imprecise). 
+<p style="margin-bottom:1cm;">
 
 ---
 class: split-five, inverse
@@ -168,7 +184,7 @@ class: split-five, inverse
 .column.bg-indigo[.content[
 <center>
 <p>
-"Unbalanced-Survivor"  
+"Unbalanced+Survivor"  
 (=Base)
 </p>
 </center>
@@ -226,415 +242,162 @@ class: split-five, inverse
      width="300px">
 ]]
 .column.bg-inverse[.content[
-Capital intensity went up in 3-4 years.   
-* Substituted labor &rarr; capital for both unbalanced and survivor farms.  
+.orange[
+Survivors and others are a bit different.  
+* Is there an attrition bias?
+]
+
+.orange[Capital intensity is on a rising trend but all statistically zero.
+* Except Survivors that do not show a trend.
+]   
 
 Employment (# of employees)  
-* Unbalanced: Reduced in 3-4 years.  
-* Survivor: Shot up at the impact, settled down in 3-4 years.  
+.orange[* Survivors: Reduced at 3rd year and beyond.  ]
 
 .orange[Capital]  
-* Unbalanced: Unchanged.  
-* Survivors: Increased. 
+.orange[Unchanged in all samples.  ]
 ]]
 ---
-class: split-three, inverse
+class: split-five, inverse
 
 .column.bg-indigo[.content[
-Unbalanced
+<center>
+Base
+</center>
 
-<img src="FromMichael2024Feb07/Main/GeneralResults/unbalanced/Average-wage-low-wage-workers-cluster_weight.png"
+<img src="FromMichael2024Feb07/GeneralResults/unbalanced_survivors/Average_wage_high_wage_workers-cluster_weight.png"
      width="300px">
-<img src="FromMichael2024Feb07/Main/GeneralResults/unbalanced/Labour-cost-per-worker-cluster_weight.png"
-     width="300px">
-<img src="FromMichael2024Feb07/Main/GeneralResults/unbalanced/Operating-profit-cluster_weight.png"
-     width="300px">
+<img src="FromMichael2024Feb07/GeneralResults/unbalanced_survivors/Average_wage_non_seasonal-cluster_weight.png" 
+ width="300px">
+<img src="FromMichael2024Feb07/GeneralResults/unbalanced_survivors/Average_wage_low_wage_workers-cluster_weight.png" 
+ width="300px">
+<img src="FromMichael2024Feb07/GeneralResults/unbalanced_survivors/Average_wage_seasonal-cluster_weight.png" 
+ width="300px">
 ]]
 .column.bg-indigo[.content[
+<center>
+Unbalanced portion
+</center>
+
+<img src="FromMichael2024Feb07/GeneralResults/unbalanced/Average_wage_high_wage_workers-cluster_weight.png"
+     width="300px">
+<img src="FromMichael2024Feb07/GeneralResults/unbalanced/Average_wage_non_seasonal-cluster_weight.png" 
+ width="300px">
+<img src="FromMichael2024Feb07/GeneralResults/unbalanced/Average_wage_low_wage_workers-cluster_weight.png" 
+ width="300px">
+<img src="FromMichael2024Feb07/GeneralResults/unbalanced/Average_wage_seasonal-cluster_weight.png" 
+ width="300px">
+]]
+.column.bg-indigo[.content[
+<center>
 Survivor
+</center>
 
-<img src="FromMichael2024Feb07/Main/GeneralResults/survivors/Average-wage-low-wage-workers-cluster_weight.png"
+<img src="FromMichael2024Feb07/GeneralResults/survivors/Average_wage_high_wage_workers-cluster_weight.png"
      width="300px">
-<img src="FromMichael2024Feb07/Main/GeneralResults/survivors/Labour-cost-per-worker-cluster_weight.png" 
+<img src="FromMichael2024Feb07/GeneralResults/survivors/Average_wage_non_seasonal-cluster_weight.png" 
  width="300px">
-<img src="FromMichael2024Feb07/Main/GeneralResults/survivors/Operating-profit-cluster_weight.png" 
+<img src="FromMichael2024Feb07/GeneralResults/survivors/Average_wage_low_wage_workers-cluster_weight.png" 
+ width="300px">
+<img src="FromMichael2024Feb07/GeneralResults/survivors/Average_wage_seasonal-cluster_weight.png" 
+ width="300px">
+]]
+.column.bg-indigo[.content[
+<center>
+Balanced
+</center>
+
+<img src="FromMichael2024Feb07/GeneralResults/balanced/Average_wage_high_wage_workers-cluster_weight.png"
+     width="300px">
+<img src="FromMichael2024Feb07/GeneralResults/balanced/Average_wage_non_seasonal-cluster_weight.png" 
+ width="300px">
+<img src="FromMichael2024Feb07/GeneralResults/balanced/Average_wage_low_wage_workers-cluster_weight.png" 
+ width="300px">
+<img src="FromMichael2024Feb07/GeneralResults/balanced/Average_wage_seasonal-cluster_weight.png" 
  width="300px">
 ]]
 .column.bg-inverse[.content[
-.orange[Average wage of low wage workers (mean of low wage worker subsample of each farm)]  
-Both decreased at the impact but increased from t=+1. 
+.orange[
+Survivors and others are a bit different.  
 
-Labour costs per worker   
-* Unbalanced: Increased in 3-4 years.  
-* Survivor: Reduced at the impact. Initially substituted high paid workers &rarr; low paid workers?   
+High wage workers and non-seasonal workers took a cut in wages at the impact.  
 
-Operating profits  
-* Unbalanced: Increased at the impact.  
-* Survivor: Unchanged.  
+High wage workers wage increased after 2-4 years, especially among Surviors. 
 
-Unbalanced farms   
- * Substituted labour &rarr; captal.  
+Low wage workers wage increased, but less so among Survivors.  
 
-Survivor farms  
-  * Substituted labour &rarr; captal.
-  * Substituted high paid workers &rarr; low paid workers.  
+Seasonal workers wage decreased at the impact, stayed zero. Among Survivors, wage did not decrease.  
+] 
 ]]
 ---
-class: inverse, center, middle
-
-# From Michael, Feb 04, 2024
-
-## Financial year ending at February
-
----
-class: inverse
-
-## Low wage worker wage increased by 40-50%
-## Capital intensity unchanged for unbalanced
-## Employment loss 30-40% at 4th year, but imprecise
-## Capital increased only for survivors
-
-
----
-class: split-three, inverse
+class: split-five, inverse
 
 .column.bg-indigo[.content[
-Unbalanced
+<center>
+Base
+</center>
 
-<img src="FromMichael2024Feb07/FebruaryFinYearEnd/GeneralResults/unbalanced/Capital_intensity-cluster_weight.png"
+<img src="FromMichael2024Feb07/GeneralResults/unbalanced_survivors/High_wage_jobs-cluster_weight.png"
      width="300px">
-<img src="FromMichael2024Feb07/FebruaryFinYearEnd/GeneralResults/unbalanced/Employment-cluster_weight.png"
-     width="300px">
-<img src="FromMichael2024Feb07/FebruaryFinYearEnd/GeneralResults/unbalanced/Capital-cluster_weight.png"
-     width="300px">
+<img src="FromMichael2024Feb07/GeneralResults/unbalanced_survivors/Non_Seasonal_jobs-cluster_weight.png" 
+ width="300px">
+<img src="FromMichael2024Feb07/GeneralResults/unbalanced_survivors/Low_wage_jobs-cluster_weight.png" 
+ width="300px">
+<img src="FromMichael2024Feb07/GeneralResults/unbalanced_survivors/Seasonal_jobs-cluster_weight.png" 
+ width="300px">
 ]]
 .column.bg-indigo[.content[
+<center>
+Unbalanced portion
+</center>
+
+<img src="FromMichael2024Feb07/GeneralResults/unbalanced/High_wage_jobs-cluster_weight.png"
+     width="300px">
+<img src="FromMichael2024Feb07/GeneralResults/unbalanced/Non_Seasonal_jobs-cluster_weight.png" 
+ width="300px">
+<img src="FromMichael2024Feb07/GeneralResults/unbalanced/Low_wage_jobs-cluster_weight.png" 
+ width="300px">
+<img src="FromMichael2024Feb07/GeneralResults/unbalanced/Seasonal_jobs-cluster_weight.png" 
+ width="300px">
+]]
+.column.bg-indigo[.content[
+<center>
 Survivor
+</center>
 
-<img src="FromMichael2024Feb07/FebruaryFinYearEnd/GeneralResults/survivors/Capital_intensity-cluster_weight.png"
+<img src="FromMichael2024Feb07/GeneralResults/survivors/High_wage_jobs-cluster_weight.png"
      width="300px">
-<img src="FromMichael2024Feb07/FebruaryFinYearEnd/GeneralResults/survivors/Employment-cluster_weight.png" 
+<img src="FromMichael2024Feb07/GeneralResults/survivors/Non_Seasonal_jobs-cluster_weight.png" 
  width="300px">
-<img src="FromMichael2024Feb07/FebruaryFinYearEnd/GeneralResults/survivors/Capital-cluster_weight.png" 
+<img src="FromMichael2024Feb07/GeneralResults/survivors/Low_wage_jobs-cluster_weight.png" 
  width="300px">
-]]
-.column.bg-inverse[.content[
-Capital intensity   
-* Unbalanced: .orange[Unchanged.]  
-* Survivor: Went up in 3-4 years.  
-
-Employment (# of employees)  
-* Unbalanced: Shot up at the impact, reduced in 3-4 years.  
-* Survivor: Shot up at the impact, reduced in 3-4 years (statistically zero).  
-
-.orange[Capital]  
-* Unbalanced: Decreasing but statistically zero.  
-* Survivors: Increasing but statistically zero. 
-]]
----
-class: split-three, inverse
-
-.column.bg-indigo[.content[
-Unbalanced
-
-<img src="FromMichael2024Feb07/FebruaryFinYearEnd/GeneralResults/unbalanced/Average-wage-low-wage-workers-cluster_weight.png"
-     width="300px">
-<img src="FromMichael2024Feb07/FebruaryFinYearEnd/GeneralResults/unbalanced/Labour-cost-per-worker-cluster_weight.png"
-     width="300px">
-<img src="FromMichael2024Feb07/FebruaryFinYearEnd/GeneralResults/unbalanced/Operating-profit-cluster_weight.png"
-     width="300px">
+<img src="FromMichael2024Feb07/GeneralResults/survivors/Seasonal_jobs-cluster_weight.png" 
+ width="300px">
 ]]
 .column.bg-indigo[.content[
-Survivor
+<center>
+Balanced
+</center>
 
-<img src="FromMichael2024Feb07/FebruaryFinYearEnd/GeneralResults/survivors/Average-wage-low-wage-workers-cluster_weight.png"
+<img src="FromMichael2024Feb07/GeneralResults/balanced/High_wage_jobs-cluster_weight.png"
      width="300px">
-<img src="FromMichael2024Feb07/FebruaryFinYearEnd/GeneralResults/survivors/Labour-cost-per-worker-cluster_weight.png" 
+<img src="FromMichael2024Feb07/GeneralResults/balanced/Non_Seasonal_jobs-cluster_weight.png" 
  width="300px">
-<img src="FromMichael2024Feb07/FebruaryFinYearEnd/GeneralResults/survivors/Operating-profit-cluster_weight.png" 
+<img src="FromMichael2024Feb07/GeneralResults/balanced/Low_wage_jobs-cluster_weight.png" 
+ width="300px">
+<img src="FromMichael2024Feb07/GeneralResults/balanced/Seasonal_jobs-cluster_weight.png" 
  width="300px">
 ]]
 .column.bg-inverse[.content[
-.orange[Average wage of low wage workers (mean of low wage worker subsample of each farm)]  
-Both decreased at the impact but increased from t=+1.  
+.orange[
+Survivors and others are a bit different.  
 
-Labour costs per worker: Reduced at the impact, .orange[a clear upward trend.]  
+High wage jobs reduced in all but most pronounced among Survivors.  
 
-Non-wage labour costs (not shown)  
-* Reduced both at the impact.  
-* .orange[No clear trend.]  
+Non-seasonal jobs increased at the impact but reduced, except Survivors did not increase at the impact.  
 
-Operating profits .orange[unchanged or negative (statistically zero).]  
+Low wage jobs increased at the impact but reduced after 2-4 years.
 
+Seasonal jobs reduced except among Survivors.  
+]
 ]]
----
-class: inverse
-
-## Capital intensity increased. 
-<p style="margin-bottom:2cm;">
---
-
-## Capital $K\uparrow$ and labour $L\downarrow$ are both imprecisely measured but combined to give capital intensity increase $\frac{K\uparrow}{L\downarrow}$.  
-<p style="margin-bottom:2cm;">
-
---
-
-* 3rd year employment decrease is about 25% for survivors, 30-45% for unbalanced. Though imprecisely estimated, impacts could have been large. 
-
---
-
-* Capital intensification achieved through employment loss for unbalanced, plus capital increase for survivors. Liquidity constraint?
-
----
-class: inverse
-
-## Average wage increased for low wage workers.  
-<p style="margin-bottom:2cm;">
-
---
-
-## Why did employment increase at the impact? 
-
---
-
-* Rate of increase about 25%. How many employess were added at the mean farm?  
-
---
-
-* Increase at the impact is consistent with increased labour supply and retention, which allowed farms to hire/keep more workers with almost zero marginal costs.  
-
---
-
-* Where do the recruitment costs come in? In wage or non-wage?  
-
---
-
-   * Total of recruitmemt/retention expenses + wage increased, and "actual wage" increase may be smaller than 50%. 
----
-class: inverse, center, middle
-
-# From Marlies, Jan 29, 2024
-
----
-class: split-three, inverse
-
-.column.bg-indigo[.content[
-Non-survivor (CIT), seasonal
-
-<div style="width: 270px; height: 195px; border: 1px solid black;"></div>
-<img src="FromMarlies2024Jan29/SeasonalResults/CITNonSurvivors/nb_entr_w_CIT_Non_survivor.png"
-     height="195px">
-<img src="FromMarlies2024Jan29/SeasonalResults/CITNonSurvivors/nb_empl_w_CIT_Non_survivor.png"
-     height="195px">
-]]
-.column.bg-indigo[.content[
-Survivor (CIT), seasonal
-
-<img src="FromMarlies2024Jan29/SeasonalResults/CITSurvivors/nb_exit_w_CIT_Survivor.png"
-     height="195px">
-<img src="FromMarlies2024Jan29/SeasonalResults/CITSurvivors/nb_entr_w_CIT_Survivor.png"
-     height="195px">
-<img src="FromMarlies2024Jan29/SeasonalResults/CITSurvivors/nb_empl_w_CIT_Survivor.png"
-     height="195px">
-]]
-.column.bg-inverse[.content[
-&#35; of seasonal employees not on payroll (Exit)   
-* Non-survivor: <Results missing>  
-* Survivor: Unchanged.  
-
-&#35; of seasonal employees newly hired (Entry)  
-* Non-survivor: Decreased in 0-2 years.  
-* Survivor: Unchanged.  
-
-Employment (# of seasonal employees)  
-* Non-survivor: Increased at the impact (large SE).  
-* Survivor: Unchanged, but a dip at $t=-1$.  
-
-CIT seasonal  
-* Non-survivor: Reduced new hires.  
-* Survivor: Unchanged.  
-]]
----
-class: split-three, inverse
-
-.column.bg-indigo[.content[
-Non-survivor (CIT), non-seasonal
-
-<img src="FromMarlies2024Jan29/NonSeasonalResults/CITNonSurvivors/nb_exit_w_CIT_Non_survivor.png"
-     height="195px">
-<img src="FromMarlies2024Jan29/NonSeasonalResults/CITNonSurvivors/nb_entr_w_CIT_Non_survivor.png"
-    height = "195px">
-<img src="FromMarlies2024Jan29/NonSeasonalResults/CITNonSurvivors/nb_empl_w_CIT_Non_survivor.png"
-     height="195px">
-]]
-.column.bg-indigo[.content[
-Survivor (CIT), non-seasonal
-
-<img src="FromMarlies2024Jan29/NonSeasonalResults/CITSurvivors/nb_exit_w_CIT_Survivor.png"
-     height="195px">
-<img src="FromMarlies2024Jan29/NonSeasonalResults/CITSurvivors/nb_entr_w_CIT_Survivor.png"
-     height="195px">
-<img src="FromMarlies2024Jan29/NonSeasonalResults/CITSurvivors/nb_empl_w_CIT_Survivor.png"
-     height="195px">
-]]
-.column.bg-inverse[.content[
-&#35; of non-seasonal employees not on payroll (Exit)   
-* Non-survivor: Unchanged.  
-* Survivor: Increased at the impact but settled down.  
-
-&#35; of seasonal employees newly hired (Entry)  
-* Non-survivor: Decreased after 1 year, negative point estimates. 
-* Survivor: Unchanged but negative point estimates.  
-
-Employment (# of non-seasonal employees)  
-* Non-survivor: Unchanged.  
-* Survivor: Decreased.  
-
-CIT non-seasonal  
-* Non-survivor: Reduced new hires.  
-* Survivor: Reduced new hires and employment.  
-]]
----
-class: split-three, inverse
-
-.column.bg-indigo[.content[
-Non-survivor (Non-CIT), seasonal
-
-<div style="width: 270px; height: 195px; border: 1px solid black;"></div>
-<img src="FromMarlies2024Jan29/SeasonalResults/NonCITNonSurvivors/nb_entr_w_Non_CIT_Non_survivor.png"
-     height="195px" width="270px">
-<img src="FromMarlies2024Jan29/SeasonalResults/NonCITNonSurvivors/nb_empl_w_Non_CIT_Non_survivor.png"
-     height="195px" width="270px">
-]]
-.column.bg-indigo[.content[
-Survivor (Non-CIT), seasonal
-
-<img src="FromMarlies2024Jan29/SeasonalResults/NonCITSurvivors/nb_exit_w_NON_CIT_Survivor.png"
-     height="195px">
-<img src="FromMarlies2024Jan29/SeasonalResults/NonCITSurvivors/nb_entr_w_NON_CIT_Survivor.png"
-     height="195px">
-<img src="FromMarlies2024Jan29/SeasonalResults/NonCITSurvivors/nb_empl_w_NON_CIT_Survivor.png"
-     height="195px">
-]]
-.column.bg-inverse[.content[
-&#35; of seasonal employees not on payroll (Exit)   
-* Non-survivor: <Results missing>  
-* Survivor: Unchanged.  
-
-&#35; of seasonal employees newly hired (Entry)  
-* Non-survivor:   
-* Survivor: Unchanged.  
-
-Employment (# of seasonal employees)  
-* Non-survivor:   
-* Survivor: Unchanged, but a dip at $t=-1$.  
-
-Non-CIT seasonal  
-* Non-survivor:   
-* Survivor: Unchanged.  
-]]
----
-class: split-three, inverse
-
-.column.bg-indigo[.content[
-Non-survivor (Non-CIT), non-seasonal
-
-<img src="FromMarlies2024Jan29/NonSeasonalResults/NonCITNonSurvivors/nb_exit_w_Non_CIT_Non_survivor.png"
-     height="195px">
-<img src="FromMarlies2024Jan29/NonSeasonalResults/NonCITNonSurvivors/nb_entr_w_Non_CIT_Non_survivor.png"
-    height = "195px">
-<img src="FromMarlies2024Jan29/NonSeasonalResults/NonCITNonSurvivors/nb_empl_w_Non_CIT_Non_survivor.png"
-     height="195px">
-]]
-.column.bg-indigo[.content[
-Survivor (Non-CIT), non-seasonal
-
-<img src="FromMarlies2024Jan29/NonSeasonalResults/NonCITSurvivors/nb_exit_w_NON_CIT_Survivor.png"
-     height="195px">
-<img src="FromMarlies2024Jan29/NonSeasonalResults/NonCITSurvivors/nb_entr_w_NON_CIT_Survivor.png"
-     height="195px">
-<img src="FromMarlies2024Jan29/NonSeasonalResults/NonCITSurvivors/nb_empl_w_NON_CIT_Survivor.png"
-     height="195px">
-]]
-.column.bg-inverse[.content[
-&#35; of non-seasonal employees not on payroll (Exit)   
-* Non-survivor: Unchanged.  
-* Survivor: Increased at the impact but settled down.  
-
-&#35; of seasonal employees newly hired (Entry)  
-* Non-survivor: Negative point estimates.  
-* Survivor: Decreased.  
-
-Employment (# of non-seasonal employees)  
-* Non-survivor: Decreased at 0.  
-* Survivor: Decreased for 0-2 years.  
-
-Non-CIT non-seasonal  
-* Non-survivor: Reduced new hires and employment at the impact.  
-* Survivor: Increased exits, reduced new hires, reduced employmemt.  
-]]
----
-class: inverse, center, middle
-
-# How should we summarise?
-
----
-class: inverse
-
-## Wages increased per law for low wage workers. Compliance is not an issue.  
-
---
-
-## Large farms held seasonal employment, reduced non-seasonal new hires and employment (except non-survivors held non-seasonal employment unchanged). 
-
-* Corporate (CIT) farms reduced non-seasonal new hires and employment, but held seasonal employment at level (except non-survivors reduced new hires).  
-* Marginal (Non-CIT) farms reduced non-seasonal employment.  
-
---
-
-## Large and small farms: Seasonal workers are hard to reduce. Non-seasonal workers were reduced in some cases. Substituted high skilled with low sklled workers?  
-
----
-class: inverse
-
-## Headline: Compliance &#128079;  
-
---
-
-## Headline: Capital intensity&uarr;  
-
---
-
-## Possible headline: Stable seasonal employment but reduced non-seasonal employment?  
-
---
-
-## Possible mechanism: High skilled workers are substituted by machines?  
-
----
-class: inverse, center, middle
-
-# Other things to consider
-
----
-class: inverse
-
-## Regardless of using which/both of unbalanced vs. survivor (complete) panel, need to consider how attrition affect results.  
-
---
-
-### Are the treated more likely to attrit than the control? 
-
---
-
-### If so, impacts may be more adverse than estimated.  
-
---
-
-
-### To know about it, regress
-
-$$
-attrit=a\times characteristics + b\times characteristics*treated + e. 
-$$
-### and test $b=0$.  
