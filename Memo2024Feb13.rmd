@@ -169,7 +169,7 @@ class: inverse
 
 --
 
-## Low wage employment reduced after 3-4 years. Seasonal employment did not change.  
+## Low wage and non-seasonal employment reduced after 3-4 years. Seasonal employment did not change.  
 <p style="margin-bottom:1cm;">
 
 ---
