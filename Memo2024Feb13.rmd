@@ -172,6 +172,11 @@ class: inverse
 ## Low wage and non-seasonal employment reduced after 3-4 years. Seasonal employment did not change.  
 <p style="margin-bottom:1cm;">
 
+
+--
+
+## Better focus on seasonal/non-seasonal dimension.  
+
 ---
 class: inverse, middle
 
