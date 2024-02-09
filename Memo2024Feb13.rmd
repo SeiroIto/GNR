@@ -1,6 +1,6 @@
 ---
 title: "_____Memo on results"
-subtitle: "_____of Feb 07, 2024"
+subtitle: "_____of Feb 08, 2024"
 author: "______Seiro Ito"
 date: "________`r format(Sys.time(), '%m %d, %Y% %R')`"
 output:
@@ -155,7 +155,7 @@ class: inverse, center, middle
 ---
 class: inverse
 
-## Capital intensity did not rise. Capital did not change.
+## Capital intensity rose. Capital increased, most among Survivors.
 <p style="margin-bottom:1cm;">
 
 --
@@ -164,19 +164,23 @@ class: inverse
 <p style="margin-bottom:1cm;">
 
 --
-
-## Low wage employment reduced. 
+## High wage employment decreased at the impact. 
 <p style="margin-bottom:1cm;">
 
 --
 
-## Survivor and other samples show different patterns. 
+## Low wage employment reduced after 3-4 years. Seasonal employment did not change.  
+<p style="margin-bottom:1cm;">
+
+---
+class: inverse, middle
+
+## Survivor and other samples show different patterns but only mildly. 
 <p style="margin-bottom:1cm;">
 
 --
 
-## Survivors did not decrease seasonal worker wages and seasonal employment while others decreased (though imprecise). 
-<p style="margin-bottom:1cm;">
+## Unbalanced portion did not adjust as much as other samples.
 
 ---
 class: split-five, inverse
@@ -189,11 +193,11 @@ class: split-five, inverse
 </p>
 </center>
 
-<img src="FromMichael2024Feb07/GeneralResults/unbalanced_survivors/Capital_intensity-cluster_weight.png"
+<img src="FromMichael2024Feb08/GeneralResults/unbalanced_survivors/CapitalIntensity-cluster_weight.png"
      width="300px">
-<img src="FromMichael2024Feb07/GeneralResults/unbalanced_survivors/Employment-cluster_weight.png"
+<img src="FromMichael2024Feb08/GeneralResults/unbalanced_survivors/Employment-cluster_weight.png"
      width="300px">
-<img src="FromMichael2024Feb07/GeneralResults/unbalanced_survivors/Capital-cluster_weight.png"
+<img src="FromMichael2024Feb08/GeneralResults/unbalanced_survivors/Capital-cluster_weight.png"
      width="300px">
 ]]
 .column.bg-indigo[.content[
@@ -204,11 +208,11 @@ class: split-five, inverse
 </p>
 </center>
 
-<img src="FromMichael2024Feb07/GeneralResults/unbalanced/Capital_intensity-cluster_weight.png"
+<img src="FromMichael2024Feb08/GeneralResults/unbalanced/CapitalIntensity-cluster_weight.png"
      width="300px">
-<img src="FromMichael2024Feb07/GeneralResults/unbalanced/Employment-cluster_weight.png" 
+<img src="FromMichael2024Feb08/GeneralResults/unbalanced/Employment-cluster_weight.png" 
  width="300px">
-<img src="FromMichael2024Feb07/GeneralResults/unbalanced/Capital-cluster_weight.png" 
+<img src="FromMichael2024Feb08/GeneralResults/unbalanced/Capital-cluster_weight.png" 
  width="300px">
 ]]
 .column.bg-indigo[.content[
@@ -219,11 +223,11 @@ class: split-five, inverse
 </p>
 </center>
 
-<img src="FromMichael2024Feb07/GeneralResults/survivors/Capital_intensity-cluster_weight.png"
+<img src="FromMichael2024Feb08/GeneralResults/survivors/CapitalIntensity-cluster_weight.png"
      width="300px">
-<img src="FromMichael2024Feb07/GeneralResults/survivors/Employment-cluster_weight.png" 
+<img src="FromMichael2024Feb08/GeneralResults/survivors/Employment-cluster_weight.png" 
  width="300px">
-<img src="FromMichael2024Feb07/GeneralResults/survivors/Capital-cluster_weight.png" 
+<img src="FromMichael2024Feb08/GeneralResults/survivors/Capital-cluster_weight.png" 
  width="300px">
 ]]
 .column.bg-indigo[.content[
@@ -234,28 +238,23 @@ class: split-five, inverse
 </p>
 </center>
 
-<img src="FromMichael2024Feb07/GeneralResults/balanced/Capital_intensity-cluster_weight.png"
+<img src="FromMichael2024Feb08/GeneralResults/balanced/CapitalIntensity-cluster_weight.png"
      width="300px">
-<img src="FromMichael2024Feb07/GeneralResults/balanced/Employment-cluster_weight.png"
+<img src="FromMichael2024Feb08/GeneralResults/balanced/Employment-cluster_weight.png"
      width="300px">
-<img src="FromMichael2024Feb07/GeneralResults/balanced/Capital-cluster_weight.png"
+<img src="FromMichael2024Feb08/GeneralResults/balanced/Capital-cluster_weight.png"
      width="300px">
 ]]
 .column.bg-inverse[.content[
-.orange[
-Survivors and others are a bit different.  
-* Is there an attrition bias?
-]
+.orange[Survivor and Base/Balanced show similar patterns.  ] 
 
-.orange[Capital intensity is on a rising trend but all statistically zero.
-* Except Survivors that do not show a trend.
-]   
+Capital intensity went up in 3-4 years.   
+* Substituted labor &rarr; capital for all but unbalanced portion.  
 
-Employment (# of employees)  
-.orange[* Survivors: Reduced at 3rd year and beyond.  ]
+Employment (# of employees) shot up at the impact, then reduced in 3-4 years in all but unbalanced portion.  
 
-.orange[Capital]  
-.orange[Unchanged in all samples.  ]
+Capital  
+.orange[* Increased for all but Unbalanced portion. Increase is largest among Survivors.  ]
 ]]
 ---
 class: split-five, inverse
@@ -265,13 +264,13 @@ class: split-five, inverse
 Base
 </center>
 
-<img src="FromMichael2024Feb07/GeneralResults/unbalanced_survivors/Average_wage_high_wage_workers-cluster_weight.png"
+<img src="FromMichael2024Feb08/GeneralResults/unbalanced_survivors/AverageWage_HighWageWorker-cluster_weight.png"
      width="300px">
-<img src="FromMichael2024Feb07/GeneralResults/unbalanced_survivors/Average_wage_non_seasonal-cluster_weight.png" 
+<img src="FromMichael2024Feb08/GeneralResults/unbalanced_survivors/AverageWage_NonSeasonal-cluster_weight.png" 
  width="300px">
-<img src="FromMichael2024Feb07/GeneralResults/unbalanced_survivors/Average_wage_low_wage_workers-cluster_weight.png" 
+<img src="FromMichael2024Feb08/GeneralResults/unbalanced_survivors/AverageWage_LowWageWorker-cluster_weight.png" 
  width="300px">
-<img src="FromMichael2024Feb07/GeneralResults/unbalanced_survivors/Average_wage_seasonal-cluster_weight.png" 
+<img src="FromMichael2024Feb08/GeneralResults/unbalanced_survivors/AverageWage_Seasonal-cluster_weight.png" 
  width="300px">
 ]]
 .column.bg-indigo[.content[
@@ -279,13 +278,13 @@ Base
 Unbalanced portion
 </center>
 
-<img src="FromMichael2024Feb07/GeneralResults/unbalanced/Average_wage_high_wage_workers-cluster_weight.png"
+<img src="FromMichael2024Feb08/GeneralResults/unbalanced/AverageWage_HighWageWorker-cluster_weight.png"
      width="300px">
-<img src="FromMichael2024Feb07/GeneralResults/unbalanced/Average_wage_non_seasonal-cluster_weight.png" 
+<img src="FromMichael2024Feb08/GeneralResults/unbalanced/AverageWage_NonSeasonal-cluster_weight.png" 
  width="300px">
-<img src="FromMichael2024Feb07/GeneralResults/unbalanced/Average_wage_low_wage_workers-cluster_weight.png" 
+<img src="FromMichael2024Feb08/GeneralResults/unbalanced/AverageWage_LowWageWorker-cluster_weight.png" 
  width="300px">
-<img src="FromMichael2024Feb07/GeneralResults/unbalanced/Average_wage_seasonal-cluster_weight.png" 
+<img src="FromMichael2024Feb08/GeneralResults/unbalanced/AverageWage_Seasonal-cluster_weight.png" 
  width="300px">
 ]]
 .column.bg-indigo[.content[
@@ -293,13 +292,13 @@ Unbalanced portion
 Survivor
 </center>
 
-<img src="FromMichael2024Feb07/GeneralResults/survivors/Average_wage_high_wage_workers-cluster_weight.png"
+<img src="FromMichael2024Feb08/GeneralResults/survivors/AverageWage_HighWageWorker-cluster_weight.png"
      width="300px">
-<img src="FromMichael2024Feb07/GeneralResults/survivors/Average_wage_non_seasonal-cluster_weight.png" 
+<img src="FromMichael2024Feb08/GeneralResults/survivors/AverageWage_NonSeasonal-cluster_weight.png" 
  width="300px">
-<img src="FromMichael2024Feb07/GeneralResults/survivors/Average_wage_low_wage_workers-cluster_weight.png" 
+<img src="FromMichael2024Feb08/GeneralResults/survivors/AverageWage_LowWageWorker-cluster_weight.png" 
  width="300px">
-<img src="FromMichael2024Feb07/GeneralResults/survivors/Average_wage_seasonal-cluster_weight.png" 
+<img src="FromMichael2024Feb08/GeneralResults/survivors/AverageWage_Seasonal-cluster_weight.png" 
  width="300px">
 ]]
 .column.bg-indigo[.content[
@@ -307,26 +306,26 @@ Survivor
 Balanced
 </center>
 
-<img src="FromMichael2024Feb07/GeneralResults/balanced/Average_wage_high_wage_workers-cluster_weight.png"
+<img src="FromMichael2024Feb08/GeneralResults/balanced/AverageWage_HighWageWorker-cluster_weight.png"
      width="300px">
-<img src="FromMichael2024Feb07/GeneralResults/balanced/Average_wage_non_seasonal-cluster_weight.png" 
+<img src="FromMichael2024Feb08/GeneralResults/balanced/AverageWage_NonSeasonal-cluster_weight.png" 
  width="300px">
-<img src="FromMichael2024Feb07/GeneralResults/balanced/Average_wage_low_wage_workers-cluster_weight.png" 
+<img src="FromMichael2024Feb08/GeneralResults/balanced/AverageWage_LowWageWorker-cluster_weight.png" 
  width="300px">
-<img src="FromMichael2024Feb07/GeneralResults/balanced/Average_wage_seasonal-cluster_weight.png" 
+<img src="FromMichael2024Feb08/GeneralResults/balanced/AverageWage_Seasonal-cluster_weight.png" 
  width="300px">
 ]]
 .column.bg-inverse[.content[
 .orange[
-Survivors and others are a bit different.  
+Survivors and others are a bit different along non-seasonal/low wage dimensions.  
 
 High wage workers and non-seasonal workers took a cut in wages at the impact.  
 
-High wage workers wage increased after 2-4 years, especially among Surviors. 
+High wage workers wage increased after 2-4 years. 
 
 Low wage workers wage increased, but less so among Survivors.  
 
-Seasonal workers wage decreased at the impact, stayed zero. Among Survivors, wage did not decrease.  
+Seasonal workers wage did not change.  
 ] 
 ]]
 ---
@@ -337,13 +336,13 @@ class: split-five, inverse
 Base
 </center>
 
-<img src="FromMichael2024Feb07/GeneralResults/unbalanced_survivors/High_wage_jobs-cluster_weight.png"
+<img src="FromMichael2024Feb08/GeneralResults/unbalanced_survivors/HighWageEmployment-cluster_weight.png"
      width="300px">
-<img src="FromMichael2024Feb07/GeneralResults/unbalanced_survivors/Non_Seasonal_jobs-cluster_weight.png" 
+<img src="FromMichael2024Feb08/GeneralResults/unbalanced_survivors/NonSeasonalEmployment-cluster_weight.png" 
  width="300px">
-<img src="FromMichael2024Feb07/GeneralResults/unbalanced_survivors/Low_wage_jobs-cluster_weight.png" 
+<img src="FromMichael2024Feb08/GeneralResults/unbalanced_survivors/LowWageEmployment-cluster_weight.png" 
  width="300px">
-<img src="FromMichael2024Feb07/GeneralResults/unbalanced_survivors/Seasonal_jobs-cluster_weight.png" 
+<img src="FromMichael2024Feb08/GeneralResults/unbalanced_survivors/Seasonal_Employment-cluster_weight.png" 
  width="300px">
 ]]
 .column.bg-indigo[.content[
@@ -351,13 +350,13 @@ Base
 Unbalanced portion
 </center>
 
-<img src="FromMichael2024Feb07/GeneralResults/unbalanced/High_wage_jobs-cluster_weight.png"
+<img src="FromMichael2024Feb08/GeneralResults/unbalanced/HighWageEmployment-cluster_weight.png"
      width="300px">
-<img src="FromMichael2024Feb07/GeneralResults/unbalanced/Non_Seasonal_jobs-cluster_weight.png" 
+<img src="FromMichael2024Feb08/GeneralResults/unbalanced/NonSeasonalEmployment-cluster_weight.png" 
  width="300px">
-<img src="FromMichael2024Feb07/GeneralResults/unbalanced/Low_wage_jobs-cluster_weight.png" 
+<img src="FromMichael2024Feb08/GeneralResults/unbalanced/LowWageEmployment-cluster_weight.png" 
  width="300px">
-<img src="FromMichael2024Feb07/GeneralResults/unbalanced/Seasonal_jobs-cluster_weight.png" 
+<img src="FromMichael2024Feb08/GeneralResults/unbalanced/Seasonal_Employment-cluster_weight.png" 
  width="300px">
 ]]
 .column.bg-indigo[.content[
@@ -365,13 +364,13 @@ Unbalanced portion
 Survivor
 </center>
 
-<img src="FromMichael2024Feb07/GeneralResults/survivors/High_wage_jobs-cluster_weight.png"
+<img src="FromMichael2024Feb08/GeneralResults/survivors/HighWageEmployment-cluster_weight.png"
      width="300px">
-<img src="FromMichael2024Feb07/GeneralResults/survivors/Non_Seasonal_jobs-cluster_weight.png" 
+<img src="FromMichael2024Feb08/GeneralResults/survivors/NonSeasonalEmployment-cluster_weight.png" 
  width="300px">
-<img src="FromMichael2024Feb07/GeneralResults/survivors/Low_wage_jobs-cluster_weight.png" 
+<img src="FromMichael2024Feb08/GeneralResults/survivors/LowWageEmployment-cluster_weight.png" 
  width="300px">
-<img src="FromMichael2024Feb07/GeneralResults/survivors/Seasonal_jobs-cluster_weight.png" 
+<img src="FromMichael2024Feb08/GeneralResults/survivors/Seasonal_Employment-cluster_weight.png" 
  width="300px">
 ]]
 .column.bg-indigo[.content[
@@ -379,25 +378,25 @@ Survivor
 Balanced
 </center>
 
-<img src="FromMichael2024Feb07/GeneralResults/balanced/High_wage_jobs-cluster_weight.png"
+<img src="FromMichael2024Feb08/GeneralResults/balanced/HighWageEmployment-cluster_weight.png"
      width="300px">
-<img src="FromMichael2024Feb07/GeneralResults/balanced/Non_Seasonal_jobs-cluster_weight.png" 
+<img src="FromMichael2024Feb08/GeneralResults/balanced/NonSeasonalEmployment-cluster_weight.png" 
  width="300px">
-<img src="FromMichael2024Feb07/GeneralResults/balanced/Low_wage_jobs-cluster_weight.png" 
+<img src="FromMichael2024Feb08/GeneralResults/balanced/LowWageEmployment-cluster_weight.png" 
  width="300px">
-<img src="FromMichael2024Feb07/GeneralResults/balanced/Seasonal_jobs-cluster_weight.png" 
+<img src="FromMichael2024Feb08/GeneralResults/balanced/Seasonal_Employment-cluster_weight.png" 
  width="300px">
 ]]
 .column.bg-inverse[.content[
 .orange[
-Survivors and others are a bit different.  
+Survivors and others are a bit different along seasonal/non-seasonal dimensions.  
 
-High wage jobs reduced in all but most pronounced among Survivors.  
+High wage employment reduced at the impact.  
 
-Non-seasonal jobs increased at the impact but reduced, except Survivors did not increase at the impact.  
+Non-seasonal employment increased at the impact but reduced, except Survivors did not increase at the impact.  
 
-Low wage jobs increased at the impact but reduced after 2-4 years.
+Low wage employment increased at the impact but reduced after 2-4 years, less so for Survivors.
 
-Seasonal jobs reduced except among Survivors.  
+Seasonal employment did not change.  
 ]
 ]]
