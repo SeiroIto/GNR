@@ -92,7 +92,7 @@ All ag farms & observed from 2010 or 2011 & dropping years other than 2010-2016 
 
 ### Survivor
 
-Unbalanced panel & dropping farms with a missing observation for some year.
+Base & dropping farms with a missing observation for some year.
 
 ### Unbalanced portion
 
@@ -112,6 +112,16 @@ Any of above & workers earning $<$ R5400 per month for all periods
 ### High wage worker subsample
 
 Any of above - Low wage worker subsample  
+
+--
+
+### Seasonal worker subsample
+
+Any of above & workers working less than 6 months 
+
+### Non-seasonal worker subsample
+
+Any of above - seasonal worker subsample  
 
 --
 
