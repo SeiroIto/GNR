@@ -619,15 +619,6 @@ Survivor, unweighted
 ]]
 .column.bg-inverse[.content[
 .orange[
-Survivors and others are a bit different along seasonal/non-seasonal dimensions.  
-
-High wage employment reduced at the impact.  
-
-Non-seasonal employment increased at the impact but reduced, except Survivors did not increase at the impact.  
-
-Low wage employment increased at the impact but reduced after 2-4 years, less so for Survivors.
-
-Seasonal employment did not change.  
 ]
 ]]
 ---
