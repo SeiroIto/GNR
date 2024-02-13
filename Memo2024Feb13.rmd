@@ -17,6 +17,7 @@ output:
 # setwd(path <- "c:/seiro/docs/IDE/kenkyuukai/2022/MinWages/MichaelDraft/"); rmarkdown::render("Memo2024Feb13.Rmd")
 #  renderthis::to_pdf(paste0(path, "Memo2024Feb13.Rmd"))
 #  xaringanBuilder::build_pdf(paste0(path, "Memo2024Feb13.Rmd"))
+# cd c:/seiro/docs/IDE/kenkyuukai/2022/MinWages/MichaelDraft/
 # git init
 # git add .    ## this adds all files
 # git commit -am "initial commit"
@@ -405,3 +406,86 @@ Low wage employment increased at the impact but reduced after 2-4 years, less so
 Seasonal employment did not change.  
 ]
 ]]
+---
+class: inverse, middle, center
+
+# From Michael, 2024 Feb 11 
+
+---
+class: split-five, inverse
+
+.column.bg-indigo[.content[
+<center>
+Base
+</center>
+
+<img src="FromMichael2024Feb11/histograms/analysis_unbalanced_survivors/FA_2012.png"
+     width="300px">
+<img src="FromMichael2024Feb11/histograms/analysis_unbalanced_survivors/diff_2011.png"
+     width="300px">
+<img src="FromMichael2024Feb11/histograms/analysis_unbalanced_survivors/diff_2013.png"
+     width="300px">
+<img src="FromMichael2024Feb11/histograms/analysis_unbalanced_survivors/diff_2017.png"
+     width="300px">
+
+]]
+.column.bg-indigo[.content[
+<center>
+Unbalanced portion
+</center>
+
+<img src="FromMichael2024Feb11/histograms/analysis_unbalanced/FA_2012.png"
+     width="300px">
+<img src="FromMichael2024Feb11/histograms/analysis_unbalanced/diff_2011.png"
+     width="300px">
+<img src="FromMichael2024Feb11/histograms/analysis_unbalanced/diff_2013.png"
+     width="300px">
+<img src="FromMichael2024Feb11/histograms/analysis_unbalanced/diff_2017.png"
+     width="300px">
+
+]]
+.column.bg-indigo[.content[
+<center>
+Survivor
+</center>
+
+<img src="FromMichael2024Feb11/histograms/analysis_survivors/FA_2012.png"
+     width="300px">
+<img src="FromMichael2024Feb11/histograms/analysis_survivors/diff_2011.png"
+     width="300px">
+<img src="FromMichael2024Feb11/histograms/analysis_survivors/diff_2013.png"
+     width="300px">
+<img src="FromMichael2024Feb11/histograms/analysis_survivors/diff_2017.png"
+     width="300px">
+]]
+.column.bg-indigo[.content[
+<center>
+Balanced
+</center>
+
+<img src="FromMichael2024Feb11/histograms/analysis_balanced/FA_2012.png"
+     width="300px">
+<img src="FromMichael2024Feb11/histograms/analysis_balanced/diff_2011.png"
+     width="300px">
+<img src="FromMichael2024Feb11/histograms/analysis_balanced/diff_2013.png"
+     width="300px">
+<img src="FromMichael2024Feb11/histograms/analysis_balanced/diff_2017.png"
+     width="300px">
+]]
+.column.bg-inverse[.content[
+.orange[
+Survivors and others show similar dist in all years.  
+
+In 2012, more than 1/2 of farms are exposed more than .5.  
+
+In 2011, symmetric so no obvious anticipation.  
+
+In 2013, slightly on positive, some adjustments.  
+
+In 2017, mostly positive but less than 1/2 of farms are more than .5. Partial compliance?  
+
+* Part time workers earning less than statutory MW per month.  
+]
+]]
+
+
