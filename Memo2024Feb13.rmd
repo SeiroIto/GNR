@@ -11,7 +11,7 @@ output:
       highlightStyle: github
       countIncrementalSlides: false
       ratio: "16:9"
-      titleSlideClass: [top, right, inverse]
+      seal: false
     citation_package: natbib
     self_contained: true
 # setwd(path <- "c:/seiro/docs/IDE/kenkyuukai/2022/MinWages/MichaelDraft/"); rmarkdown::render("Memo2024Feb13.Rmd")
@@ -712,5 +712,55 @@ In 2017, mostly positive but less than 1/2 of farms are more than .5. Partial co
 * Part time workers earning less than statutory MW per month.  
 ]
 ]]
+---
+class: inverse, middle, center
 
+# Summary of discussions, 2024 Feb 13 
 
+---
+class: inverse
+
+# Main story
+
+### Less than full adj of wages. Partial compliance.  
+### Gradual reduction, non-seasonal and low wage employment.  
+### No changes in seasonal employment.  
+### Capital intensification.  
+<p style="margin-bottom:1.25cm;">
+
+## Employment reduction despite smaller effective shocks $\leftarrow$ partial compliance 
+<p style="margin-bottom:.75cm;">
+## Farms gradually adjust in conjunction with partial compliance and capital increase (in anticipation of further MW&uarr;, or process just takes time?)  
+
+---
+class: inverse
+
+# Sample contrasts
+
+## Survivor vs Unbalanced portion: Productive vs. Less productive farms
+
+* Capital intensification: With or without capital increase  
+* Low wage worker wages: Less or more pronounced drop 
+
+## Survivor vs Balanced: Counting farm deaths
+
+* Negative outcomes may get more pronounced?
+<p style="margin-bottom:1.25cm;">
+
+--
+
+# Weights
+
+* Use pre-policy values (employment, etc.) for all periods.  
+* Using concurrent values may over- or under-state the impacts.  
+
+---
+class: inverse
+
+# Tone: Our impact estimates are conservative.
+
+## Partial compliance
+
+## Survivor sample
+
+## Still, we see substitution away from labour (except seasonal) to capital after 4-5 years. 
