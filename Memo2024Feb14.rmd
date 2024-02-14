@@ -720,10 +720,13 @@ class: inverse
 
 * Casual observations of: Permanent workers &rarr; contract or seasonal workers.  
 
+--
+
+Their wage impacts (22%), hours worked (5 hrs) impacts are positive.  
+
 <!--
 
 
-Their wage impacts (22%), hours worked (5 hrs) impacts are positive.  
 
 * They wrote a section "Assessing employment losses...". Someone (authors or editor) was not happy with positive employment impacts?  
 * No estimation of full time employment impacts (could see disemployment if casual observation was correct).  
