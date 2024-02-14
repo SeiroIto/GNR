@@ -29,15 +29,21 @@ output:
 library(RefManageR)
 BibOptions(check.entries = FALSE,
            bib.style = "authoryear",
-           cite.style = "alphabetic",
+           cite.style = "authoryear",
            style = "markdown",
-           hyperlink = FALSE,
-           dashed = FALSE)
-myBib <- ReadBib("./seiro.bib", check = FALSE)
+           hyperlink = "to.doc",
+           dashed = T)
+## Delete cache if you add an entry to seiro.bib.
+myBib <- ReadBib("c:/seiro/settings/TeX/seiro.bib")
 ```
 ```{r xaringan-themer, include=FALSE, warning=FALSE}
 library(xaringanthemer)
-style_mono_light(base_color = "#23395b")
+style_mono_light(
+  base_color = "#23395b"
+  #, text_color = "white"
+  #, title_slide_background_color = "darkblue"
+  , link_color = "lightgreen"
+)
 xaringancolor::setup_colors(
   red ="red",
   green = "green",
@@ -722,7 +728,7 @@ class: inverse
 
 # Main story
 
-### Less than full adj of wages. Partial compliance.  
+### Less than full adj of wages. "Partial" compliance.  
 ### Gradual reduction, non-seasonal and low wage employment.  
 ### No changes in seasonal employment.  
 ### Capital intensification.  
@@ -759,8 +765,52 @@ class: inverse
 
 # Tone: Our impact estimates are conservative.
 
-## Partial compliance
+## "Partial" compliance
 
 ## Survivor sample
 
 ## Still, we see substitution away from labour (except seasonal) to capital after 4-5 years. 
+<p style="margin-bottom:1.5cm;">
+
+--
+
+# Interpretation: Partial compliance or compliance (reliance on part time workers, or "legal incompliance"?).
+---
+class: inverse
+
+## Bhorat et al. (2014) discuss the reasons of possible muted wage impacts and employment adjustments.  
+
+`r Citet(myBib, "BhoratKanburStanwix2014")` on 2003 intro of MW
+
+--
+
+* Possibility of reallocation of non monetary benefits to wages (start deducting rents, etc.) Write as (p.1406):  
+> _the biggest challenge for analyzing the wage gains in the sector._ 
+
+--
+
+* Casual observations of: Permanent workers &rarr; contract or seasonal workers.  
+
+<!--
+
+
+Their wage impacts (22%), hours worked (5 hrs) impacts are positive.  
+
+* They wrote a section "Assessing employment losses...". Someone (authors or editor) was not happy with positive employment impacts?  
+* No estimation of full time employment impacts (could see disemployment if casual observation was correct).  
+
+
+Their treatment variable is either:  
+1. Farm vs. nonfarm workers with similar qualifications: A common trend between individuals?  
+1. Wage gap (MW-median ag worker wage) of the district: A common trend between districts? Similar to FA.  
+
+-->
+
+---
+class: inverse
+```{r results = "asis", warning = F, echo = F}
+PrintBibliography(myBib, .opts = list(check.entries = F, sorting = "nyt",
+  no.print.fields=c("eprint", "URL")),
+  start = 1, end = 8)
+```
+
