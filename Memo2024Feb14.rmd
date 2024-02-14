@@ -646,7 +646,7 @@ class: inverse
 ### Capital intensification.  
 <p style="margin-bottom:1.25cm;">
 
-## Employment reduction despite smaller effective shocks $\leftarrow$ partial compliance 
+## Employment reduction despite smaller effective shocks $\leftarrow$ "partial" compliance 
 <p style="margin-bottom:.75cm;">
 ## Farms gradually adjust in conjunction with partial compliance and capital increase (in anticipation of further MW&uarr;, or process just takes time?)  
 
@@ -685,16 +685,24 @@ class: inverse
 <p style="margin-bottom:1.5cm;">
 
 ---
+class: inverse
 
 # Tone on interpretation: Partial compliance or compliance (reliance on part time workers, or "legal incompliance"?).
+<p style="margin-bottom:1.5cm;">
 
 --
 
-## We cannot tell which. But it does not matter. 
+## We cannot tell which. 
+<p style="margin-bottom:.5cm;">
 
 --
 
-## Farms did not pay full MW even 4 years after introduction. This is what we measure. Ne need to argue if it is due to incompliance.  
+## But it does not matter. 
+<p style="margin-bottom:.5cm;">
+
+--
+
+## Farms did not pay full MW even 4 years after introduction. This is the base of what we measure. Ne need to argue if it is due to incompliance.  
 
 ---
 class: inverse
