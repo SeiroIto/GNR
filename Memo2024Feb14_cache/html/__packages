@@ -1,0 +1,11 @@
+base
+methods
+data.table
+datasets
+utils
+grDevices
+graphics
+stats
+xaringanthemer
+flair
+RefManageR

@@ -106,7 +106,7 @@ Base - Survivor.
 
 ### Balanced
 
-Base sample with NA=0.
+Base sample with NA=0. 
 
 ---
 ## Main sample: Firm-worker (CIT-IRP5)
@@ -167,7 +167,7 @@ Our current estimate $\beta_{t}$ measures impacts of sub-MW worker % on % change
 ---
 class: inverse, center, middle
 
-# From Michael, Feb 08, 2024
+# From Michael, Feb 13, 2024
 
 ---
 class: inverse
