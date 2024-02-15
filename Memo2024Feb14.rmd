@@ -24,6 +24,7 @@ output:
 # git config --global user.name "SeiroIto"
 # git remote add origin https://github.com/SeiroIto/SAMinWage.git  ## specify remote
 # git push -f origin main  ## push files to remote
+# 日本語
 ---
 ```{r, load_refs, eval = T, include=FALSE, cache=T}
 library(RefManageR)
@@ -722,7 +723,21 @@ class: inverse
 
 --
 
-Their wage impacts (22%), hours worked (5 hrs) impacts are positive.  
+Their DID wage impacts (22%), hours worked (5 hrs) impacts are positive. But des stat show 20+% reduction in employment.   
+
+
+* They believe in disemployment and argue only with descriptive stats. 
+* Their DID: $y_{ijt}=con+post_{t} + WG_{j} + post_{t}*WG_{j}$ using agri+comparable workers. With an agricultural employment dummy $A_{ijt}$, they could have got a negative estimate $b_{2}$ had they run:  
+
+\begin{aligned}
+y_{ijt}
+=con+cA_{ijt}&+a_{0}post_{t} &&+ a_{1}WG_{j} &&+ a_{2}post_{t}WG_{j}\\
+&
++b_{0}A_{ijt}post_{t} &&+ b_{1}A_{ijt}WG_{j} &&+ b_{2}A_{ijt}post_{t}WG_{j}+e_{ijt}.
+\end{aligned}
+
+$WG_{j}=\ln\{MW-median(w_{ijt-1})\}$ is wage gap for district $j$.
+
 
 <!--
 
@@ -737,6 +752,85 @@ Their treatment variable is either:
 1. Wage gap (MW-median ag worker wage) of the district: A common trend between districts? Similar to FA.  
 
 -->
+
+---
+class: inverse, middle, center
+
+## By farm size
+
+---
+class: split-five, inverse
+
+.column.bg-indigo[.content[
+<center>
+<p>
+Survivor  <br>
+</p>
+</center>
+
+<img src="FromMichael2024Feb13/Sample_r5400/GeneralResults/survivors/CapitalIntensity-cluster_weight.png"
+     width="300px">
+<img src="FromMichael2024Feb13/Sample_r5400/GeneralResults/survivors/Employment-cluster_weight.png" 
+ width="300px">
+<img src="FromMichael2024Feb13/Sample_r5400/GeneralResults/survivors/Capital-cluster_weight.png" 
+ width="300px">
+]]
+.column.bg-indigo[.content[
+<center>
+<p>
+Survivor  <br>
+Full sample
+</p>
+</center>
+
+<img src="FromMichael2024Feb13/FullSample/GeneralResults/survivors/CapitalIntensity-cluster_weight.png"
+     width="300px">
+<img src="FromMichael2024Feb13/FullSample/GeneralResults/survivors/Employment-cluster_weight.png" 
+ width="300px">
+<img src="FromMichael2024Feb13/FullSample/GeneralResults/survivors/Capital-cluster_weight.png" 
+ width="300px">
+]]
+.column.bg-indigo[.content[
+<center>
+<p>
+Balanced  <br>
+Sub-R5400
+</p>
+</center>
+
+<img src="FromMichael2024Feb13/Sample_r5400/GeneralResults/balanced/CapitalIntensity-cluster_weight.png"
+     width="300px">
+<img src="FromMichael2024Feb13/Sample_r5400/GeneralResults/balanced/Employment-cluster_weight.png" 
+ width="300px">
+<img src="FromMichael2024Feb13/Sample_r5400/GeneralResults/balanced/Capital-cluster_weight.png" 
+ width="300px">
+]]
+.column.bg-indigo[.content[
+<center>
+<p>
+Balanced  <br>
+Full sample
+</p>
+</center>
+
+<img src="FromMichael2024Feb13/FullSample/GeneralResults/balanced/CapitalIntensity-cluster_weight.png"
+     width="300px">
+<img src="FromMichael2024Feb13/FullSample/GeneralResults/balanced/Employment-cluster_weight.png" 
+ width="300px">
+<img src="FromMichael2024Feb13/FullSample/GeneralResults/balanced/Capital-cluster_weight.png" 
+ width="300px">
+]]
+.column.bg-inverse[.content[
+
+All are GeneralResults and not by farm size. Need to wait to receive files. 
+
+* Capital intensity  
+* Employment  
+* Capital
+
+]]
+---
+
 
 ---
 class: inverse
