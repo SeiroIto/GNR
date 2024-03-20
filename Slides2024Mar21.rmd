@@ -124,7 +124,7 @@ MathJax.Hub.Config({
 # Agricultural producer responses to minimum wage changes
 ## The case of South Africa
 <br>
-### Kilumelume, Fintel, Piek, Ito
+### Kilumelume, von Fintel, Piek, Ito
 
 <br>
 ### IDE DP presentation
