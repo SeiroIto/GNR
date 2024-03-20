@@ -208,171 +208,6 @@ name: WeShowCover
 # We show capital intensity increased.
 
 ---
-class: inverse 
-
-
-
----
-class: inverse, middle, center
-
-.left[Perfectly competitive market view]  
-
-```{r diagram1, eval = knitr::is_html_output(), echo = F}
-DiagrammeR::grViz("digraph {
-  graph [layout = dot, rankdir = LR]
-  node [shape = rectangle, width = 1, nodesep = .75, fontsize = 10, style = filled, fillcolor = Linen]
-  rec1 [label = 'minimum wages&uarr;', group = g1]
-  rec2 [label = 'unemployment&uarr;']
-  graph [layout = dot, rankdir = TB, nodesep = 1.0]
-  node [shape = ellipse, style = filled, fillcolor = lightblue]
-  ell1 [label = 'labour costs&uarr;', group = g1]
-  ell2 [label = 'labour demand&darr;', group = g1]
-  edge [style = dashed]
-  rec1 -> rec2 [label = 'observed', fontsize = 10];
-  edge [color = blue, style = solid]
-  rec1 -> ell1 -> ell2 -> rec2
-  rank=same {rec1 rec2}
-  }",
-  width = 700, 
-  height = 500)
-```
-<!--
----
-class: middle, center
-
-.left[Imperfectly competitive market view]  
-
-
-```{r diagram2, eval = knitr::is_html_output(), echo = F}
-DiagrammeR::grViz("digraph {
-  graph [layout = dot, rankdir = LR]
-  node [shape = rectangle, width = 1, nodesep = .75, fontsize = 10, style = filled, fillcolor = Linen]
-  rec1 [label = 'minimum wages &uarr;']
-  rec2 [label = 'unemployment change little', group = g2]
-  edge [style = dashed]
-  rec1 -> rec2 [label = 'observed', fontsize = 10];
-  graph [layout = dot, rankdir = TB, nodesep = 1.0]
-  node [shape = ellipse, style = filled, fillcolor = lightblue]
-  ell1 [label = 'worker retention&uarr;', group = g1]
-  ell2 [label = 'job searchers&uarr;', group = g1]
-  ell3 [label = 'marginal labour costs change little', group = g1]
-  edge[color = blue, style = solid] 
-    {ell1 ell2} -> ell3
-    rec1 -> {ell1 ell2 ell3}
-    ell3 -> rec2
-  rank=same {ell1 ell2}
-  rank=same {rec1 rec2}
-  }",
-  width = 800,
-  height = 600)
-```
--->
----
-class: inverse, middle, center
-
-.left[Imperfectly competitive market view]  
-
-
-```{r diagram3, eval = knitr::is_html_output(), echo = F}
-DiagrammeR::grViz("digraph {
-  rankdir = TB
-  subgraph cluster0 {
-    rankdir = LR
-    style=invis
-    node [shape = ellipse, nodesep = .75, fontsize = 10, style = filled, fillcolor = lightblue]
-    mono1 [label = 'firms pay\n less than competitive wage']
-    mono2 [label = 'can maintain workers\n to some extent']
-    edge [color = blue, style = solid]
-    mono1 -> mono2 [label = 'oligopsonistic', fontsize = 10];
-    rank=same {mono1 mono2}
-  }
-  subgraph cluster1 {
-    rankdir = LR
-    style=invis
-    node [shape = rectangle, width = 1, nodesep = .75, fontsize = 10, style = filled, fillcolor = Linen]
-    rec1 [label = 'minimum wages &uarr;']
-    rec2 [label = 'unemployment change little']
-    edge [style = dashed]
-    rec1 -> rec2 [label = 'observed', fontsize = 10];
-    rank=same {rec1 rec2}
-  }
-  subgraph cluster2 {
-    rankdir = LR
-    style=invis
-    node [shape = ellipse, nodesep = .75, fontsize = 10, style = filled, fillcolor = lightblue]
-    ell1 [label = 'worker retention&uarr;']
-    ell2 [label = 'job searchers&uarr;']
-  }
-  subgraph cluster3 {
-    rankdir = TB
-    style=invis
-    node [shape = ellipse, nodesep = .75, fontsize = 10, style = filled, fillcolor = lightblue]
-    ell3 [label = 'marginal costs of increasing labour change little\nor even decrease']
-  }
-  edge [color = blue, style = solid]
-    rec1 -> {ell1 ell2};
-  edge[color = blue, style = solid] 
-    {ell1 ell2} -> ell3
-  edge [color = blue, style = solid]
-    {ell3 mono2} -> rec2
-  }",
-  width = 800,
-  height = 600)
-```
-
----
-class: middle, center
-
-.left[不完全競争による見方]  
-
-
-```{r diagram4, eval = knitr::is_html_output(), echo = F}
-DiagrammeR::grViz("digraph {
-  rankdir = TB
-  subgraph cluster0 {
-    rankdir = LR
-    style=invis
-    node [shape = ellipse, nodesep = .75, fontsize = 10, style = filled, fillcolor = lightblue]
-    mono1 [label = '競争的水準以下の\n 賃金支払']
-    mono2 [label = '雇用をある程度\n 維持可能']
-    edge [color = blue, style = solid]
-    mono1 -> mono2 [label = '雇用寡占的', fontsize = 10];
-    rank=same {mono1 mono2}
-  }
-  subgraph cluster1 {
-    rankdir = LR
-    style=invis
-    node [shape = rectangle, width = 1, nodesep = .75, fontsize = 10, style = filled, fillcolor = Linen]
-    rec1 [label = '最低賃金&uarr;']
-    rec2 [label = '失業率変化僅少']
-    edge [style = dashed]
-    rec1 -> rec2 [label = '観察された関係', fontsize = 10];
-    rank=same {rec1 rec2}
-  }
-  subgraph cluster2 {
-    rankdir = LR
-    style=invis
-    node [shape = ellipse, nodesep = .75, fontsize = 10, style = filled, fillcolor = lightblue]
-    ell1 [label = '従業員歩留まり&uarr;']
-    ell2 [label = '求職者&uarr;']
-  }
-  subgraph cluster3 {
-    rankdir = TB
-    style=invis
-    node [shape = ellipse, nodesep = .75, fontsize = 10, style = filled, fillcolor = lightblue]
-    ell3 [label = '労働の限界費用はほぼ一定']
-  }
-  edge [color = blue, style = solid]
-    rec1 -> {ell1 ell2};
-  edge[color = blue, style = solid] 
-    {ell1 ell2} -> ell3
-  edge [color = blue, style = solid]
-    {ell3 mono2} -> rec2
-  }",
-  width = 800,
-  height = 600)
-```
----
 class: inverse, center, middle
 name: IntroCover
 # What we know by far
@@ -853,14 +688,21 @@ class: inverse
 ```{r results = "asis", echo = FALSE, warning = F}
 PrintBibliography(myBib, .opts = list(check.entries = FALSE, sorting = "nyt",
   no.print.fields=c("eprint", "URL")),
-  start = 1, end = 9)
+  start = 1, end = 7)
 ```
 ---
 class: inverse
 ```{r results = "asis", echo = FALSE, warning = F}
 PrintBibliography(myBib, .opts = list(check.entries = FALSE, sorting = "nyt",
   no.print.fields=c("eprint", "URL")),
-  start = 10, end = 17)
+  start = 8, end = 14)
+```
+---
+class: inverse
+```{r results = "asis", echo = FALSE, warning = F}
+PrintBibliography(myBib, .opts = list(check.entries = FALSE, sorting = "nyt",
+  no.print.fields=c("eprint", "URL")),
+  start = 15, end = 17)
 ```
 ---
 class: inverse
