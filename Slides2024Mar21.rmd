@@ -201,7 +201,7 @@ name: Intro2
 ---
 class: inverse, center, middle
 name: WeShowCover
-# We show employment reduced, among low wage workers.
+# We show employment reduced among low wage workers, the policy target.
 
 <br><br>
 
@@ -229,8 +229,8 @@ class: inverse
 <br>
 ## Potential culprit: Small sample size
 
-* Results in unignorable sampling errors: Accidentally sampled in a biased way  
 * Cannot identify small effects, can only admit large effects  
+* Can result in unignorable sampling errors: Accidentally sampled in a biased way  
 ---
 class: center
 name: weak
@@ -323,7 +323,7 @@ class: inverse
 
 * Impacts of a policy "with unaffected group"  
 * Contrasts between formal and informal  
-* Too general, information is less specific  
+* General information  
 
 ### .orange[Demand side data can show]
 
@@ -365,28 +365,29 @@ class: inverse
 --
 
 .pull-left70[
-### Supply/demand side data can show impacts only of a policy "with unaffected group"  
-### Supply side data can see spillovers to informal sector 
-### Demand side data can show impacts on other adjustment channels (capital, profits, prices)  
+### Supply side data: Spillovers to informal sector 
+### Demand side data: All adjustment channels (labour, capital, profits, prices)  
+### Both: A policy with an unaffected group  
 ]
 
 --
 
 .pull-right30[
-* Can only study a policy of limited coverage.  
-* Estimators: EvSt-DID, RDD, SCM.  
 * Findings (from demand side data and supply side data) are complementary.  
 * Neither is superior.  
+* Can only study a policy of limited coverage.  
+* Estimators: EvSt-DID, RDD, SCM.  
 ]
 
 --
 
-<br>
+<br><br>
 .pull-left70[
 ### .blue[MEE data can show]
 
 * What demand side data can show, plus,  
 * Impacts without a control group under a dose-response framework.  
+* Impacts of any policy.  
 * Our paper: Dose=.blue[fraction affected: Fraction of sub-minimum wage workers in a firm] 
 ]
 
@@ -415,15 +416,15 @@ name: Data
 * Job duration, incomes.  
    * Seasonal workers: Duration less than 6 months  
    * Low wage workers: Monthly income $<$ R5400 (USD `r round(5400/7.3)`)  
-   * blue[Fraction affected] of each firm  
-* We do not have wage rates or work hours.  
+   * .blue[Fraction affected] of each firm  
+* Cannot distinguish part time workers. We do not have wage rates or work hours.  
 
 --
 
 ## And we merge the two together: CIT-IRP5
 
 * 2011-(2013)-2017  
-* Keep only: Exist in both data sets, Perrenial, non-perennial crops, plant propagation, livestock, mixed farming, existed before 2013: Over 1.5 M &rarr; 1.1 M.  &rarr; 40,697 &rarr; 18,919.  
+* Keep only: Exist in both data sets, perrenial crops, non-perennial crops, plant propagation, livestock, mixed farming, existed before 2013: Over 1.5 M &rarr; 1.1 M.  &rarr; 40,697 &rarr; 18,919.  
 
 ---
 class: inverse, center, middle
@@ -437,19 +438,19 @@ class: inverse
 \% \mbox{ change in }y_{it} = \alpha_{t}+\beta_{t}FA_{i}+\bfgamma'\bfx_{it}+\epsilon_{it}.
 \end{equation*}
 
-$\beta_{t}$ measures impacts of sub-MW worker % on % change of $y_{it}$.
+$\beta_{t}$ measures impacts of sub-MW worker % on % change of $y_{it}$ (base: 2012).
 
 --
 
 <br>
-## Crucial assumption = .red[*Common rate*]: % change in *y* is common among any value of *FA* 
+## Crucial assumption = .red[*Common rate*]: % change in *y* is common for all value of *FA* 
 
 --
 
 <br>
 ## We can observe/test if it holds for pre-policy periods
 
-* But we cannot screen results based on pre-policy trends: Pre-test bias `r Citep(myBib, c("Roth2021", "RambachanRoth2023"))`
+* But we cannot screen results based on pre-policy trends: A pre-test bias `r Citep(myBib, c("Roth2021", "RambachanRoth2023"))`
 
 ---
 class: inverse
@@ -475,7 +476,7 @@ name: ThingsToWorry
 
 --
 
-### No wage rates, work hours: Including part timers in *FA*
+### No wage rates, work hours: Part timers are included in *FA*
 
 * $FA$ may be overstated, so exposure could have been smaller, leading to .orange[underestimation].  
 
@@ -500,7 +501,7 @@ class: inverse
 
 --
 <br>
-## March 1, 2013: 52% increase (R70&rarr;R105 per day) in agri MW.
+## March 1, 2013: 50% increase (R70&rarr;R105 per day) in agri MW.
 
 --
 <br>
@@ -640,7 +641,7 @@ class: inverse
 <br>
 ## Firms held seasonal employment, reduced non-seasonal/low wage employment (new hires&darr;). 
 
-* Despite possible labour oligopoly.  
+* Despite possible labour oligopsony.  
 
 ---
 
@@ -663,10 +664,10 @@ class: inverse
 
 # MW does not necessarily but will reduce employment if it is raised too much.  
 --
-<br>
-# Reduced growth in low wage employment after MW hike is an overkill.  
+<br><br>
+# MW hike in 2013 reduced the growth in low wage employment. Firms responded with mechanisation. It was an overkill.  
 --
-<br>
+<br><br>
 # A large hike impact can only be estimated with MEE data.  
 ---
 class: inverse, middle
@@ -679,7 +680,7 @@ name: CoauthorsCover
 
 # Thanks to
 
-## .center[SA Treasury Department, SARS &#x1F4C8]
+## .center[SA Treasury Department, SARS &#x1F4C8;]
 ## .center[UNU-WIDER &#x1F4B6;]
 ## .center[IDE &#x1F4B4;]
 
