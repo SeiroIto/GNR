@@ -2255,56 +2255,12 @@ class: inverse
 
 ## Suitable research design by data type
 
-.pull-left60[
-### .orange[Supply side data can show]
-
-* Impacts of a policy &quot;with unaffected group&quot;  
-* Contrasts between formal and informal  
-* General information  
-
-### .orange[Demand side data can show]
-
-* Impacts of a policy &quot;with unaffected group&quot;  
-* Other adjustment channels (capital, profits, prices, etc.)  
-]
-
---
-
-.pull-right40[
-* Findings (from demand side data and supply side data) are complementary.  
-* Neither is superior.  
-* Estimators: EvSt-DID, RDD, SCM.  
-* Can only study a policy of limited coverage.  
-]
-
---
-&lt;br&gt;
-.pull-left60[
-### .blue[MEE data can show]
-
-* What demand side data can show, plus,  
-* Impacts without a control group under a dose-response framework.  
-* Our paper: Dose=.blue[fraction affected: Fraction of sub-minimum wage workers in a firm] 
-]
-
---
-
-.pull-right40[
-* .red[Impacts without a control group] &amp;larr; Pretty big...superior? No, needs common trend assumption as in DID.  
-   * Use .blue[common rate] assumption.  
-* Same reservations apply as demand side studies  
-]
----
-class: inverse
-
-## Suitable research design by data type
-
 --
 
 .pull-left70[
-### Supply side data: Spillovers to informal sector 
-### Demand side data: All adjustment channels (labour, capital, profits, prices)  
-### Both: A policy with an unaffected group  
+### .orange[Supply side data:] Spillovers to informal sector 
+### .orange[Demand side data:] All adjustment channels (labour, capital, profits, prices)  
+### .orange[Both:] A policy with an unaffected group  
 ]
 
 --
@@ -2318,6 +2274,7 @@ class: inverse
 
 --
 
+&lt;br&gt;&lt;br&gt;
 &lt;br&gt;&lt;br&gt;
 .pull-left70[
 ### .blue[MEE data can show]
@@ -2380,7 +2337,10 @@ class: inverse
 --
 
 &lt;br&gt;
-## Crucial assumption = .red[*Common rate*]: % change in *y* is common for all value of *FA* 
+## Crucial assumption = .red[*Common rate*:] % change in *y* is common for all value of *FA* 
+
+* Common trend: Scale free impacts.
+* Common rate: Proportional-to-scale impacts. More sensible in this context.  
 
 --
 
@@ -2581,18 +2541,6 @@ class: inverse
 
 * Despite possible labour oligopsony.  
 
----
-
-### If higher *FA* firms attrit more, impacts may be more adverse than estimated.  
-
---
-
-### To know about it, regress
-
-$$
-attrit=a\times characteristics + b\times FA + c\times characteristics*FA + e. 
-$$
-### and test `\(b=0, c=0\)`.  
 ---
 class: inverse, center, middle
 name: ConlcusionCover
