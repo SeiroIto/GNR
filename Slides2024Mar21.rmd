@@ -216,7 +216,7 @@ class: inverse
 
 ## Agricultural MW .red[may have reduced employment] in South Africa
 
-* 2003 MW introduction: Descriptive arguments of disemployment despite "increased" in estimated results `r Citep(myBib, "BhoratKanburStanwix2014", after = ", contrasted with similar industries")`, disemployment of certain crops `r Citep(myBib, "MurrayVanWalbeek2007", after = ", sugar cane in KZN coasts")`  
+* 2003 MW introduction: Employment probability at a farm decreased in districts of larger wage hikes (emp of other industries?), while work hours got longer for farm workers relative to simlar industry workers `r Citep(myBib, "BhoratKanburStanwix2014", after = "clear positive intensive margin impacts and less clear negative extensive margin impacts, they should have regressed empl on farm, post, farm*post")`, disemployment of certain crops `r Citep(myBib, "MurrayVanWalbeek2007", after = ", sugar cane in KZN coasts")`  
 * 2005 MW increase: Disemployment prediction based on wage elasticity estimates `r Citep(myBib, "Conradie2005", after = ", wine grapes in WC")`  
 * 2007 MW unification: Increased tractor sales `r Citep(myBib, "ChrisRulofRankin2015")`, firn profit and employment reduction for some crops using district level data `r Citep(myBib, "ItoSeiro2021")`  
 
@@ -224,7 +224,8 @@ class: inverse
 
 ## .red[No definitive evidence] by far. 
 
---
+---
+class: inverse
 
 <br>
 ## Potential culprit: Small sample size
