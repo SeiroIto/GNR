@@ -181,7 +181,7 @@ name: Intro2
 
 --
 
-* Wage floor&uarr; discretely: Marginal costs of labour = 0 (for a while, [static monopsony models](#MCIsAboveSCurve) )  
+* Wage floor&uarr; discretely: Marginal costs of labour = 0 (for a while, [static monopsony models](#MCIsAboveSCurve))  
 
 --
 
@@ -201,7 +201,7 @@ name: Intro2
 ---
 class: inverse, center, middle
 name: WeShowCover
-# We show employment reduced among low wage workers, the policy target.
+# We show employment decreased among low wage workers, the policy target.
 
 <br><br>
 
@@ -293,13 +293,13 @@ Cons
 Pros  
 
 * More precise  
-* Large *sample* size  
+* Large data size  
 * Other adjustment channels  
 
 Cons  
 
 * Only formal sector, overstated impacts  
-* Labour contents are not granular  
+* Labour contents are not granular enough  
 ]
 
 --
@@ -313,7 +313,7 @@ Cons
 
 * Rare in developing countries
 --
-.red[&larr; our paper]
+.red[&larr; our paper]  
 ---
 class: inverse
 
@@ -402,16 +402,15 @@ $\beta_{t}$ measures impacts of sub-MW worker % on % change of $y_{it}$ (base: 2
 <br>
 ## Crucial assumption = .red[*Common rate*:] % change in *y* is common for all values of *FA* 
 
-* Common trend (DID): Scale free impacts.
+
+* Common trend (DID): Scale free impacts.  
 * Common rate (this paper): Proportional-to-scale impacts. More sensible in a production context.  
 
 --
 
-<br>
-## We can observe/test if it holds for pre-policy periods
-
-* Cannot screen results based on pre-policy trends: A pre-test bias `r Citep(myBib, c("Roth2021", "RambachanRoth2023"))`
-
+* We can observe/test if it holds for pre-policy periods.  
+   * But we cannot screen results based on pre-policy trends: This gives rise to a pre-test bias `r Citep(myBib, c("Roth2021", "RambachanRoth2023"))`  
+   * Seasonal and low wage employment were increasing in pre-policy: RR's method should give smaller $p$ values for employment reduction.  
 ---
 class: inverse
 name: ThingsToWorry
@@ -700,6 +699,8 @@ name: MCIsAboveSCurve
 ]
 .pull-right40[
 .left[
+Marginal cost curve is above the supply curve.  
+<br>
 \begin{aligned}
 \frac{\partial w(L_{1})L_{1}}{\partial L}&=\overbrace{w(L_{1})+w'(L_{1})L_{1}}^{\mbox{MC}}\\
 &>\underbrace{w(L_{1})}_{\mbox{Suppy curve}}
@@ -714,6 +715,8 @@ name: MCIsEqualtoSCurve
      style="position:absolute; left:0px; top:0px;">
 ]
 .pull-right40[
+Marginal cost curve is the supply curve.  
+<br>
 .left[
 $$\frac{\partial wL_{1}}{\partial L}=\underbrace{w}_{\mbox{MC}}=\underbrace{w}_{\mbox{Suppy curve}}$$
 ]]
@@ -742,7 +745,7 @@ name: Monopsony1
 * Gets excess profit as shaded area, arising from wage markdown $w^{M}-\underline{w}$  
 * $A$ is competitive equilibrium  
 * No unemployment &xlArr; hired on the supply curve  
-* But employment **level** is small  
+* But employment **level** is low  
 ]]
 ---
 class: center, inverse
@@ -754,6 +757,7 @@ name: Monopsony2
 .pull-right40[
 .left[
 * MW set to $\bar{w}<w^{*}$  
+* Monopsonist can stay at $B$ or expand to $\bar{L}$  
 * If stay at $B$, excess profit shrinks but remains positive  
    * Just increase wages, absorb with profit decrease  
 * If expand to $\bar{L}$, excess profit shrinks but remains positive  
