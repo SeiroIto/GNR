@@ -216,7 +216,10 @@ class: inverse
 
 ## Agricultural MW .red[may have reduced employment] in South Africa
 
-* 2003 MW introduction: Employment probability at a farm decreased in districts of larger wage hikes (emp of other industries?), while work hours got longer for farm workers relative to simlar industry workers `r Citep(myBib, "BhoratKanburStanwix2014", after = "clear positive intensive margin impacts and less clear negative extensive margin impacts, they should have regressed empl on farm, post, farm*post")`, disemployment of certain crops `r Citep(myBib, "MurrayVanWalbeek2007", after = ", sugar cane in KZN coasts")`  
+* 2003 MW introduction: Employment probability at a farm decreased in districts of larger wage hikes, while work hours got longer for farm workers relative to simlar industry workers `r Citep(myBib, "BhoratKanburStanwix2014")`, disemployment of certain crops `r Citep(myBib, "MurrayVanWalbeek2007", after = ", sugar cane in KZN coasts")`  
+   * Bhorat et al. (2014): Clear positive intensive margin impacts and less clear negative extensive margin impacts.  
+   * Can be confounded with other factors leading to larger employment losses in the districts with larger hikes.  
+   * Straightforward DID: Employment on farm, post, farm*post with district-time TWFE.  
 * 2005 MW increase: Disemployment prediction based on wage elasticity estimates `r Citep(myBib, "Conradie2005", after = ", wine grapes in WC")`  
 * 2007 MW unification: Increased tractor sales `r Citep(myBib, "ChrisRulofRankin2015")`, firn profit and employment reduction for some crops using district level data `r Citep(myBib, "ItoSeiro2021")`  
 
@@ -230,8 +233,10 @@ class: inverse
 <br>
 ## Potential culprit: Small sample size
 
-* Cannot identify small effects, when estimation requires MW effects to be not pervasive so we can find an unaffected group
-* Bad research design  
+* Cannot identify small effects, when estimation requires MW effects to be not pervasive so we can find an unaffected group  
+   * `r Citet(myBib, "BhoratKanburStanwix2014", after = ", study heterogenous and large wage hike at the district level")` is an exception  
+   * We use a similar approach of using a continuous treatment measure but at the firm level  
+* Not an ideal research design  
 ---
 class: center
 name: weak

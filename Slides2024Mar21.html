@@ -2152,8 +2152,11 @@ class: inverse
 
 ## Agricultural MW .red[may have reduced employment] in South Africa
 
-* 2003 MW introduction: Employment probability at a farm decreased in districts of larger wage hikes (emp of other industries?), while work hours got longer for farm workers relative to simlar industry workers ([Bhorat, Kanbur, and Stanwix, 2014]( + http://dx.doi.org/10.1093/ajae/aau049)clear positive intensive margin impacts and less clear negative extensive margin impacts, they should have regressed empl on farm, post, farm*post), disemployment of certain crops ([Murray and van
+* 2003 MW introduction: Employment probability at a farm decreased in districts of larger wage hikes, while work hours got longer for farm workers relative to simlar industry workers ([Bhorat, Kanbur, and Stanwix, 2014]( + http://dx.doi.org/10.1093/ajae/aau049)), disemployment of certain crops ([Murray and van
 Walbeek , 2007](         http://dx.doi.org/10.1080/03031853.2007.9523763), sugar cane in KZN coasts)  
+   * Bhorat et al. (2014): Clear positive intensive margin impacts and less clear negative extensive margin impacts.  
+   * Can be confounded with other factors leading to larger employment losses in the districts with larger hikes.  
+   * Straightforward DID: Employment on farm, post, farm*post with district-time TWFE.  
 * 2005 MW increase: Disemployment prediction based on wage elasticity estimates ([Conradie, 2005](https://journals.co.za/content/agrekon/44/1/EJC18294), wine grapes in WC)  
 * 2007 MW unification: Increased tractor sales ([Garber, Burger, and Rankin, 2015](http://2015.essa.org.za/fullpaper/essa_2895.pdf)), firn profit and employment reduction for some crops using district level data ([伊藤, 2021](https://doi.org/10.24765/ajiakeizai.62.2_24))  
 
@@ -2167,8 +2170,10 @@ class: inverse
 &lt;br&gt;
 ## Potential culprit: Small sample size
 
-* Cannot identify small effects, when estimation requires MW effects to be not pervasive so we can find an unaffected group
-* Bad research design  
+* Cannot identify small effects, when estimation requires MW effects to be not pervasive so we can find an unaffected group  
+   * [Bhorat, Kanbur, and Stanwix (2014, study heterogenous and large wage hike at the district level)]( + http://dx.doi.org/10.1093/ajae/aau049) is an exception  
+   * We use a similar approach of using a continuous treatment measure but at the firm level  
+* Not an ideal research design  
 ---
 class: center
 name: weak
