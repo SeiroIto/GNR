@@ -229,8 +229,8 @@ class: inverse
 <br>
 ## Potential culprit: Small sample size
 
-* Cannot identify small effects, can only admit large effects  
-* Can result in unignorable sampling errors: Accidentally sampled in a biased way  
+* Cannot identify small effects, when estimation requires MW effects to be not pervasive so we can find an unaffected group
+* Bad research design  
 ---
 class: center
 name: weak
@@ -272,12 +272,13 @@ class: inverse
 Pros  
 
 * Covers informal sector  
+* Can impute wage rates, work hours, compliance  
 
 Cons  
 
-* Imprecise  
-* Small sample size  
-* Panel is relatively rare  
+* Imprecise due to recall errors  
+* Smaller (effective) sample size  
+* Panel data are relatively rare  
 ]
 
 --
@@ -298,7 +299,7 @@ Pros
 Cons  
 
 * Only formal sector, overstated impacts  
-* Imprecise labour contents  
+* Labour contents are not granular  
 ]
 
 --
@@ -306,7 +307,7 @@ Cons
 
 ### .blue[Matched employee-employer (MEE) data]
 
-* Corporate Income Tax+ Employee Payrolls = shows how many are earning how much 
+* Corporate Income Tax+ Employee Payrolls = shows how many are earning how much in a firm  
 
 --
 
@@ -321,7 +322,7 @@ class: inverse
 --
 
 .pull-left70[
-### .orange[Supply side data:] Spillovers to informal sector 
+### .orange[Supply side data:] Spillovers to informal sector, impute compliance  
 ### .orange[Demand side data:] All adjustment channels (labour, capital, profits, prices)  
 ### .orange[Both:] A policy with an unaffected group  
 ]
@@ -329,7 +330,7 @@ class: inverse
 --
 
 .pull-right30[
-* Findings (from demand side data and supply side data) are complementary.  
+* Strength (of demand side data and supply side data) are complementary.  
 * Neither is superior.  
 * Can only study a policy of limited coverage.  
 * Estimators: EvSt-DID, RDD, SCM.  
@@ -337,9 +338,8 @@ class: inverse
 
 --
 
-<br><br>
-<br><br>
 .pull-left70[
+<br>
 ### .blue[MEE data can show]
 
 * What demand side data can show, plus,  
@@ -362,14 +362,14 @@ name: Data
 
 ### Corporate Income Tax (CIT)
 
-* Formal establishments: Anual net income $>$ R2000 (USD `r round(2000/7.3)`).  
+* Formal establishments: Annual net income $>$ R2000 (USD `r round(2000/7.3)`).  
 * Revenue, profit, capital, various cost components.  
 
 --
 
 ### Employee Income Tax Certificates (IRP5)
 
-* Individuals: Anual income $>$ R2000.  
+* Individuals working for CIT firms: Annual income $>$ R2000.  
 * Job duration, incomes.  
    * Seasonal workers: Duration less than 6 months  
    * Low wage workers: Monthly income $<$ R5400 (USD `r round(5400/7.3)`)  
@@ -395,22 +395,22 @@ class: inverse
 \% \mbox{ change in }y_{it} = \alpha_{t}+\beta_{t}FA_{i}+\bfgamma'\bfx_{it}+\epsilon_{it}.
 \end{equation*}
 
-$\beta_{t}$ measures impacts of sub-MW worker % on % change of $y_{it}$ (base: 2012).
+$\beta_{t}$ measures impacts of sub-MW worker % on % change of $y_{it}$ (base: 2012). Event study design.
 
 --
 
 <br>
-## Crucial assumption = .red[*Common rate*:] % change in *y* is common for all value of *FA* 
+## Crucial assumption = .red[*Common rate*:] % change in *y* is common for all values of *FA* 
 
-* Common trend: Scale free impacts.
-* Common rate: Proportional-to-scale impacts. More sensible in this context.  
+* Common trend (DID): Scale free impacts.
+* Common rate (this paper): Proportional-to-scale impacts. More sensible in a production context.  
 
 --
 
 <br>
 ## We can observe/test if it holds for pre-policy periods
 
-* But we cannot screen results based on pre-policy trends: A pre-test bias `r Citep(myBib, c("Roth2021", "RambachanRoth2023"))`
+* Cannot screen results based on pre-policy trends: A pre-test bias `r Citep(myBib, c("Roth2021", "RambachanRoth2023"))`
 
 ---
 class: inverse
@@ -431,7 +431,7 @@ name: ThingsToWorry
 
 * Low rate: Estimated as 44% are paid less than MW in 2007 `r Citep(myBib, "Bhorat2012")`   
 * Results in .orange[underestimation] of impacts  
-* .red[Interpretation]: Disemployment could have been worse (despite labour oligopsony can sustain $L$ to an extent)  
+* .red[Interpretation]: Disemployment could have been worse (despite labour oligopsony sustains $L$ to an extent)  
 * We can [observe it in data](#Compliance) (with a reservation: parttimers are included)  
 
 --
@@ -439,12 +439,16 @@ name: ThingsToWorry
 ### No wage rates, work hours: Part timers are included in *FA*
 
 * $FA$ may be overstated, so exposure could have been smaller, leading to .orange[underestimation].  
-
---
+---
+class: inverse
+name: ThingsToWorry2
+## Things to worry about in our data
 
 ### Attrition
 
-* If higher $FA$ firms attrit more, leading to .orange[underestimation] of impacts.  
+* If higher $FA$ firms attrit more, leads to .orange[underestimation] of impacts.  
+* We also estimate with a balanced panel and contrast with unbalanced panel results.  
+* Balanced panel results give a more vivid picture of firm adjustments.  
 
 ---
 class: inverse, center, middle
@@ -457,7 +461,7 @@ class: inverse
 
 --
 <br>
-## MWs were anually adjusted for inflation. But a major strike broke out in 2012.  
+## MWs were annually adjusted for inflation. But a major strike broke out in 2012.  
 
 --
 <br>
@@ -586,12 +590,12 @@ Balanced panel
 ---
 class: inverse
 
-## Headline: Capital intensity growth&uarr;  
+## Headline: Capital intensity rose (growth&uarr;)  
 
 --
 
 <br>
-## Headline: Nonseasonal/low wage labor growth&darr;  
+## Headline: Nonseasonal/low wage labor fell (growth&darr;)  
 
 --
 
@@ -616,7 +620,7 @@ class: inverse
 # MW hike in 2013 reduced the growth in low wage employment. Firms responded with mechanisation. It was an overkill.  
 --
 <br><br>
-# A large hike impact can only be estimated with MEE data.  
+# A large hike impact can be estimated because we use MEE data.  
 ---
 class: inverse, middle
 name: CoauthorsCover
@@ -629,6 +633,7 @@ name: CoauthorsCover
 # Thanks to
 
 ## .center[SA Treasury Department, SARS &#x1F4C8;]
+## .center[Stellenbosch U &#x1F4B5; &#x1F3EB;]
 ## .center[UNU-WIDER &#x1F4B6;]
 ## .center[IDE &#x1F4B4;]
 
@@ -696,7 +701,7 @@ name: MCIsAboveSCurve
 .pull-right40[
 .left[
 \begin{aligned}
-\frac{\partial w(L_{1})}{\partial L_{1}}&=\overbrace{w(L_{1})+w'(L_{1})L_{1}}^{\mbox{MC}}\\
+\frac{\partial w(L_{1})L_{1}}{\partial L}&=\overbrace{w(L_{1})+w'(L_{1})L_{1}}^{\mbox{MC}}\\
 &>\underbrace{w(L_{1})}_{\mbox{Suppy curve}}
 \end{aligned}
 
@@ -710,7 +715,7 @@ name: MCIsEqualtoSCurve
 ]
 .pull-right40[
 .left[
-$$\frac{\partial w(L_{1})}{\partial L_{1}}=\underbrace{w(L_{1})}_{\mbox{MC}}=\underbrace{w(L_{1})}_{\mbox{Suppy curve}}$$
+$$\frac{\partial wL_{1}}{\partial L}=\underbrace{w}_{\mbox{MC}}=\underbrace{w}_{\mbox{Suppy curve}}$$
 ]]
 ---
 class: center, inverse
@@ -800,6 +805,9 @@ name: Compliance
 		]
 	.panel[.panel-name[2017-2012]
 <img src="FromMichael2024Feb13/histograms2/analysis_unbalanced/diff_2017.png" width="700px">
+		]
+	.panel[.panel-name[2017]
+<img src="FromMichael2024Feb13/histograms2/analysis_unbalanced/FA_2017.png" width="700px">
 		]
 ]
 
